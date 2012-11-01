@@ -6,6 +6,12 @@
         mc:Ignorable="d" d:DesignHeight="200"
         Title="MainWindow" Loaded="Window_Loaded" Height="700">
     <Window.Resources>
+        <DataTemplate x:Key="checkBoxTemplate">
+            <CheckBox Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
+        </DataTemplate>
+        <DataTemplate x:Key="picTemplate">
+            <Image Source="{Binding Path=CarImage}" Width="30"/>
+        </DataTemplate>
         <DataTemplate x:Key="histRTemplate">
             <ItemsControl Name="itemsControl"
                               ItemsSource="{Binding Path=HistR, Converter={StaticResource histogramConverter}, ConverterParameter=30}">
@@ -54,7 +60,7 @@
     </Window.Resources>
 
 
-    <Grid>
+    <Grid Name="grid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
@@ -67,30 +73,6 @@
         </Grid.RowDefinitions>
 
         <Image Name="image1" Grid.Column="0" Stretch="None" />
-        <ListView Name="contourListBox1" Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  SelectionChanged="contourListBox_SelectionChanged">
-            <ListView.View>
-                <GridView >
-                    <GridViewColumn>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="图片">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Image Source="{Binding Path=CarImage}" Width="30"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="R" CellTemplate="{StaticResource histRTemplate}" />
-                    <GridViewColumn Header="G" CellTemplate="{StaticResource histGTemplate}" />
-                    <GridViewColumn Header="B" CellTemplate="{StaticResource histBTemplate}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
         <TextBlock Grid.Column="2">
                 <TextBlock.Inlines>
                     <Run>汽车总数量：</Run>
@@ -99,30 +81,6 @@
         </TextBlock>
 
         <Image Name="image2" Grid.Row="1" Grid.Column="0" Stretch="None" />
-        <ListView Name="contourListBox2" Grid.Row="1" Grid.Column="1" ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                  SelectionChanged="contourListBox2_SelectionChanged">
-            <ListView.View>
-                <GridView >
-                    <GridViewColumn>
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox Checked="CheckBox2_Checked" Unchecked="CheckBox2_Unchecked" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="图片">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <Image Source="{Binding Path=CarImage}" Width="30"/>
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                    <GridViewColumn Header="R" CellTemplate="{StaticResource histRTemplate}" />
-                    <GridViewColumn Header="G" CellTemplate="{StaticResource histGTemplate}" />
-                    <GridViewColumn Header="B" CellTemplate="{StaticResource histBTemplate}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
         <TextBlock Grid.Row="1" Grid.Column="2">
                 <TextBlock.Inlines>
                     <Run>汽车总数量：</Run>
