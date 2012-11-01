@@ -27,17 +27,17 @@ namespace Gqqnbig.TrafficVolumeCalculator
             try
             {
                 Image<Bgr, byte> frame1 = new Image<Bgr, byte>(@"H:\文件\毕业设计\西湾大桥氹仔端\图片\0.jpg");
-                Scene scene = new Scene();
+                Lane lane = new Lane();
                 Image<Gray, byte> finalImage;
-                var cars1 = scene.FindCars(frame1, out finalImage);
-                image1.Source = scene.GetFocusArea(frame1).ToBitmap().ToBitmapImage();
+                var cars1 = lane.FindCars(frame1, out finalImage);
+                image1.Source = lane.GetFocusArea(frame1).ToBitmap().ToBitmapImage();
                 contourListBox1.ItemsSource = cars1;
                 totalCarNumberTextRun.Text = cars1.Length.ToString();
 
 
                 Image<Bgr, byte> frame2 = new Image<Bgr, byte>(@"H:\文件\毕业设计\西湾大桥氹仔端\图片\1.jpg");
-                var cars2 = scene.FindCars(frame2, out finalImage);
-                image2.Source = scene.GetFocusArea(frame2).ToBitmap().ToBitmapImage();// finalImage.ToBitmap().ToBitmapImage();
+                var cars2 = lane.FindCars(frame2, out finalImage);
+                image2.Source = lane.GetFocusArea(frame2).ToBitmap().ToBitmapImage();// finalImage.ToBitmap().ToBitmapImage();
                 contourListBox2.ItemsSource = cars2;
                 totalCarNumberTextRun2.Text = cars2.Length.ToString();
             }
