@@ -22,32 +22,6 @@ namespace Gqqnbig.TrafficVolumeCalculator
         }
     }
 
-    public class HistogramConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            float[] hist = (float[])value;
-            double maxHeight = System.Convert.ToDouble(parameter);
-
-            double[] enlargedHist = new double[hist.Length];
-            float maxValue = hist.Max();
-            double factor = maxHeight / maxValue;
-
-            for (int i = 0; i < hist.Length; i++)
-            {
-                enlargedHist[i] = hist[i] * factor;
-            }
-
-            return enlargedHist;
-
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class DenseHistogramConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
