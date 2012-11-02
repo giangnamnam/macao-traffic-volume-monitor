@@ -6,14 +6,46 @@
         xmlns:TrafficVolumeCalculator="clr-namespace:Gqqnbig.TrafficVolumeCalculator" mc:Ignorable="d" d:DesignHeight="200"
         Title="MainWindow" Loaded="Window_Loaded" Height="700">
 
-    <StackPanel Name="grid">
-        <TrafficVolumeCalculator:CaptureViewer x:Name="captureViewer1" />
-        <TrafficVolumeCalculator:CaptureViewer x:Name="captureViewer2" />
+    <DockPanel Name="grid">
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0">
+                <TextBlock.Inlines>
+                    <Run Text="当前图片："/>
+                    <Run Name="picIdTextRun1"/>
+                    <Run Text="、"/>
+                    <Run Name="picIdTextRun2"/>
+                </TextBlock.Inlines>
+            </TextBlock>
+            <TextBlock  Grid.Row="1" Grid.Column="0">
+                <TextBlock.Inlines>
+                    <Run Text="背景图"/>
+                    <Run Name="backgroundPicIdsTextRun"/>
+                </TextBlock.Inlines>
+            </TextBlock>
+
+            <Button Name="previousButton" Grid.Row="0" Grid.Column="1"  Content="上一张" FontSize="20" Padding="30,10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Click="previousButton_Click"/>
+            <Button Grid.Row="1" Grid.Column="1"  Content="下一张" FontSize="20" Padding="30,10" HorizontalAlignment="Center" VerticalAlignment="Center"
+                    Click="nextButton_Click"/>
 
 
-        <StackPanel Grid.Row="0" Grid.RowSpan="2" Grid.Column="3">
-            <Button Content="计算直方图相似度" Click="Button_Click" />
-            <TextBox Name="histSimilarityTextBox" AcceptsReturn="True" IsReadOnly="True"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="计算直方图相似度" VerticalAlignment="Center"  Click="Button_Click" />
+            <TextBox Grid.Row="1" Grid.Column="2"  Name="histSimilarityTextBox" AcceptsReturn="True" IsReadOnly="True"/>
+        </Grid>
+
+        <StackPanel>
+            <TrafficVolumeCalculator:CaptureViewer x:Name="captureViewer1" />
+            <TrafficVolumeCalculator:CaptureViewer x:Name="captureViewer2" />
         </StackPanel>
-    </StackPanel>
+    </DockPanel>
 </Window>

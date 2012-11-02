@@ -45,10 +45,12 @@ namespace Gqqnbig.TrafficVolumeCalculator
         public DenseHistogram HistS { get; private set; }
         public DenseHistogram HistV { get; private set; }
 
+        public DenseHistogram HistHue { get; private set; }
+
         private Car(Rectangle carRectangle, Image<Bgr, byte> image)
         {
             this.Image = image;
-            image.Save(@"D:\img.bmp");
+            //image.Save(@"D:\img.bmp");
             CarImage = Image.ToBitmap().ToBitmapImage();
 
             this.CarRectangle = carRectangle;
@@ -67,6 +69,11 @@ namespace Gqqnbig.TrafficVolumeCalculator
             HistB.Calculate(new[] { image[2] }, false, null);
             //HistB.Normalize(1);
             HistB.MatND.ManagedArray.SetValue(0, 0);
+
+            var hsvImage = image.Convert<Hsv, byte>();
+            HistHue = new DenseHistogram(256, new RangeF(0, 179));
+            HistHue.Calculate(new[] { hsvImage[0] }, false, null);
+            HistHue.MatND.ManagedArray.SetValue(0, 0);
         }
 
 

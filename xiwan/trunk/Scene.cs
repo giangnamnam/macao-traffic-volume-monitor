@@ -35,11 +35,11 @@ namespace Gqqnbig.TrafficVolumeCalculator
             //Lanes[0] = new Lane(@"H:\文件\毕业设计\西湾大桥氹仔端\图片\mask-Lane1.gif", TrafficDirection.GoUp, 0.4031);
             //Lanes[1] = new Lane(@"H:\文件\毕业设计\西湾大桥氹仔端\图片\mask-Lane2.gif", TrafficDirection.GoDown, 0.4031);
 
-            mask = new Image<Gray, byte>(Lanes[0].Mask.Size);
-            CvInvoke.cvAdd(Lanes[0].Mask, Lanes[1].Mask, mask, IntPtr.Zero);
+            //mask = new Image<Gray, byte>(Lanes[0].Mask.Size);
+            //CvInvoke.cvAdd(Lanes[0].Mask, Lanes[1].Mask, mask, IntPtr.Zero);
 
-            var contours = mask.FindContours();
-            regionOfInterest = contours.BoundingRectangle;
+            //var contours = mask.FindContours();
+            //regionOfInterest = contours.BoundingRectangle;
         }
 
 

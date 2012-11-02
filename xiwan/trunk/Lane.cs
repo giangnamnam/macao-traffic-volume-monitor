@@ -11,8 +11,6 @@ namespace Gqqnbig.TrafficVolumeCalculator
 {
     class Lane
     {
-        public Image<Gray, byte> Mask { get; private set; }
-
         public TrafficDirection TrafficDirection { get; private set; }
 
         public double RgbSimilarityThreshold = 0.4031;
@@ -50,15 +48,13 @@ namespace Gqqnbig.TrafficVolumeCalculator
         }
 
 
-        public Car[] FindCars(Image<Bgr, byte> image, out Image<Gray, byte> finalImage)
+        public Car[] FindCars(Image<Bgr, byte> image, Image<Bgra, byte> backgroundImage, out Image<Gray, byte> finalImage)
         {
-            var backgroundColor = FindBackgroundColor(image);
             image = GetFocusArea(image);
 
-            var background = FindBackground(6, backgroundColor);
 
             CvInvoke.cvShowImage("originalImage", image);
-            var car1 = Utility.RemoveSame(image, background, tolerance);
+            var car1 = Utility.RemoveSame(image, backgroundImage, tolerance);
             //CvInvoke.cvShowImage("car 1", car1);
 
             Image<Gray, byte> gaussianImage = car1.SmoothGaussian(3);
@@ -98,7 +94,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
             return image;
         }
 
-        Bgr FindBackgroundColor(Image<Bgr, byte> frame)
+        public Bgr GetRoadColor(Image<Bgr, byte> frame)
         {
             var samplingBackgroundColors = new List<Bgr>();
 
@@ -121,24 +117,22 @@ namespace Gqqnbig.TrafficVolumeCalculator
         /// <summary>
         /// 获取背景
         /// </summary>
-        /// <param name="sampleSize">根据多少张图片来获取背景</param>
-        /// <param name="backgroundColor"> </param>
+        /// <param name="samples">根据这些图片来获取背景</param>
+        /// <param name="roadColor"> </param>
         /// <returns></returns>
-        public Image<Bgra, byte> FindBackground(int sampleSize, Bgr backgroundColor)
+        public Image<Bgra, byte> FindBackground(Image<Bgr,byte>[] samples, Bgr roadColor)
         {
-
-            Image<Bgr, byte>[] frames = new Image<Bgr, byte>[sampleSize];
-            for (int i = 0; i < sampleSize; i++)
+            for (int i = 0; i < samples.Length; i++)
             {
-                frames[i] = GetFocusArea(new Image<Bgr, byte>(String.Format(MainWindow.filePathPattern, i)));
+                samples[i] = GetFocusArea(samples[i]);
                 //CvInvoke.cvShowImage("Image " + i, frames[i]);
             }
 
             //List<Image<Bgra, byte>> backgrounds = new List<Image<Bgra, byte>>();
-            List<Bgr> colors = new List<Bgr>(sampleSize + 2);
+            List<Bgr> colors = new List<Bgr>(samples.Length + 2);
 
-            int width = frames[0].Width;
-            int height = frames[0].Height;
+            int width = samples[0].Width;
+            int height = samples[0].Height;
             Image<Bgra, byte> background = new Image<Bgra, byte>(width, height);
 
             //System.Threading.Tasks.Parallel.For()
@@ -146,10 +140,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
             {
                 for (int y = 0; y < height; y++)
                 {
-                    colors.AddRange(frames.Select(f => f[y, x]));
+                    colors.AddRange(samples.Select(f => f[y, x]));
                     //System.Diagnostics.Debug.WriteLine(x + "," + y);
-                    colors.Add(backgroundColor);
-                    //colors.Add(backgroundColor);
+                    colors.Add(roadColor);
+                    //colors.Add(roadColor);
 
                     colors = Utility.RemoveDeviatedComponent(colors, c => c.Red, 10);
                     colors = Utility.RemoveDeviatedComponent(colors, c => c.Green, 10);

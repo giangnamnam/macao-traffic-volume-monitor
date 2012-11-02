@@ -63,9 +63,24 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </DataTemplate>
+        <DataTemplate x:Key="histHueTemplate">
+            <ItemsControl Name="itemsControl"
+                              ItemsSource="{Binding Path=HistHue, Converter={StaticResource histogramConverter}, ConverterParameter=30}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Rectangle Width="1" Stroke="Black" VerticalAlignment="Bottom" Height="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </DataTemplate>
     </UserControl.Resources>
     <DockPanel>
-        <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center">
+        <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center" Margin="5">
             <Image Name="imageBox" Grid.Column="0" Stretch="None" />
 
             <TextBlock Grid.Column="2">
@@ -77,15 +92,16 @@
         </StackPanel>
         <ListView Name="listView" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
                   SelectionChanged="listView_SelectionChanged">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn CellTemplate="{StaticResource checkBoxTemplate}" />
-                        <GridViewColumn Header="图片" CellTemplate="{StaticResource picTemplate}" />
-                        <GridViewColumn Header="R" CellTemplate="{StaticResource histRTemplate}" />
-                        <GridViewColumn Header="G" CellTemplate="{StaticResource histGTemplate}" />
-                        <GridViewColumn Header="B" CellTemplate="{StaticResource histBTemplate}" />
-                    </GridView>
-                </ListView.View>
-            </ListView>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn CellTemplate="{StaticResource checkBoxTemplate}" />
+                    <GridViewColumn Header="图片" CellTemplate="{StaticResource picTemplate}" />
+                    <GridViewColumn Header="R" CellTemplate="{StaticResource histRTemplate}" />
+                    <GridViewColumn Header="G" CellTemplate="{StaticResource histGTemplate}" />
+                    <GridViewColumn Header="B" CellTemplate="{StaticResource histBTemplate}" />
+                    <GridViewColumn Header="Hue" CellTemplate="{StaticResource histHueTemplate}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
     </DockPanel>
 </UserControl>
