@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:TrafficVolumeCalculator="clr-namespace:Gqqnbig.TrafficVolumeCalculator" mc:Ignorable="d" d:DesignHeight="200"
+        mc:Ignorable="d" d:DesignHeight="200"
         Title="MainWindow" Loaded="Window_Loaded" Height="700">
 
     <DockPanel Name="grid">
@@ -43,9 +43,6 @@
             <TextBox Grid.Row="1" Grid.Column="2"  Name="histSimilarityTextBox" AcceptsReturn="True" IsReadOnly="True"/>
         </Grid>
 
-        <StackPanel>
-            <TrafficVolumeCalculator:CaptureViewer x:Name="captureViewer1" />
-            <TrafficVolumeCalculator:CaptureViewer x:Name="captureViewer2" />
-        </StackPanel>
+        <ItemsControl Name="captureViewerList" VerticalAlignment="Stretch" SizeChanged="captureViewerList_SizeChanged"/>
     </DockPanel>
 </Window>

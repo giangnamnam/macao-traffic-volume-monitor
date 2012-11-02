@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Diagnostics.Contracts;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Emgu.CV;
+using Emgu.CV.Structure;
 
 namespace Gqqnbig.TrafficVolumeCalculator
 {
@@ -20,10 +15,65 @@ namespace Gqqnbig.TrafficVolumeCalculator
     /// </summary>
     public partial class CaptureViewer : UserControl
     {
+        public int? CurrentPicId { get; private set; }
+        public string FilePathPattern { get; set; }
+
         public CaptureViewer()
         {
             InitializeComponent();
         }
+
+
+
+        public void View(int? id)
+        {
+            CurrentPicId = id;
+            if(id.HasValue==false)
+            {
+                imageBox.Source = null;
+                listView.ItemsSource = null;
+                totalCarNumberTextRun.Text = string.Empty;
+                return;
+            }
+
+
+
+
+            Lane lane = new Lane();
+            Image<Gray, byte> finalImage;
+            Image<Bgr, byte> frame1 = new Image<Bgr, byte>(string.Format(FilePathPattern, id));
+
+
+            Bgr roadColor = lane.GetRoadColor(frame1);
+
+            int sampleStart = id.Value - 3;
+
+            Image<Bgr, byte>[] samples = GetSamples(sampleStart < 0 ? 0 : sampleStart, 6);
+
+            Image<Bgra, byte> backgroundImage = lane.FindBackground(samples, roadColor);
+            var cars1 = lane.FindCars(frame1, backgroundImage, out finalImage);
+
+            imageBox.Source = lane.GetFocusArea(frame1).ToBitmap().ToBitmapImage();
+            listView.ItemsSource = cars1;
+            totalCarNumberTextRun.Text = cars1.Length.ToString();
+        }
+
+        private Image<Bgr, byte>[] GetSamples(int sampleStart, int length)
+        {
+            Contract.Requires(sampleStart >= 0);
+            Contract.Requires(length >= 0);
+
+            Image<Bgr, byte>[] samples = new Image<Bgr, byte>[length];
+
+            for (int i = 0; i < samples.Length; i++)
+            {
+                samples[i] = new Image<Bgr, byte>(string.Format(FilePathPattern, sampleStart++));
+            }
+            return samples;
+        }
+
+
+
 
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
