@@ -87,14 +87,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CaptureViewer.xaml.cs">
+      <DependentUpon>CaptureViewer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Car.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="OutBoxAdorner.cs" />
     <Compile Include="PossibleCarGroup.cs" />
     <Compile Include="H:\文件\毕业设计\my library\single file\Gqqnbig\Drawing\RectangleOperations.cs" />
+    <Compile Include="H:\文件\毕业设计\my library\single file\Gqqnbig\Windows\Data\ArithmeticConverter.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Utility.cs" />
+    <Page Include="CaptureViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
