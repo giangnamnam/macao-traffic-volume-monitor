@@ -56,6 +56,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
                 picIdTextRun1.Text = PicId.ToString();
                 picIdTextRun2.Text = (PicId + 1).ToString();
+
+                PreloadImage();
             }
             catch (Exception ex)
             {
@@ -94,8 +96,12 @@ namespace Gqqnbig.TrafficVolumeCalculator
             Mouse.OverrideCursor = Cursors.Wait;
 
             PicId++;
-            captureViewers[2].View(PicId + 1);
+            if (captureViewers[2].CurrentPicId != PicId + 1)
+                captureViewers[2].View(PicId + 1);
             UpdateLayout();
+
+            picIdTextRun1.Text = PicId.ToString();
+            picIdTextRun2.Text = (PicId + 1).ToString();
 
 
             TranslateTransform translateTransform = new TranslateTransform();
@@ -108,6 +114,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
             animation.Completed += new EventHandler(animation_Completed);
             translateTransform.BeginAnimation(TranslateTransform.YProperty, animation);
 
+
+
             Mouse.OverrideCursor = originalCursor;
         }
 
@@ -116,6 +124,17 @@ namespace Gqqnbig.TrafficVolumeCalculator
             var n = captureViewers[0];
             captureViewers.RemoveAt(0);
             captureViewers.Add(n);
+
+            PreloadImage();
+        }
+
+        void PreloadImage()
+        {
+            Dispatcher.BeginInvoke(new Action(() =>
+                                                  {
+                                                      captureViewers[2].View(PicId + 2);
+                                                      System.Diagnostics.Debug.WriteLine("预加载" + (PicId + 2) + "完成");
+                                                  }), System.Windows.Threading.DispatcherPriority.Background);
         }
 
 
