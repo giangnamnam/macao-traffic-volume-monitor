@@ -57,23 +57,25 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
             HistR = new DenseHistogram(256, new RangeF(0, 255));
             HistR.Calculate(new[] { Image[0] }, false, null);
-            HistR.MatND.ManagedArray.SetValue(0, 0);
+            HistR.MatND.ManagedArray.SetValue(0, 0);         
+            HistR.Normalize(1);
 
 
             HistG = new DenseHistogram(256, new RangeF(0, 255));
             HistG.Calculate(new[] { image[1] }, false, null);
-            //HistG.Normalize(1);
             HistG.MatND.ManagedArray.SetValue(0, 0);
+            HistG.Normalize(1);
 
             HistB = new DenseHistogram(256, new RangeF(0, 255));
             HistB.Calculate(new[] { image[2] }, false, null);
-            //HistB.Normalize(1);
             HistB.MatND.ManagedArray.SetValue(0, 0);
+            HistB.Normalize(1);
 
             var hsvImage = image.Convert<Hsv, byte>();
             HistHue = new DenseHistogram(256, new RangeF(0, 179));
             HistHue.Calculate(new[] { hsvImage[0] }, false, null);
             HistHue.MatND.ManagedArray.SetValue(0, 0);
+            HistHue.Normalize(1);
         }
 
 
