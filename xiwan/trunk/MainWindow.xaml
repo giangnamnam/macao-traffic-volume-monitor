@@ -39,7 +39,7 @@
                     Click="nextButton_Click"/>
 
 
-            <Button Grid.Row="0" Grid.Column="2" Content="计算直方图相似度" VerticalAlignment="Center"  Click="Button_Click" />
+            <Button Grid.Row="0" Grid.Column="2" Content="计算直方图相似度" VerticalAlignment="Center"  Click="calculateSimilarityButton_Click" />
             <TextBox Grid.Row="1" Grid.Column="2"  Name="histSimilarityTextBox" AcceptsReturn="True" IsReadOnly="True"/>
         </Grid>
 
