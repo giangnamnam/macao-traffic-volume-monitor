@@ -74,7 +74,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
             while (contours != null)
             {
                 //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
-                CvInvoke.cvDrawContours(finalImage, contours, inContourColor.MCvScalar, inContourColor.MCvScalar, 0, -1, LINE_TYPE.CV_AA, new Point(0, 0));
+                finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
 
                 var carGroup = new PossibleCarGroup(image, finalImage, contours, maxCarWidth, maxCarLength, 12, 85);
                 if (carGroup.CarNumber > 0)
