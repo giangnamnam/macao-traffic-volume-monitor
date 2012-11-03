@@ -53,7 +53,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
             image = GetFocusArea(image);
 
 
-            CvInvoke.cvShowImage("originalImage", image);
+            //CvInvoke.cvShowImage("originalImage", image);
             var car1 = Utility.RemoveSame(image, backgroundImage, tolerance);
             //CvInvoke.cvShowImage("car 1", car1);
 
