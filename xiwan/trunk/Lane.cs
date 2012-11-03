@@ -55,7 +55,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
             //CvInvoke.cvShowImage("originalImage", image);
             var car1 = Utility.RemoveSame(image, backgroundImage, tolerance);
-            //CvInvoke.cvShowImage("car 1", car1);
+            CvInvoke.cvShowImage("car 1", car1);
 
             Image<Gray, byte> gaussianImage = car1.SmoothGaussian(3);
             //CvInvoke.cvShowImage("gaussianImage", gaussianImage);
@@ -70,8 +70,12 @@ namespace Gqqnbig.TrafficVolumeCalculator
             var contours = finalImage.FindContours();
 
             List<Car> groups = new List<Car>();
+            var inContourColor = new Gray(255);
             while (contours != null)
             {
+                //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
+                CvInvoke.cvDrawContours(finalImage, contours, inContourColor.MCvScalar, inContourColor.MCvScalar, 0, -1, LINE_TYPE.CV_AA, new Point(0, 0));
+
                 var carGroup = new PossibleCarGroup(image, finalImage, contours, maxCarWidth, maxCarLength, 12, 85);
                 if (carGroup.CarNumber > 0)
                     groups.AddRange(carGroup.GetCars());
@@ -120,7 +124,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         /// <param name="samples">根据这些图片来获取背景</param>
         /// <param name="roadColor"> </param>
         /// <returns></returns>
-        public Image<Bgra, byte> FindBackground(Image<Bgr,byte>[] samples, Bgr roadColor)
+        public Image<Bgra, byte> FindBackground(Image<Bgr, byte>[] samples, Bgr roadColor)
         {
             for (int i = 0; i < samples.Length; i++)
             {
