@@ -154,9 +154,13 @@ namespace Gqqnbig.TrafficVolumeCalculator
                     colors = Utility.RemoveDeviatedComponent(colors, c => c.Blue, 10);
 
                     if (colors.Any())
-                        background[y, x] = new Bgra(colors.Average(bgr => bgr.Blue),
-                                                  colors.Average(bgr => bgr.Green),
-                                                  colors.Average(bgr => bgr.Red), 255);
+                        background[y, x] = new Bgra(Median(colors.Select(bgr => bgr.Blue)),
+                                                    Median(colors.Select(bgr => bgr.Green)),
+                                                    Median(colors.Select(bgr => bgr.Red)), 255);
+
+                        //background[y, x] = new Bgra(colors.Average(bgr => bgr.Blue),
+                    //                          colors.Average(bgr => bgr.Green),
+                    //                          colors.Average(bgr => bgr.Red), 255);
                     else
                         background[y, x] = new Bgra(0, 0, 0, 0);
 
@@ -277,6 +281,31 @@ namespace Gqqnbig.TrafficVolumeCalculator
             }
 
 
+        }
+
+        static double Median(IEnumerable<double> source)
+        {
+            if (!source.Any())
+            {
+                throw new InvalidOperationException("Cannot compute median for an empty set.");
+            }
+
+            var sortedList = from number in source
+                             orderby number
+                             select number;
+
+            int itemIndex = (int)sortedList.Count() / 2;
+
+            if (sortedList.Count() % 2 == 0)
+            {
+                // Even number of items.
+                return (sortedList.ElementAt(itemIndex) + sortedList.ElementAt(itemIndex - 1)) / 2;
+            }
+            else
+            {
+                // Odd number of items.
+                return sortedList.ElementAt(itemIndex);
+            }
         }
 
 
