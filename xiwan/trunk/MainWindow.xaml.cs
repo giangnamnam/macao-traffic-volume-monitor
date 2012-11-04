@@ -26,6 +26,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
         {
             InitializeComponent();
 
+            Title = GetType().Assembly.Location;
+
             PicId = 0;
 
             captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern });
