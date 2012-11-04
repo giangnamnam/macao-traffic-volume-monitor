@@ -91,7 +91,7 @@
             </TextBlock>
         </StackPanel>
         <ListView Name="listView" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
-                  SelectionChanged="listView_SelectionChanged">
+                  SnapsToDevicePixels="True" SelectionChanged="listView_SelectionChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn CellTemplate="{StaticResource checkBoxTemplate}" />
