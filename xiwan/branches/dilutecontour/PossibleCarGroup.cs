@@ -9,7 +9,6 @@ namespace Gqqnbig.TrafficVolumeCalculator
     class PossibleCarGroup
     {
         private readonly Image<Bgr, byte> sourceImage;
-        private readonly Image<Gray, byte> objectImage;
 
         /// <summary>
         /// 车道的宽度。汽车宽度不能超过车道宽度。
@@ -31,7 +30,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         public PossibleCarGroup(Image<Bgr, byte> sourceImage, Image<Gray, byte> objectImage, Contour<Point> contour, int laneWidth, int maxCarLength, int minArea, int maxArea)
         {
             this.sourceImage = sourceImage;
-            this.objectImage = objectImage;
+            //this.objectImage = objectImage;
             this.laneWidth = laneWidth;
             this.maxCarLength = maxCarLength;
             this.minArea = minArea;
@@ -75,7 +74,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
         {
             if (CarNumber == 0)
                 return new Car[0];
-            else if (CarNumber == 1)
+
+            var objectImage = CreateObjectImage(Contour, sourceImage.Width, sourceImage.Height);
+
+            if (CarNumber == 1)
                 return new[] { Car.CreateCar(BoundingRectangle //new DRectangle(BoundingRectangle.X-1,BoundingRectangle.Y-1,BoundingRectangle.Width+2,BoundingRectangle.Height+2)
                     , sourceImage,objectImage) };
             else
@@ -85,13 +87,26 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 for (int i = 0; i < cars.Length; i++)
                 {
                     //rectangles[i].Inflate(2, 2);
-                    cars[i] = Car.CreateCar(rectangles[i], sourceImage,objectImage);
+                    cars[i] = Car.CreateCar(rectangles[i], sourceImage, objectImage);
                 }
                 return cars;
             }
         }
 
-
+        /// <summary>
+        /// 重新生成objectImage，使得contour可以放大，而且不会跟其他的contour合并。
+        /// </summary>
+        /// <param name="contour"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        private static Image<Gray, byte> CreateObjectImage(Contour<Point> contour, int width, int height)
+        {
+            Image<Gray, byte> image = new Image<Gray, byte>(width, height);
+            image.Draw(contour, new Gray(255), -1);
+            image = image.Dilate(1);
+            return image;
+        }
 
     }
 }
