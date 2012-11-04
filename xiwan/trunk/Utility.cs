@@ -108,33 +108,6 @@ namespace Gqqnbig.TrafficVolumeCalculator
             }
         }
 
-
-
-
-        public static Image<Bgra, byte> GetCommon(Image<Bgr, byte> image1, Image<Bgr, byte> image2, int tolerance)
-        {
-            int width = image1.Width;
-            int height = image1.Height;
-            Image<Bgra, byte> common = new Image<Bgra, byte>(width, height);
-
-            for (int row = 0; row < height; row++)
-            {
-                for (int column = 0; column < width; column++)
-                {
-                    //System.Diagnostics.Debug.WriteLine("{0},{1}", row, column);
-                    var c1 = image1[row, column];
-                    if (c1.IsSimilarTo(image2[row, column], tolerance))
-                    {
-                        common[row, column] = new Bgra(c1.Blue, c1.Green, c1.Red, 255);
-                    }
-                    else
-                        common[row, column] = new Bgra(0, 0, 0, 0);
-                }
-            }
-            return common;
-
-        }
-
         public static Image<Bgra, byte> OverlayImages(params Image<Bgra, byte>[] images)
         {
             int width = images[0].Width;
