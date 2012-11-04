@@ -48,9 +48,6 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            double h = captureViewerList.RenderSize.Height / 2;
-
-
             try
             {
                 captureViewers[0].View(PicId);
