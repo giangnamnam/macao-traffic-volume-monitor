@@ -57,7 +57,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
             //CvInvoke.cvShowImage("originalImage", image);
             var car1 = Utility.RemoveSame(image, backgroundImage, tolerance);
-            CvInvoke.cvShowImage("car 1", car1);
+            //CvInvoke.cvShowImage("car 1", car1);
 
             Image<Gray, byte> gaussianImage = car1.SmoothGaussian(3);
             //CvInvoke.cvShowImage("gaussianImage", gaussianImage);
@@ -159,9 +159,9 @@ namespace Gqqnbig.TrafficVolumeCalculator
                         colors = Utility.RemoveDeviatedComponent(colors, c => c.Blue, 10);
 
                         if (colors.Any())
-                            background[y, x] = new Bgra(Median(colors.Select(bgr => bgr.Blue)),
-                                                        Median(colors.Select(bgr => bgr.Green)),
-                                                        Median(colors.Select(bgr => bgr.Red)), 255);
+                            background[y, x] = new Bgra(colors.Select(bgr => bgr.Blue).Median(),
+                                                        colors.Select(bgr => bgr.Green).Median(),
+                                                        colors.Select(bgr => bgr.Red).Median(), 255);
 
                             //background[y, x] = new Bgra(colors.Average(bgr => bgr.Blue),
                         //                          colors.Average(bgr => bgr.Green),
@@ -287,30 +287,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         }
 
-        static double Median(IEnumerable<double> source)
-        {
-            if (!source.Any())
-            {
-                throw new InvalidOperationException("Cannot compute median for an empty set.");
-            }
 
-            var sortedList = from number in source
-                             orderby number
-                             select number;
-
-            int itemIndex = (int)sortedList.Count() / 2;
-
-            if (sortedList.Count() % 2 == 0)
-            {
-                // Even number of items.
-                return (sortedList.ElementAt(itemIndex) + sortedList.ElementAt(itemIndex - 1)) / 2;
-            }
-            else
-            {
-                // Odd number of items.
-                return sortedList.ElementAt(itemIndex);
-            }
-        }
 
 
         public CarMatch[] FindCarMatch(Car[] cars1, Car[] cars2)
