@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
+using Gqqnbig.Statistics;
+using System.Linq;
 
 namespace Gqqnbig.TrafficVolumeCalculator
 {
@@ -313,7 +315,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         public CarMatch[] FindCarMatch(Car[] cars1, Car[] cars2)
         {
-            double similarityThreshold = 0.27;
+            double similarityThreshold = 0.26;
 
             List<CarMatch> list = new List<CarMatch>();
             if (TrafficDirection == TrafficDirection.GoUp)
@@ -337,13 +339,19 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 }
             }
 
-            return FindOneToOneBestMatch(list).ToArray();
+            list = FindOneToOneBestMatch(list);
+            if (list.Count > 2)
+            {
+                return RemoveDeviation(list).ToArray();
+            }
+            else
+                return list.ToArray();
         }
 
-        static CarMatch[] FindOneToOneBestMatch(List<CarMatch> list)
+        static List<CarMatch> FindOneToOneBestMatch(List<CarMatch> list)
         {
             if (list.Count == 0)
-                return new CarMatch[0];
+                return list;
 
             /*
              * 算法：
@@ -372,9 +380,28 @@ namespace Gqqnbig.TrafficVolumeCalculator
             }
 
             if (list.Count == 0)
-                return oneToOneMatch.ToArray();
+                return oneToOneMatch;
             else
                 goto Step1;
+        }
+
+        static IEnumerable<CarMatch> RemoveDeviation(List<CarMatch> list)
+        {
+            //用拉依达准则法。
+            Tuple<CarMatch, int>[] carMoves = new Tuple<CarMatch, int>[list.Count];
+            for (int i = 0; i < carMoves.Length; i++)
+            {
+                carMoves[i] = Tuple.Create(list[i], list[i].Car1.CarRectangle.Top - list[i].Car2.CarRectangle.Top);
+            }
+
+            var mean = carMoves.Average(m => m.Item2);
+            var sd = Math.Sqrt(carMoves.Variance(mean, m => m.Item2));
+
+            var rersult = from m in carMoves
+                          where Math.Abs(m.Item1.Car1.CarRectangle.Top - m.Item1.Car2.CarRectangle.Top - mean) <= 2 * sd
+                          select m.Item1;
+            return rersult;
+
         }
     }
 

@@ -25,7 +25,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
             Title = GetType().Assembly.Location;
 
-            PicId = 0;
+            PicId = 9;
 
             captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern });
             captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern });
@@ -53,9 +53,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 picIdTextRun1.Text = PicId.ToString();
                 picIdTextRun2.Text = (PicId + 1).ToString();
 
-                lastMatch = lane.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
-                LabelMatch(lastMatch);
-                PreloadImage();
+                LoadCompleted();
             }
             catch (Exception ex)
             {
@@ -117,7 +115,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
             UnlabelMatch(lastMatch);
-            //return;
+
             var originalCursor = Mouse.OverrideCursor;
             Mouse.OverrideCursor = Cursors.Wait;
             
@@ -153,6 +151,11 @@ namespace Gqqnbig.TrafficVolumeCalculator
             captureViewers.RemoveAt(0);
             captureViewers.Add(n);
 
+            LoadCompleted();
+        }
+
+        private void LoadCompleted()
+        {
             lastMatch = lane.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
             LabelMatch(lastMatch);
             PreloadImage();
