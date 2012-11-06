@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
@@ -136,45 +136,40 @@ namespace Gqqnbig.TrafficVolumeCalculator
             for (int i = 0; i < samples.Length; i++)
             {
                 samples[i] = GetFocusArea(samples[i]);
-                //CvInvoke.cvShowImage("Image " + i, frames[i]);
             }
-
-            //List<Image<Bgra, byte>> backgrounds = new List<Image<Bgra, byte>>();
-            List<Bgr> colors = new List<Bgr>(samples.Length + 2);
 
             int width = samples[0].Width;
             int height = samples[0].Height;
             Image<Bgra, byte> background = new Image<Bgra, byte>(width, height);
 
-            //System.Threading.Tasks.Parallel.For()
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
+            Parallel.For(0, width, x =>
                 {
-                    colors.AddRange(samples.Select(f => f[y, x]));
-                    //System.Diagnostics.Debug.WriteLine(x + "," + y);
-                    colors.Add(roadColor);
-                    //colors.Add(roadColor);
+                    List<Bgr> colors = new List<Bgr>(samples.Length + 1);
+                    for (int y = 0; y < height; y++)
+                    {
+                        colors.AddRange(samples.Select(f => f[y, x]));
+                        //System.Diagnostics.Debug.WriteLine(x + "," + y);
+                        colors.Add(roadColor);
+                        //colors.Add(roadColor);
 
-                    colors = Utility.RemoveDeviatedComponent(colors, c => c.Red, 10);
-                    colors = Utility.RemoveDeviatedComponent(colors, c => c.Green, 10);
-                    colors = Utility.RemoveDeviatedComponent(colors, c => c.Blue, 10);
+                        colors = Utility.RemoveDeviatedComponent(colors, c => c.Red, 10);
+                        colors = Utility.RemoveDeviatedComponent(colors, c => c.Green, 10);
+                        colors = Utility.RemoveDeviatedComponent(colors, c => c.Blue, 10);
 
-                    if (colors.Any())
-                        background[y, x] = new Bgra(Median(colors.Select(bgr => bgr.Blue)),
-                                                    Median(colors.Select(bgr => bgr.Green)),
-                                                    Median(colors.Select(bgr => bgr.Red)), 255);
+                        if (colors.Any())
+                            background[y, x] = new Bgra(Median(colors.Select(bgr => bgr.Blue)),
+                                                        Median(colors.Select(bgr => bgr.Green)),
+                                                        Median(colors.Select(bgr => bgr.Red)), 255);
 
-                        //background[y, x] = new Bgra(colors.Average(bgr => bgr.Blue),
-                    //                          colors.Average(bgr => bgr.Green),
-                    //                          colors.Average(bgr => bgr.Red), 255);
-                    else
-                        background[y, x] = new Bgra(0, 0, 0, 0);
+                            //background[y, x] = new Bgra(colors.Average(bgr => bgr.Blue),
+                        //                          colors.Average(bgr => bgr.Green),
+                        //                          colors.Average(bgr => bgr.Red), 255);
+                        else
+                            background[y, x] = new Bgra(0, 0, 0, 0);
 
-                    colors.Clear();
-                }
-            }
-
+                        colors.Clear();
+                    }
+                });
             CvInvoke.cvShowImage("background", background);
             return background;
         }
@@ -196,52 +191,52 @@ namespace Gqqnbig.TrafficVolumeCalculator
             Image<Bgr, byte> newFrame = new Image<Bgr, byte>(width, height);
             int newWidth = newFrame.Width;
 
-            for (int y = 32; y < height; y++)
-            {
-                int centerX = (int)(getCenterX((double)y / height) * width);
-                int newCenterX = (int)(getCenterX((double)y / height) * newWidth);
-                double factor = getLeftFactorByY(y) * getLeftSphereFactor(y);
+            Parallel.For(32, height, y =>
+              {
+                  int centerX = (int)(getCenterX((double)y / height) * width);
+                  int newCenterX = (int)(getCenterX((double)y / height) * newWidth);
+                  double factor = getLeftFactorByY(y) * getLeftSphereFactor(y);
 
-                int lastNewX = -1;
-                for (int x = 0; x <= centerX; x++)
+                  int lastNewX = -1;
+                  for (int x = 0; x <= centerX; x++)
+                  {
+                      int horizontalDistance = centerX - x;
+                      int newHorizontalDistance = (int)Math.Round(factor * horizontalDistance);
+
+                      int newX = newCenterX - newHorizontalDistance;
+                      if (newX >= 0)
+                      {
+                          newFrame[y, newX] = frame[y, x];
+
+                          if (lastNewX != -1 && newX - lastNewX > 1)
+                              Interplote(newFrame, lastNewX, y, newX, y);
+                          lastNewX = newX;
+                      }
+                  }
+              });
+
+            Parallel.For(32, height, y =>
                 {
-                    int horizontalDistance = centerX - x;
-                    int newHorizontalDistance = (int)Math.Round(factor * horizontalDistance);
+                    int centerX = (int)(getCenterX((double)y / height) * width);
+                    int newCenterX = (int)(getCenterX((double)y / height) * newWidth);
+                    double factor = getRightFactorByY(y) * getRightSphereFactor(y);
 
-                    int newX = newCenterX - newHorizontalDistance;
-                    if (newX >= 0)
+                    int lastNewX = -1;
+                    for (int x = centerX + 1; x < width; x++)
                     {
-                        newFrame[y, newX] = frame[y, x];
+                        int horizontalDistance = x - centerX;
+                        int newHorizontalDistance = (int)Math.Round(factor * horizontalDistance);
 
-                        if (lastNewX != -1 && newX - lastNewX > 1)
-                            Interplote(newFrame, lastNewX, y, newX, y);
-                        lastNewX = newX;
+                        int newX = newCenterX + newHorizontalDistance;
+                        if (newX < width)
+                        {
+                            newFrame[y, newX] = frame[y, x];
+                            if (lastNewX != -1 && newX - lastNewX > 1)
+                                Interplote(newFrame, lastNewX, y, newX, y);
+                            lastNewX = newX;
+                        }
                     }
-                }
-            }
-
-            for (int y = 32; y < height; y++)
-            {
-                int centerX = (int)(getCenterX((double)y / height) * width);
-                int newCenterX = (int)(getCenterX((double)y / height) * newWidth);
-                double factor = getRightFactorByY(y) * getRightSphereFactor(y);
-
-                int lastNewX = -1;
-                for (int x = centerX + 1; x < width; x++)
-                {
-                    int horizontalDistance = x - centerX;
-                    int newHorizontalDistance = (int)Math.Round(factor * horizontalDistance);
-
-                    int newX = newCenterX + newHorizontalDistance;
-                    if (newX < width)
-                    {
-                        newFrame[y, newX] = frame[y, x];
-                        if (lastNewX != -1 && newX - lastNewX > 1)
-                            Interplote(newFrame, lastNewX, y, newX, y);
-                        lastNewX = newX;
-                    }
-                }
-            }
+                });
 
             //CvInvoke.cvShowImage("enlarge", newFrame);
 
@@ -362,13 +357,13 @@ namespace Gqqnbig.TrafficVolumeCalculator
             IComparer<CarMatch> comparer = new CarMatchComparer();
             list.Sort(comparer);
 
-            Step1:
+        Step1:
             var m = list[0];
             oneToOneMatch.Add(m);
 
             list.RemoveAt(0);
             int index = 0;
-            while (index<list.Count)//有必要倒着删加快速度么？
+            while (index < list.Count)//有必要倒着删加快速度么？
             {
                 if (list[index].Car1 == m.Car1 || list[index].Car2 == m.Car2)
                     list.RemoveAt(index); //第2步

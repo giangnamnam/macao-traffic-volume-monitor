@@ -15,6 +15,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
     /// </summary>
     public partial class CaptureViewer : UserControl
     {
+        readonly Lane lane = new Lane();
+
         public Car[] Cars { get; private set; }
         public int? CurrentPicId { get; private set; }
         public string FilePathPattern { get; set; }
@@ -37,10 +39,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 return;
             }
 
-
-
-
-            Lane lane = new Lane();
+            //Stopwatch sw = new Stopwatch();
+            //sw.Start();
             Image<Gray, byte> finalImage;
             Image<Bgr, byte> frame1 = new Image<Bgr, byte>(string.Format(FilePathPattern, id));
 
@@ -50,9 +50,14 @@ namespace Gqqnbig.TrafficVolumeCalculator
             int sampleStart = id.Value - 3;
 
             Image<Bgr, byte>[] samples = GetSamples(sampleStart < 0 ? 0 : sampleStart, 6);
-
             Image<Bgra, byte> backgroundImage = lane.FindBackground(samples, roadColor);
+            //sw.Stop();
+            //System.Diagnostics.Debug.WriteLine("background:{0}", sw.ElapsedMilliseconds);
+            //sw.Restart();
+
             Cars = lane.FindCars(frame1, backgroundImage, out finalImage);
+            //sw.Stop();
+            //System.Diagnostics.Debug.WriteLine("FindCars:{0}", sw.ElapsedMilliseconds);
 
             imageBox.Source = lane.GetFocusArea(frame1).ToBitmap().ToBitmapImage();
             listView.ItemsSource = Cars;
