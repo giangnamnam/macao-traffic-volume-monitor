@@ -7,7 +7,7 @@ using Emgu.CV.Structure;
 
 namespace Gqqnbig.TrafficVolumeCalculator
 {
-    class Car
+    public class Car
     {
 
 

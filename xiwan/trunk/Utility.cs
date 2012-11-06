@@ -168,5 +168,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
             }
             return result;
         }
+
+        public static System.Windows.Media.Color ToWpfColor(this System.Drawing.Color color)
+        {
+            return System.Windows.Media.Color.FromRgb(color.R, color.G, color.B);
+        }
     }
 }

@@ -41,7 +41,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         public Lane()
         {
             mask = new Image<Gray, byte>(@"D:\文件\毕业设计\西湾大桥氹仔端\图片\mask-Lane1.gif");
-            TrafficDirection = TrafficDirection.GoDown;
+            TrafficDirection = TrafficDirection.GoUp;
 
             var contours = mask.FindContours();
             regionOfInterest = contours.BoundingRectangle;
@@ -75,7 +75,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
             {
                 ////填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
                 //finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
-                System.Diagnostics.Debug.WriteLine(contours.Area);
+                //System.Diagnostics.Debug.WriteLine(contours.Area);
 
                 //if(contours.Area>40) 进行两次腐蚀
 
@@ -315,6 +315,64 @@ namespace Gqqnbig.TrafficVolumeCalculator
             }
         }
 
+
+        public CarMatch[] FindCarMatch(Car[] cars1, Car[] cars2)
+        {
+            double similarityThreshold = 0.27;
+
+            List<CarMatch> list = new List<CarMatch>();
+            if (TrafficDirection == TrafficDirection.GoUp)
+            {
+                foreach (var c2 in cars2)
+                {
+                    //List<CarMatch> carMatch = new List<CarMatch>();
+                    foreach (var c1 in cars1)
+                    {
+                        if (c1.CarRectangle.Top <= c2.CarRectangle.Top)
+                            break;
+
+                        //假设车不改变车道。
+                        if (Math.Abs(c1.CarRectangle.Left - c2.CarRectangle.Left) > 5)
+                            continue;
+
+                        CarMatch cm = new CarMatch(c1, c2);
+
+                        if(cm.RS>similarityThreshold && cm.GS>similarityThreshold && cm.BS>similarityThreshold)
+                            list.Add(cm);
+                    }
+
+                    //TODO: 如果一辆车跟多辆车相像，找一辆最像的。
+
+                }
+            }
+            return list.ToArray();
+        }
+    }
+
+    class CarMatch
+    {
+        public CarMatch(Car car1, Car car2)
+        {
+            Car2 = car2;
+            Car1 = car1;
+
+            RS = CvInvoke.cvCompareHist(car1.HistR, car2.HistR, HISTOGRAM_COMP_METHOD.CV_COMP_CORREL);
+            GS = CvInvoke.cvCompareHist(car1.HistG, car2.HistG, HISTOGRAM_COMP_METHOD.CV_COMP_CORREL);
+            BS = CvInvoke.cvCompareHist(car1.HistB, car2.HistB, HISTOGRAM_COMP_METHOD.CV_COMP_CORREL);
+            HueS = CvInvoke.cvCompareHist(car1.HistHue, car2.HistHue, HISTOGRAM_COMP_METHOD.CV_COMP_CORREL);
+        }
+
+        public Car Car1 { get; private set; }
+
+        public Car Car2 { get; private set; }
+
+        public double RS { get; private set; }
+
+        public double GS { get; private set; }
+
+        public double BS { get; private set; }
+
+        public double HueS { get; private set; }
 
     }
 

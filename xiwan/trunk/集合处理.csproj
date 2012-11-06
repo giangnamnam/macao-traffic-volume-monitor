@@ -97,6 +97,7 @@
     <Compile Include="PossibleCarGroup.cs" />
     <Compile Include="..\..\my library\single file\Gqqnbig\Drawing\RectangleOperations.cs" />
     <Compile Include="..\..\my library\single file\Gqqnbig\Windows\Data\ArithmeticConverter.cs" />
+    <Compile Include="E:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Drawing\ColorConversion.cs" />
     <Compile Include="Scene.cs" />
     <Compile Include="Utility.cs" />
     <Page Include="CaptureViewer.xaml">

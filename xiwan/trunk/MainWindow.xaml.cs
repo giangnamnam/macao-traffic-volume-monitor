@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
 using Emgu.CV;
-using Emgu.CV.Structure;
-using System.IO;
 
 namespace Gqqnbig.TrafficVolumeCalculator
 {
@@ -18,9 +12,12 @@ namespace Gqqnbig.TrafficVolumeCalculator
     /// </summary>
     public partial class MainWindow : Window
     {
-        public const string filePathPattern = @"H:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg";
+        public const string filePathPattern = @"D:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg";
         private int m_picId;
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
+
+        Lane lane = new Lane();
+        private CarMatch[] lastMatch;
 
         public MainWindow()
         {
@@ -56,11 +53,38 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 picIdTextRun1.Text = PicId.ToString();
                 picIdTextRun2.Text = (PicId + 1).ToString();
 
+                lastMatch = lane.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
+                LabelMatch(lastMatch);
                 PreloadImage();
             }
             catch (Exception ex)
             {
 
+            }
+        }
+
+        private void LabelMatch(CarMatch[] matches)
+        {
+            double h = 360.0 / (matches.Length + 1);
+            int n=1;
+
+            foreach (var m in matches)
+            {
+                //System.Diagnostics.Debug.WriteLine(h * n);
+                captureViewers[0].BoxCar(m.Car1, /*Brushes.Red*/ new SolidColorBrush(Drawing.ColorConversion.HslToRgb(h*n,0.781,0.625).ToWpfColor()));
+                captureViewers[1].BoxCar(m.Car2, /*Brushes.Red*/ new SolidColorBrush(Drawing.ColorConversion.HslToRgb(h * n++, 0.781, 0.625).ToWpfColor()));
+            }
+        }
+
+        private void UnlabelMatch(CarMatch[] matches)
+        {
+            double h = 360.0 / (matches.Length + 1);
+            int n = 1;
+
+            foreach (var m in matches)
+            {
+                captureViewers[0].UnboxCar(m.Car1);
+                captureViewers[1].UnboxCar(m.Car2);
             }
         }
 
@@ -92,13 +116,17 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
+            UnlabelMatch(lastMatch);
+            //return;
             var originalCursor = Mouse.OverrideCursor;
             Mouse.OverrideCursor = Cursors.Wait;
+            
 
             PicId++;
             if (captureViewers[2].CurrentPicId != PicId + 1)
                 captureViewers[2].View(PicId + 1);
             UpdateLayout();
+
 
             picIdTextRun1.Text = PicId.ToString();
             picIdTextRun2.Text = (PicId + 1).ToString();
@@ -125,6 +153,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
             captureViewers.RemoveAt(0);
             captureViewers.Add(n);
 
+            lastMatch = lane.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
+            LabelMatch(lastMatch);
             PreloadImage();
         }
 
