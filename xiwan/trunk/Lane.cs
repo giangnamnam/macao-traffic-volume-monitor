@@ -133,10 +133,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
         /// <returns></returns>
         public Image<Bgra, byte> FindBackground(Image<Bgr, byte>[] samples, Bgr roadColor)
         {
-            for (int i = 0; i < samples.Length; i++)
-            {
-                samples[i] = GetFocusArea(samples[i]);
-            }
+            Parallel.For(0, samples.Length, i =>
+                {
+                    samples[i] = GetFocusArea(samples[i]);
+                });
 
             int width = samples[0].Width;
             int height = samples[0].Height;
