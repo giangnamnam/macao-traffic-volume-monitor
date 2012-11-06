@@ -40,7 +40,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         public Lane()
         {
-            mask = new Image<Gray, byte>(@"H:\文件\毕业设计\西湾大桥氹仔端\图片\mask-Lane1.gif");
+            mask = new Image<Gray, byte>(@"D:\文件\毕业设计\西湾大桥氹仔端\图片\mask-Lane1.gif");
             TrafficDirection = TrafficDirection.GoDown;
 
             var contours = mask.FindContours();
@@ -70,15 +70,22 @@ namespace Gqqnbig.TrafficVolumeCalculator
             var contours = finalImage.FindContours();
 
             List<Car> groups = new List<Car>();
-            var inContourColor = new Gray(255);
+            //var inContourColor = new Gray(255);
             while (contours != null)
             {
-                //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
-                finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
+                ////填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
+                //finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
+                System.Diagnostics.Debug.WriteLine(contours.Area);
+
+                //if(contours.Area>40) 进行两次腐蚀
+
 
                 var carGroup = new PossibleCarGroup(image, finalImage, contours, maxCarWidth, maxCarLength, 12, 85);
                 if (carGroup.CarNumber > 0)
-                    groups.AddRange(carGroup.GetCars());
+                {
+                    var cars = carGroup.GetCars();
+                    Array.ForEach(cars, c => { if (c != null)groups.Add(c); });
+                }
                 //break;
                 contours = contours.HNext;
             }

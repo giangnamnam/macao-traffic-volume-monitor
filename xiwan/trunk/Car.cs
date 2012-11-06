@@ -23,7 +23,20 @@ namespace Gqqnbig.TrafficVolumeCalculator
             var s = sourceImage.Copy(carRectangle);
             //CvInvoke.cvShowImage("s", s);
             var oi = objectImage.Copy(carRectangle);
-            //CvInvoke.cvShowImage("oi", oi);
+
+            int blackCount = 0;
+            for (int i = 0; i < oi.Height; i++)
+            {
+                for (int j = 0; j < oi.Width; j++)
+                {
+                    var pixel = oi[i, j];
+                    if (Math.Abs(pixel.Intensity - 0) < double.Epsilon)
+                        blackCount++;
+                }
+            }
+
+            if (blackCount >= oi.Width * oi.Height * 0.4)
+                throw new NotProperCarException();
 
 
             return new Car(carRectangle, s.Copy(oi));
@@ -76,8 +89,25 @@ namespace Gqqnbig.TrafficVolumeCalculator
             HistHue.Calculate(new[] { hsvImage[0] }, false, null);
             HistHue.MatND.ManagedArray.SetValue(0, 0);
             HistHue.Normalize(1);
+            //ValidateHistogram(HistHue);
         }
 
+        //private static void ValidateHistogram(DenseHistogram histogram)
+        //{
+        //    if ((float)histogram.MatND.ManagedArray.GetValue(0) > 0.6)
+        //        throw new NotProperCarException();
+        //}
+    }
 
+    [Serializable]
+    public class NotProperCarException : Exception
+    {
+        public NotProperCarException() { }
+        public NotProperCarException(string message) : base(message) { }
+        public NotProperCarException(string message, Exception inner) : base(message, inner) { }
+        protected NotProperCarException(
+          System.Runtime.Serialization.SerializationInfo info,
+          System.Runtime.Serialization.StreamingContext context)
+            : base(info, context) { }
     }
 }
