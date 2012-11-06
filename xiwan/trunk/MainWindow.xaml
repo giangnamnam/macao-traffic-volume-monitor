@@ -28,8 +28,8 @@
             </TextBlock>
             <TextBlock  Grid.Row="1" Grid.Column="0">
                 <TextBlock.Inlines>
-                    <Run Text="背景图"/>
-                    <Run Name="backgroundPicIdsTextRun"/>
+                    <Run Text="车辆平均移动距离（px）："/>
+                    <Run Name="averageRunLengthRun"/>
                 </TextBlock.Inlines>
             </TextBlock>
 

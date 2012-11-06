@@ -4,6 +4,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Emgu.CV;
+using System.Linq;
 
 namespace Gqqnbig.TrafficVolumeCalculator
 {
@@ -12,7 +13,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
     /// </summary>
     public partial class MainWindow : Window
     {
-        public const string filePathPattern = @"D:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg";
+        private const string filePathPattern = @"D:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg";
         private int m_picId;
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
 
@@ -25,7 +26,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
             Title = GetType().Assembly.Location;
 
-            PicId = 9;
+            PicId = 0;
 
             captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern });
             captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern });
@@ -158,6 +159,9 @@ namespace Gqqnbig.TrafficVolumeCalculator
         {
             lastMatch = lane.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
             LabelMatch(lastMatch);
+
+            averageRunLengthRun.Text = lastMatch.Average(m => m.Car1.CarRectangle.Top - m.Car2.CarRectangle.Top).ToString("f1");
+
             PreloadImage();
         }
 
