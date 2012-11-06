@@ -91,6 +91,7 @@
       <DependentUpon>CaptureViewer.xaml</DependentUpon>
     </Compile>
     <Compile Include="Car.cs" />
+    <Compile Include="CarMatch.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="OutBoxAdorner.cs" />

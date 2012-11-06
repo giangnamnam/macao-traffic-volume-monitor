@@ -71,8 +71,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
             foreach (var m in matches)
             {
                 //System.Diagnostics.Debug.WriteLine(h * n);
-                captureViewers[0].BoxCar(m.Car1, /*Brushes.Red*/ new SolidColorBrush(Drawing.ColorConversion.HslToRgb(h*n,0.781,0.625).ToWpfColor()));
-                captureViewers[1].BoxCar(m.Car2, /*Brushes.Red*/ new SolidColorBrush(Drawing.ColorConversion.HslToRgb(h * n++, 0.781, 0.625).ToWpfColor()));
+                captureViewers[0].BoxCar(m.Car1, "match", /*Brushes.Red*/ new SolidColorBrush(Drawing.ColorConversion.HslToRgb(h*n,0.781,0.625).ToWpfColor()));
+                captureViewers[1].BoxCar(m.Car2, "match", /*Brushes.Red*/ new SolidColorBrush(Drawing.ColorConversion.HslToRgb(h * n++, 0.781, 0.625).ToWpfColor()));
             }
         }
 
@@ -83,8 +83,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
             foreach (var m in matches)
             {
-                captureViewers[0].UnboxCar(m.Car1);
-                captureViewers[1].UnboxCar(m.Car2);
+                captureViewers[0].UnboxCar("match", m.Car1);
+                captureViewers[1].UnboxCar("match", m.Car2);
             }
         }
 

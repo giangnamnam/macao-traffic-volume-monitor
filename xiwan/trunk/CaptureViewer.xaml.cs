@@ -73,44 +73,43 @@ namespace Gqqnbig.TrafficVolumeCalculator
             return samples;
         }
 
-
-
-
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Car car;
             if (e.RemovedItems.Count > 0)
             {
                 car = (Car)e.RemovedItems[0];
-                UnboxCar(car);
+                UnboxCar("select", car);
             }
 
             if (e.AddedItems.Count != 1)
                 return;
             car = (Car)e.AddedItems[0];
-            BoxCar(car, Brushes.Orange);
+            BoxCar(car, "select", Brushes.Orange);
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = (CheckBox)sender;
             Car car = (Car)checkBox.DataContext;
-            BoxCar(car, Brushes.LightGreen);
+            BoxCar(car, "check", Brushes.LightGreen);
         }
 
         /// <summary>
         /// 给指定的车加上外框。返回此外框的id。
         /// </summary>
         /// <param name="car"></param>
+        /// <param name="tag"> </param>
         /// <param name="brush"></param>
         /// <param name="thickness"></param>
         /// <returns></returns>
-        internal void BoxCar(Car car, Brush brush, double thickness = 2)
+        internal void BoxCar(Car car, object tag, Brush brush, double thickness = 2)
         {
             var adornerLayer = AdornerLayer.GetAdornerLayer(imageBox);
 
             //加上Adorner
             OutBoxAdorner outBoxAdorner = new OutBoxAdorner(imageBox);
+            outBoxAdorner.Tag = tag;
             outBoxAdorner.Pen = new Pen(brush, thickness);
             outBoxAdorner.Rectangle = car.CarRectangle;
             adornerLayer.Add(outBoxAdorner);
@@ -119,8 +118,9 @@ namespace Gqqnbig.TrafficVolumeCalculator
         /// <summary>
         /// 删除指定车的外框。若为null，则删除所有的外框。
         /// </summary>
+        /// <param name="tag"> </param>
         /// <param name="car"></param>
-        internal void UnboxCar(Car car = null)
+        internal void UnboxCar(object tag, Car car = null)
         {
             var adornerLayer = AdornerLayer.GetAdornerLayer(imageBox);
             var adorners = adornerLayer.GetAdorners(imageBox);
@@ -131,7 +131,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
                     OutBoxAdorner oba = adorners[i] as OutBoxAdorner;
                     if (car == null)
                         adornerLayer.Remove(adorners[i]);
-                    else if (oba != null && oba.Rectangle.Equals(car.CarRectangle))
+                    else if (oba != null && oba.Rectangle.Equals(car.CarRectangle) && oba.Tag == tag)
                     {
                         adornerLayer.Remove(adorners[i]);
                         break;
@@ -144,21 +144,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         {
             CheckBox checkBox = (CheckBox)sender;
             Car carGroup = (Car)checkBox.DataContext;
-            var adornerLayer = AdornerLayer.GetAdornerLayer(imageBox);
-            var adorners = adornerLayer.GetAdorners(imageBox);
-            if (adorners != null)
-            {
-                for (int i = 0; i < adorners.Length; i++)
-                {
-                    OutBoxAdorner oba = adorners[i] as OutBoxAdorner;
-                    if (oba != null && oba.Rectangle.Equals(carGroup.CarRectangle) && oba.Pen.Brush == Brushes.LightGreen)
-                    {
-                        adornerLayer.Remove(adorners[i]);
-                        //break;
-                    }
-
-                }
-            }
+            UnboxCar("check", carGroup);
         }
 
         private void saveMenuItem_Click(object sender, RoutedEventArgs e)

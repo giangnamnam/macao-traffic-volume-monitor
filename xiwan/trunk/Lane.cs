@@ -325,7 +325,6 @@ namespace Gqqnbig.TrafficVolumeCalculator
             {
                 foreach (var c2 in cars2)
                 {
-                    //List<CarMatch> carMatch = new List<CarMatch>();
                     foreach (var c1 in cars1)
                     {
                         if (c1.CarRectangle.Top <= c2.CarRectangle.Top)
@@ -337,43 +336,51 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
                         CarMatch cm = new CarMatch(c1, c2);
 
-                        if(cm.RS>similarityThreshold && cm.GS>similarityThreshold && cm.BS>similarityThreshold)
+                        if (cm.RS > similarityThreshold && cm.GS > similarityThreshold && cm.BS > similarityThreshold)
                             list.Add(cm);
                     }
-
-                    //TODO: 如果一辆车跟多辆车相像，找一辆最像的。
-
                 }
             }
-            return list.ToArray();
-        }
-    }
 
-    class CarMatch
-    {
-        public CarMatch(Car car1, Car car2)
+            return FindOneToOneBestMatch(list).ToArray();
+        }
+
+        static CarMatch[] FindOneToOneBestMatch(List<CarMatch> list)
         {
-            Car2 = car2;
-            Car1 = car1;
+            if (list.Count == 0)
+                return new CarMatch[0];
 
-            RS = CvInvoke.cvCompareHist(car1.HistR, car2.HistR, HISTOGRAM_COMP_METHOD.CV_COMP_CORREL);
-            GS = CvInvoke.cvCompareHist(car1.HistG, car2.HistG, HISTOGRAM_COMP_METHOD.CV_COMP_CORREL);
-            BS = CvInvoke.cvCompareHist(car1.HistB, car2.HistB, HISTOGRAM_COMP_METHOD.CV_COMP_CORREL);
-            HueS = CvInvoke.cvCompareHist(car1.HistHue, car2.HistHue, HISTOGRAM_COMP_METHOD.CV_COMP_CORREL);
+            /*
+             * 算法：
+             * 1. 先从矩阵中找出相似度最高的对，
+             * 2. 这个对里两个元素的其他匹配都被删除。
+             * 3. 从剩余的矩阵中找最高匹配，以此类推。 
+             */
+
+            List<CarMatch> oneToOneMatch = new List<CarMatch>(list.Count);
+
+            IComparer<CarMatch> comparer = new CarMatchComparer();
+            list.Sort(comparer);
+
+            Step1:
+            var m = list[0];
+            oneToOneMatch.Add(m);
+
+            list.RemoveAt(0);
+            int index = 0;
+            while (index<list.Count)//有必要倒着删加快速度么？
+            {
+                if (list[index].Car1 == m.Car1 || list[index].Car2 == m.Car2)
+                    list.RemoveAt(index); //第2步
+                else
+                    index++;
+            }
+
+            if (list.Count == 0)
+                return oneToOneMatch.ToArray();
+            else
+                goto Step1;
         }
-
-        public Car Car1 { get; private set; }
-
-        public Car Car2 { get; private set; }
-
-        public double RS { get; private set; }
-
-        public double GS { get; private set; }
-
-        public double BS { get; private set; }
-
-        public double HueS { get; private set; }
-
     }
 
 
