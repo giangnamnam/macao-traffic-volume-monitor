@@ -53,8 +53,10 @@
                     Click="nextButton_Click"/>
 
 
-            <Button Grid.Row="0" Grid.Column="2" Content="计算直方图相似度" VerticalAlignment="Center"  Click="calculateSimilarityButton_Click" />
-            <TextBox Grid.Row="1" Grid.Column="2"  Name="histSimilarityTextBox" AcceptsReturn="True" IsReadOnly="True"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="计算直方图相似度" 
+                    VerticalAlignment="Center" HorizontalAlignment="Right"  Click="calculateSimilarityButton_Click" />
+            <TextBox Name="histSimilarityTextBox" Grid.Row="1" Grid.Column="2" AcceptsReturn="True" IsReadOnly="True"
+                     HorizontalAlignment="Right"/>
         </Grid>
 
         <ItemsControl Name="captureViewerList" VerticalAlignment="Stretch" SizeChanged="captureViewerList_SizeChanged"/>
