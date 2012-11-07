@@ -93,6 +93,7 @@
     <Compile Include="Car.cs" />
     <Compile Include="CarMatch.cs" />
     <Compile Include="Converters.cs" />
+    <Compile Include="ICaptureRetriever.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="OutBoxAdorner.cs" />
     <Compile Include="PossibleCarGroup.cs" />

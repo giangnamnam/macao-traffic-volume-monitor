@@ -17,7 +17,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
     {
         public Car[] Cars { get; private set; }
         public int? CurrentPicId { get; private set; }
-        public string FilePathPattern { get; set; }
+        internal DiskCaptureRetriever CaptureRetriever { get; set; }
 
         internal Lane Lane { get; set; }
 
@@ -42,7 +42,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
             //Stopwatch sw = new Stopwatch();
             //sw.Start();
             Image<Gray, byte> finalImage;
-            Image<Bgr, byte> frame1 = new Image<Bgr, byte>(string.Format(FilePathPattern, id));
+            Image<Bgr, byte> frame1 = CaptureRetriever.GetCapture(id.Value);
 
 
             Bgr roadColor = Lane.GetRoadColor(frame1);
@@ -73,7 +73,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
             for (int i = 0; i < samples.Length; i++)
             {
-                samples[i] = new Image<Bgr, byte>(string.Format(FilePathPattern, sampleStart++));
+                samples[i] = CaptureRetriever.GetCapture(sampleStart++);
             }
             return samples;
         }

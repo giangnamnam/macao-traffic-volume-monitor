@@ -28,10 +28,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
             Title = GetType().Assembly.Location;
 
             PicId = 0;
-
-            captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern, Lane = lane });
-            captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern, Lane = lane });
-            captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern, Lane = lane });
+            DiskCaptureRetriever retriever = new DiskCaptureRetriever(filePathPattern);
+            captureViewers.Add(new CaptureViewer { CaptureRetriever = retriever, Lane = lane });
+            captureViewers.Add(new CaptureViewer { CaptureRetriever = retriever, Lane = lane });
+            captureViewers.Add(new CaptureViewer { CaptureRetriever = retriever, Lane = lane });
             captureViewerList.ItemsSource = captureViewers;
         }
 
