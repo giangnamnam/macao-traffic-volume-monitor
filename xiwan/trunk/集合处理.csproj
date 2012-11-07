@@ -37,44 +37,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Emgu.CV">
-      <HintPath>bin\Debug\Emgu.CV.dll</HintPath>
+    <Reference Include="Emgu.CV, Version=2.4.0.1717, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dependencies\Emgu.CV.dll</HintPath>
     </Reference>
-    <Reference Include="Emgu.CV.DebuggerVisualizers.VS2008">
-      <HintPath>bin\Debug\Emgu.CV.DebuggerVisualizers.VS2008.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.CV.DebuggerVisualizers.VS2010">
-      <HintPath>bin\Debug\Emgu.CV.DebuggerVisualizers.VS2010.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.CV.GPU">
-      <HintPath>bin\Debug\Emgu.CV.GPU.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.CV.ML">
-      <HintPath>bin\Debug\Emgu.CV.ML.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.CV.OCR">
-      <HintPath>bin\Debug\Emgu.CV.OCR.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.CV.Stitching">
-      <HintPath>bin\Debug\Emgu.CV.Stitching.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.CV.UI">
-      <HintPath>bin\Debug\Emgu.CV.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.CV.VideoStab">
-      <HintPath>bin\Debug\Emgu.CV.VideoStab.dll</HintPath>
-    </Reference>
-    <Reference Include="Emgu.Util">
-      <HintPath>bin\Debug\Emgu.Util.dll</HintPath>
+    <Reference Include="Emgu.Util, Version=2.4.0.1717, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dependencies\Emgu.Util.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -99,8 +73,8 @@
     <Compile Include="LaneMonitor.cs" />
     <Compile Include="OutBoxAdorner.cs" />
     <Compile Include="PossibleCarGroup.cs" />
-    <Compile Include="..\..\my library\single file\Gqqnbig\Drawing\RectangleOperations.cs" />
-    <Compile Include="..\..\my library\single file\Gqqnbig\Windows\Data\ArithmeticConverter.cs" />
+    <Compile Include="E:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Drawing\RectangleOperations.cs" />
+    <Compile Include="E:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Windows\Data\ArithmeticConverter.cs" />
     <Compile Include="E:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Drawing\ColorConversion.cs" />
     <Compile Include="E:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Statistics\StatisticsOperations.cs" />
     <Compile Include="Utility.cs" />
@@ -145,6 +119,12 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dependencies\Emgu.CV.dll" />
+    <Resource Include="dependencies\Emgu.CV.xml" />
+    <Content Include="dependencies\Emgu.Util.dll" />
+    <Resource Include="dependencies\Emgu.Util.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
