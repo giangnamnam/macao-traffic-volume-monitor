@@ -8,7 +8,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
     /// <summary>
     /// 表示两辆车相似性的比较。
     /// </summary>
-    class CarMatch
+    public class CarMatch
     {
         public CarMatch(Car car1, Car car2)
         {

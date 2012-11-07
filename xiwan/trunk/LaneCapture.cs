@@ -6,7 +6,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
     /// <summary>
     /// 一张道路的截图
     /// </summary>
-    class LaneCapture
+    public class LaneCapture
     {
         public LaneCapture(Image<Bgr, byte> originalImage, Image<Bgr, byte> focusedImage, Image<Bgra, byte> backgroundImage, Image<Gray, byte> objectImage, Car[] cars)
         {

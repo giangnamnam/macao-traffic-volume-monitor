@@ -20,7 +20,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
     }
 
-    class DiskCaptureRetriever : ICaptureRetriever
+    public class DiskCaptureRetriever : ICaptureRetriever
     {
         private readonly string filePathPattern;
         private int id = -1;

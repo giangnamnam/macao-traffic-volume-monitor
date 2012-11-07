@@ -6,7 +6,7 @@ using Gqqnbig.Statistics;
 
 namespace Gqqnbig.TrafficVolumeCalculator
 {
-    class LaneMonitor
+    public class LaneMonitor
     {
         static List<CarMatch> FindOneToOneBestMatch(List<CarMatch> list)
         {
@@ -159,7 +159,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         }
     }
 
-    class CarMove
+    public class CarMove
     {
         public CarMove(int leaveFromPic1, int enterToPic2, double averageMove)
         {

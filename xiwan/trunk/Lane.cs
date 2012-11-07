@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Gqqnbig.TrafficVolumeCalculator
 {
-    class Lane
+    public class Lane
     {
         //public TrafficDirection TrafficDirection { get; private set; }
 
@@ -102,7 +102,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         //    return GetFocusArea(capture);
         //}
 
-        public Image<Bgra, byte> GetBackground(Bgr roadColor)
+        private Image<Bgra, byte> GetBackground(Bgr roadColor)
         {
             int sampleStart = CaptureId - 3;
 
@@ -137,8 +137,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
                                                                                colors.Select(bgr => bgr.Red).Median(), 255);
 
                                                    //background[y, x] = new Bgra(colors.Average(bgr => bgr.Blue),
-                                                   //                          colors.Average(bgr => bgr.Green),
-                                                   //                          colors.Average(bgr => bgr.Red), 255);
+                                               //                          colors.Average(bgr => bgr.Green),
+                                               //                          colors.Average(bgr => bgr.Red), 255);
                                                else
                                                    background[y, x] = new Bgra(0, 0, 0, 0);
 
@@ -356,7 +356,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
     }
 
 
-    enum TrafficDirection
+    public enum TrafficDirection
     {
         GoUp,
         GoDown
