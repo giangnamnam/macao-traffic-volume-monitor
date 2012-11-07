@@ -168,7 +168,11 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         private void CalculateTrafficVolume(CarMatch[] carMatch)
         {
-            var averageMove = carMatch.Average(m => m.Car1.CarRectangle.Top - m.Car2.CarRectangle.Top);
+            double averageMove;
+            if (carMatch.Length > 0)
+                averageMove = carMatch.Average(m => m.Car1.CarRectangle.Top - m.Car2.CarRectangle.Top);
+            else
+                averageMove = lane.Height;
             averageRunLengthRun.Text = averageMove.ToString("f1");
 
             int leaveInPic1 = 0;
