@@ -27,7 +27,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         readonly Image<Gray, byte> mask;
         readonly Rectangle regionOfInterest;
 
-        const int tolerance = 25;
+        const int tolerance = 20;
 
         readonly Point[] backgroundPoints = new[]
                                    {
@@ -71,17 +71,18 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
 
             finalImage = afterThreshold.Erode(1).Dilate(1);
+            CvInvoke.cvShowImage("final", finalImage);
 
             var contours = finalImage.FindContours();
 
             List<Car> groups = new List<Car>();
-            //var inContourColor = new Gray(255);
+            var inContourColor = new Gray(255);
             while (contours != null)
             {
-                ////填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
-                //finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
-                //System.Diagnostics.Debug.WriteLine(contours.Area);
+                //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
+                finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
 
+                //System.Diagnostics.Debug.WriteLine(contours.Area);
                 //if(contours.Area>40) 进行两次腐蚀
 
 
