@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Media;
 using Emgu.CV;
-using Emgu.CV.GPU;
 using Emgu.CV.Structure;
 
 namespace Gqqnbig.TrafficVolumeCalculator
