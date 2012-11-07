@@ -38,7 +38,9 @@ namespace Gqqnbig.TrafficVolumeCalculator
         readonly int maxCarWidth = 15;
         readonly int maxCarLength = 15;
 
-        public Lane[] Lanes { get; private set; }
+        public int Width { get; private set; }
+
+        public int Height { get; private set; }
 
         public Lane()
         {
@@ -53,7 +55,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
         public Car[] FindCars(Image<Bgr, byte> image, Image<Bgra, byte> backgroundImage, out Image<Gray, byte> finalImage)
         {
             image = GetFocusArea(image);
-
+            Width = image.Width;
+            Height = image.Height;
 
             //CvInvoke.cvShowImage("originalImage", image);
             var car1 = Utility.RemoveSame(image, backgroundImage, tolerance);

@@ -9,29 +9,43 @@
     <DockPanel Name="grid">
         <Grid DockPanel.Dock="Bottom">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition />
-                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0">
-                <TextBlock.Inlines>
-                    <Run Text="当前图片："/>
-                    <Run Name="picIdTextRun1"/>
-                    <Run Text="、"/>
-                    <Run Name="picIdTextRun2"/>
-                </TextBlock.Inlines>
-            </TextBlock>
-            <TextBlock  Grid.Row="1" Grid.Column="0">
-                <TextBlock.Inlines>
-                    <Run Text="车辆平均移动距离（px）："/>
-                    <Run Name="averageRunLengthRun"/>
-                </TextBlock.Inlines>
-            </TextBlock>
+            <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
+                <TextBlock>
+                    <TextBlock.Inlines>
+                        <Run Text="当前图片："/>
+                        <Run Name="picIdTextRun1"/>
+                        <Run Text="、"/>
+                        <Run Name="picIdTextRun2"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
+                <TextBlock>
+                    <TextBlock.Inlines>
+                        <Run Text="车辆平均移动距离（px）："/>
+                        <Run Name="averageRunLengthRun"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
+                <TextBlock>
+                    <TextBlock.Inlines>
+                        <Run Text="在第一幅图中离开，不出现在第二幅图中的车："/>
+                        <Run Name="leaveInPic1Run"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
+                <TextBlock>
+                    <TextBlock.Inlines>
+                        <Run Text="进入第二幅图，不出现在第一幅图中的车："/>
+                        <Run Name="enterInPic2Run"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
+            </StackPanel>
 
             <Button Name="previousButton" Grid.Row="0" Grid.Column="1"  Content="上一张" FontSize="20" Padding="30,10" HorizontalAlignment="Center" VerticalAlignment="Center"
                     Click="previousButton_Click"/>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,7 +18,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         private int m_picId;
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
 
-        Lane lane = new Lane();
+        readonly Lane lane = new Lane();
         private CarMatch[] lastMatch;
 
         public MainWindow()
@@ -28,9 +29,9 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
             PicId = 0;
 
-            captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern });
-            captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern });
-            captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern });
+            captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern, Lane = lane });
+            captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern, Lane = lane });
+            captureViewers.Add(new CaptureViewer { FilePathPattern = filePathPattern, Lane = lane });
             captureViewerList.ItemsSource = captureViewers;
         }
 
@@ -65,12 +66,12 @@ namespace Gqqnbig.TrafficVolumeCalculator
         private void LabelMatch(CarMatch[] matches)
         {
             double h = 360.0 / (matches.Length + 1);
-            int n=1;
+            int n = 1;
 
             foreach (var m in matches)
             {
                 //System.Diagnostics.Debug.WriteLine(h * n);
-                captureViewers[0].BoxCar(m.Car1, "match", /*Brushes.Red*/ new SolidColorBrush(Drawing.ColorConversion.HslToRgb(h*n,0.781,0.625).ToWpfColor()));
+                captureViewers[0].BoxCar(m.Car1, "match", /*Brushes.Red*/ new SolidColorBrush(Drawing.ColorConversion.HslToRgb(h * n, 0.781, 0.625).ToWpfColor()));
                 captureViewers[1].BoxCar(m.Car2, "match", /*Brushes.Red*/ new SolidColorBrush(Drawing.ColorConversion.HslToRgb(h * n++, 0.781, 0.625).ToWpfColor()));
             }
         }
@@ -119,7 +120,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
             var originalCursor = Mouse.OverrideCursor;
             Mouse.OverrideCursor = Cursors.Wait;
-            
+
 
             PicId++;
             if (captureViewers[2].CurrentPicId != PicId + 1)
@@ -160,9 +161,36 @@ namespace Gqqnbig.TrafficVolumeCalculator
             lastMatch = lane.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
             LabelMatch(lastMatch);
 
-            averageRunLengthRun.Text = lastMatch.Average(m => m.Car1.CarRectangle.Top - m.Car2.CarRectangle.Top).ToString("f1");
+            CalculateTrafficVolume(lastMatch);
 
             PreloadImage();
+        }
+
+        private void CalculateTrafficVolume(CarMatch[] carMatch)
+        {
+            var averageMove = carMatch.Average(m => m.Car1.CarRectangle.Top - m.Car2.CarRectangle.Top);
+            averageRunLengthRun.Text = averageMove.ToString("f1");
+
+            int leaveInPic1 = 0;
+            foreach (var car in captureViewers[0].Cars)
+            {
+                if (car.CarRectangle.Top < averageMove)//这辆车会在下一幅中离开
+                    leaveInPic1++;
+            }
+
+            int enterInPic2 = 0;
+            foreach (var car in captureViewers[1].Cars)
+            {
+                int bottom = lane.Height - car.CarRectangle.Top;
+                Contract.Assert(bottom >= 0);
+                if (bottom < averageMove)//这辆在第二幅图中的车是新进来的，在第一幅图中没有。
+                    enterInPic2++;
+            }
+
+            leaveInPic1Run.Text = leaveInPic1.ToString();
+            enterInPic2Run.Text = enterInPic2.ToString();
+
+
         }
 
         void PreloadImage()
