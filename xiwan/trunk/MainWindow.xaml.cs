@@ -17,11 +17,15 @@ namespace Gqqnbig.TrafficVolumeCalculator
         private int m_picId;
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
 
-        readonly Lane lane = new Lane(new DiskCaptureRetriever(@"D:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg"));
+        readonly Lane lane;
+        readonly LaneMonitor laneMonitor;
         private CarMatch[] lastMatch;
 
         public MainWindow()
         {
+            lane = new Lane(new DiskCaptureRetriever(@"D:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg"));
+            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
+
             InitializeComponent();
 
             Title = GetType().Assembly.Location;
@@ -47,13 +51,13 @@ namespace Gqqnbig.TrafficVolumeCalculator
         {
             //try
             //{
-                captureViewers[0].View(PicId);
-                captureViewers[1].View(PicId + 1);
+            captureViewers[0].View(PicId);
+            captureViewers[1].View(PicId + 1);
 
-                picIdTextRun1.Text = PicId.ToString();
-                picIdTextRun2.Text = (PicId + 1).ToString();
+            picIdTextRun1.Text = PicId.ToString();
+            picIdTextRun2.Text = (PicId + 1).ToString();
 
-                LoadCompleted();
+            LoadCompleted();
             //}
             //catch (Exception ex)
             //{
@@ -156,43 +160,16 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         private void LoadCompleted()
         {
-            lastMatch = lane.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
+            lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
             LabelMatch(lastMatch);
 
-            CalculateTrafficVolume(lastMatch);
+            var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
+
+            averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
+            leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
+            enterToPic2Run.Text = carMove.EnterToPic2.ToString();
 
             PreloadImage();
-        }
-
-        private void CalculateTrafficVolume(CarMatch[] carMatch)
-        {
-            double averageMove;
-            if (carMatch.Length > 0)
-                averageMove = carMatch.Average(m => m.Car1.CarRectangle.Top - m.Car2.CarRectangle.Top);
-            else
-                averageMove = lane.Height;
-            averageRunLengthRun.Text = averageMove.ToString("f1");
-
-            int leaveInPic1 = 0;
-            foreach (var car in captureViewers[0].Cars)
-            {
-                if (car.CarRectangle.Top < averageMove)//这辆车会在下一幅中离开
-                    leaveInPic1++;
-            }
-
-            int enterInPic2 = 0;
-            foreach (var car in captureViewers[1].Cars)
-            {
-                int bottom = lane.Height - car.CarRectangle.Top;
-                Contract.Assert(bottom >= 0);
-                if (bottom < averageMove)//这辆在第二幅图中的车是新进来的，在第一幅图中没有。
-                    enterInPic2++;
-            }
-
-            leaveInPic1Run.Text = leaveInPic1.ToString();
-            enterInPic2Run.Text = enterInPic2.ToString();
-
-
         }
 
         void PreloadImage()

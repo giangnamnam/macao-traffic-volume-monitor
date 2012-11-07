@@ -36,9 +36,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
             }
 
             Lane.CaptureId = id.Value;
-            Cars = Lane.GetCars();
+            var laneCapture = Lane.Analyze(id.Value);
+            Cars = laneCapture.Cars;
 
-            imageBox.Source = Lane.GetFocusCapture().ToBitmap().ToBitmapImage();
+            imageBox.Source = laneCapture.FocusedImage.ToBitmap().ToBitmapImage();
             listView.ItemsSource = Cars;
             totalCarNumberTextRun.Text = Cars.Length.ToString();
         }

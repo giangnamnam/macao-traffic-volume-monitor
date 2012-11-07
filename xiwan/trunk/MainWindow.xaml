@@ -36,13 +36,13 @@
                 <TextBlock>
                     <TextBlock.Inlines>
                         <Run Text="在第一幅图中离开，不出现在第二幅图中的车："/>
-                        <Run Name="leaveInPic1Run"/>
+                        <Run Name="leaveFromPic1Run"/>
                     </TextBlock.Inlines>
                 </TextBlock>
                 <TextBlock>
                     <TextBlock.Inlines>
                         <Run Text="进入第二幅图，不出现在第一幅图中的车："/>
-                        <Run Name="enterInPic2Run"/>
+                        <Run Name="enterToPic2Run"/>
                     </TextBlock.Inlines>
                 </TextBlock>
             </StackPanel>
