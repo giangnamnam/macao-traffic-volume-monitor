@@ -96,6 +96,9 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 contours = contours.HNext;
             }
 
+            gaussianImage.Dispose();
+            afterThreshold.Dispose();
+
             return groups.ToArray();
         }
 
