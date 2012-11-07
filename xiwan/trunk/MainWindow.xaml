@@ -45,6 +45,18 @@
                         <Run Name="enterToPic2Run"/>
                     </TextBlock.Inlines>
                 </TextBlock>
+                <TextBlock>
+                   <TextBlock.Inlines>
+                        <Run Text="5秒车流量："/>
+                        <Run Name="volume5Run"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
+                <TextBlock>
+                   <TextBlock.Inlines>
+                        <Run Text="60秒车流量："/>
+                        <Run Name="volume60Run"/>
+                    </TextBlock.Inlines>
+                </TextBlock>
             </StackPanel>
 
             <Button Name="previousButton" Grid.Row="0" Grid.Column="1"  Content="上一张" FontSize="20" Padding="30,10" HorizontalAlignment="Center" VerticalAlignment="Center"

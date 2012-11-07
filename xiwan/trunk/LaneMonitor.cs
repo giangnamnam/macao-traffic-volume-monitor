@@ -64,6 +64,18 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         }
 
+        LinkedList<int> volumeIn60secondsData = new LinkedList<int>();
+
+        /// <summary>
+        /// 获取在5秒内的平均车流量（冲过底线的车的数量/5）。
+        /// </summary>
+        public double VolumeIn5seconds { get; private set; }
+
+        /// <summary>
+        /// 获取在60秒内的平均车流量（冲过底线的车的数量/60)。
+        /// </summary>
+        public double VolumeIn60seconds { get; private set; }
+
 
         public LaneMonitor(TrafficDirection trafficDirection, Lane lane)
         {
@@ -74,7 +86,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
         public TrafficDirection TrafficDirection { get; private set; }
 
         public Lane Lane { get; private set; }
-        
+
         public CarMatch[] FindCarMatch(Car[] cars1, Car[] cars2)
         {
             double similarityThreshold = 0.26;
@@ -135,6 +147,16 @@ namespace Gqqnbig.TrafficVolumeCalculator
             }
             return new CarMove(leaveInPic1, enterInPic2, averageMove);
         }
+
+        public void AddHistory(CarMove carMove)
+        {
+            VolumeIn5seconds = carMove.LeaveFromPic1 / 5.0;
+
+            if (volumeIn60secondsData.Count == 12)
+                volumeIn60secondsData.RemoveFirst();
+            volumeIn60secondsData.AddLast(carMove.LeaveFromPic1);
+            VolumeIn60seconds = volumeIn60secondsData.Sum() / 5.0 / volumeIn60secondsData.Count;
+        }
     }
 
     class CarMove
@@ -146,10 +168,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
             LeaveFromPic1 = leaveFromPic1;
         }
 
-        public int LeaveFromPic1{get; private set;}
+        public int LeaveFromPic1 { get; private set; }
 
-        public int EnterToPic2{get; private set;}
+        public int EnterToPic2 { get; private set; }
 
-        public double AverageMove{get; private set;}
+        public double AverageMove { get; private set; }
     }
 }

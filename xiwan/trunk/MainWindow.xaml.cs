@@ -169,6 +169,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
             leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
             enterToPic2Run.Text = carMove.EnterToPic2.ToString();
 
+            laneMonitor.AddHistory(carMove);
+            volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+            volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+
             PreloadImage();
         }
 
