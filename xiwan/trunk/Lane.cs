@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
         public TrafficDirection TrafficDirection { get; private set; }
 
         public double RgbSimilarityThreshold = 0.4031;
+
+        internal DiskCaptureRetriever CaptureRetriever { get; set; }
 
         //public Lane(string maskFileName, TrafficDirection trafficDirection, double similarityThreshold)
         //{
@@ -42,8 +45,13 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         public int Height { get; private set; }
 
-        public Lane()
+        public int CaptureId { get; set; }
+
+        Image<Gray, byte> finalImage;
+
+        public Lane(DiskCaptureRetriever captureRetriever)
         {
+            CaptureRetriever = captureRetriever;
             mask = new Image<Gray, byte>(@"D:\文件\毕业设计\西湾大桥氹仔端\图片\mask-Lane1.gif");
             TrafficDirection = TrafficDirection.GoUp;
 
@@ -52,15 +60,36 @@ namespace Gqqnbig.TrafficVolumeCalculator
         }
 
 
-        public Car[] FindCars(Image<Bgr, byte> image, Image<Bgra, byte> backgroundImage, out Image<Gray, byte> finalImage)
+
+        public Image<Bgr, byte> GetFocusCapture()
         {
-            image = GetFocusArea(image);
+            var capture = CaptureRetriever.GetCapture(CaptureId);
+            return GetFocusArea(capture);
+        }
+
+        public Image<Bgra, byte> GetBackground()
+        {
+            Bgr roadColor = GetRoadColor(CaptureRetriever.GetCapture(CaptureId));
+
+            int sampleStart = CaptureId - 3;
+
+            Image<Bgr, byte>[] samples = GetSamples(sampleStart < 0 ? 0 : sampleStart, 6);
+            return FindBackground(samples, roadColor);
+        }
+
+        public Image<Gray,byte> GetFinalImage()
+        {
+            return finalImage;
+        }
+
+        public Car[] GetCars()
+        {
+            var image = GetFocusCapture();
             Width = image.Width;
             Height = image.Height;
 
-            //CvInvoke.cvShowImage("originalImage", image);
+            var backgroundImage = GetBackground();
             var car1 = Utility.RemoveSame(image, backgroundImage, tolerance);
-            //CvInvoke.cvShowImage("car 1", car1);
 
             Image<Gray, byte> gaussianImage = car1.SmoothGaussian(3);
             //CvInvoke.cvShowImage("gaussianImage", gaussianImage);
@@ -70,8 +99,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
             //CvInvoke.cvShowImage("afterThreshold", afterThreshold);
 
 
+            if(finalImage!=null)
+                finalImage.Dispose();
             finalImage = afterThreshold.Erode(1).Dilate(1);
-            CvInvoke.cvShowImage("final", finalImage);
+            //CvInvoke.cvShowImage("final", finalImage);
 
             var contours = finalImage.FindContours();
 
@@ -96,6 +127,7 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 contours = contours.HNext;
             }
 
+            car1.Dispose();
             gaussianImage.Dispose();
             afterThreshold.Dispose();
 
@@ -107,14 +139,14 @@ namespace Gqqnbig.TrafficVolumeCalculator
         /// </summary>
         /// <param name="originalImage"></param>
         /// <returns></returns>
-        public Image<Bgr, byte> GetFocusArea(Image<Bgr, byte> originalImage)
+        private Image<Bgr, byte> GetFocusArea(Image<Bgr, byte> originalImage)
         {
             var image = UnDistort(originalImage);
             image = image.Copy(mask).Copy(regionOfInterest);
             return image;
         }
 
-        public Bgr GetRoadColor(Image<Bgr, byte> frame)
+        private Bgr GetRoadColor(Image<Bgr, byte> frame)
         {
             var samplingBackgroundColors = new List<Bgr>();
 
@@ -295,6 +327,19 @@ namespace Gqqnbig.TrafficVolumeCalculator
         }
 
 
+        private Image<Bgr, byte>[] GetSamples(int sampleStart, int length)
+        {
+            Contract.Requires(sampleStart >= 0);
+            Contract.Requires(length >= 0);
+
+            Image<Bgr, byte>[] samples = new Image<Bgr, byte>[length];
+
+            for (int i = 0; i < samples.Length; i++)
+            {
+                samples[i] = CaptureRetriever.GetCapture(sampleStart++);
+            }
+            return samples;
+        }
 
 
         public CarMatch[] FindCarMatch(Car[] cars1, Car[] cars2)

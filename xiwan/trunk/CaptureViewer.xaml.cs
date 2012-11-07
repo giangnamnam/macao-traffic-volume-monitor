@@ -1,12 +1,9 @@
-﻿using System.Diagnostics.Contracts;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Emgu.CV;
-using Emgu.CV.Structure;
 
 namespace Gqqnbig.TrafficVolumeCalculator
 {
@@ -17,7 +14,6 @@ namespace Gqqnbig.TrafficVolumeCalculator
     {
         public Car[] Cars { get; private set; }
         public int? CurrentPicId { get; private set; }
-        internal DiskCaptureRetriever CaptureRetriever { get; set; }
 
         internal Lane Lane { get; set; }
 
@@ -39,44 +35,14 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 return;
             }
 
-            //Stopwatch sw = new Stopwatch();
-            //sw.Start();
-            Image<Gray, byte> finalImage;
-            Image<Bgr, byte> frame1 = CaptureRetriever.GetCapture(id.Value);
+            Lane.CaptureId = id.Value;
+            Cars = Lane.GetCars();
 
-
-            Bgr roadColor = Lane.GetRoadColor(frame1);
-
-            int sampleStart = id.Value - 3;
-
-            Image<Bgr, byte>[] samples = GetSamples(sampleStart < 0 ? 0 : sampleStart, 6);
-            Image<Bgra, byte> backgroundImage = Lane.FindBackground(samples, roadColor);
-            //sw.Stop();
-            //System.Diagnostics.Debug.WriteLine("background:{0}", sw.ElapsedMilliseconds);
-            //sw.Restart();
-
-            Cars = Lane.FindCars(frame1, backgroundImage, out finalImage);
-            //sw.Stop();
-            //System.Diagnostics.Debug.WriteLine("FindCars:{0}", sw.ElapsedMilliseconds);
-
-            imageBox.Source = Lane.GetFocusArea(frame1).ToBitmap().ToBitmapImage();
+            imageBox.Source = Lane.GetFocusCapture().ToBitmap().ToBitmapImage();
             listView.ItemsSource = Cars;
             totalCarNumberTextRun.Text = Cars.Length.ToString();
         }
 
-        private Image<Bgr, byte>[] GetSamples(int sampleStart, int length)
-        {
-            Contract.Requires(sampleStart >= 0);
-            Contract.Requires(length >= 0);
-
-            Image<Bgr, byte>[] samples = new Image<Bgr, byte>[length];
-
-            for (int i = 0; i < samples.Length; i++)
-            {
-                samples[i] = CaptureRetriever.GetCapture(sampleStart++);
-            }
-            return samples;
-        }
 
         private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

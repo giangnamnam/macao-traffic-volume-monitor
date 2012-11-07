@@ -14,11 +14,10 @@ namespace Gqqnbig.TrafficVolumeCalculator
     /// </summary>
     public partial class MainWindow : Window
     {
-        private const string filePathPattern = @"D:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg";
         private int m_picId;
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
 
-        readonly Lane lane = new Lane();
+        readonly Lane lane = new Lane(new DiskCaptureRetriever(@"D:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg"));
         private CarMatch[] lastMatch;
 
         public MainWindow()
@@ -28,10 +27,9 @@ namespace Gqqnbig.TrafficVolumeCalculator
             Title = GetType().Assembly.Location;
 
             PicId = 0;
-            DiskCaptureRetriever retriever = new DiskCaptureRetriever(filePathPattern);
-            captureViewers.Add(new CaptureViewer { CaptureRetriever = retriever, Lane = lane });
-            captureViewers.Add(new CaptureViewer { CaptureRetriever = retriever, Lane = lane });
-            captureViewers.Add(new CaptureViewer { CaptureRetriever = retriever, Lane = lane });
+            captureViewers.Add(new CaptureViewer { Lane = lane });
+            captureViewers.Add(new CaptureViewer { Lane = lane });
+            captureViewers.Add(new CaptureViewer { Lane = lane });
             captureViewerList.ItemsSource = captureViewers;
         }
 
@@ -47,8 +45,8 @@ namespace Gqqnbig.TrafficVolumeCalculator
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            try
-            {
+            //try
+            //{
                 captureViewers[0].View(PicId);
                 captureViewers[1].View(PicId + 1);
 
@@ -56,11 +54,11 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 picIdTextRun2.Text = (PicId + 1).ToString();
 
                 LoadCompleted();
-            }
-            catch (Exception ex)
-            {
+            //}
+            //catch (Exception ex)
+            //{
 
-            }
+            //}
         }
 
         private void LabelMatch(CarMatch[] matches)
