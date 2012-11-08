@@ -37,8 +37,6 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         public int Height { get; private set; }
 
-        public int CaptureId { get; set; }
-
         public Lane(DiskCaptureRetriever captureRetriever, string maskFilePath)
         {
             CaptureRetriever = captureRetriever;
@@ -53,22 +51,22 @@ namespace Gqqnbig.TrafficVolumeMonitor
         {
             var orginialImage = CaptureRetriever.GetCapture(id);
             var focusedImage = GetFocusArea(orginialImage);
+
             Width = focusedImage.Width;
             Height = focusedImage.Height;
 
             var roadColor = GetRoadColor(orginialImage);
-            var backgroundImage = GetBackground(roadColor);
+            var backgroundImage = GetBackground(roadColor, id);
             var car1 = Utility.RemoveSame(focusedImage, backgroundImage, tolerance);
+
 
             Image<Gray, byte> gaussianImage = car1.SmoothGaussian(3);
             Image<Gray, byte> afterThreshold = new Image<Gray, byte>(gaussianImage.Width, gaussianImage.Height);
             CvInvoke.cvThreshold(gaussianImage, afterThreshold, 0, 255, THRESH.CV_THRESH_OTSU);
 
             var finalImage = afterThreshold.Erode(1).Dilate(1);
-            //CvInvoke.cvShowImage("final", finalImage);
 
             var contours = finalImage.FindContours();
-
             List<Car> groups = new List<Car>();
             var inContourColor = new Gray(255);
             while (contours != null)
@@ -101,9 +99,9 @@ namespace Gqqnbig.TrafficVolumeMonitor
         //    return GetFocusArea(capture);
         //}
 
-        private Image<Bgra, byte> GetBackground(Bgr roadColor)
+        private Image<Bgra, byte> GetBackground(Bgr roadColor, int forCapturer)
         {
-            int sampleStart = CaptureId - 3;
+            int sampleStart = forCapturer - 3;
 
             Image<Bgr, byte>[] samples = GetSamples(sampleStart < 0 ? 0 : sampleStart, 6);
 
