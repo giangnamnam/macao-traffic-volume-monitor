@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
-namespace Gqqnbig.TrafficVolumeCalculator.Testing
+namespace Gqqnbig.TrafficVolumeMonitor.Testing
 {
     /// <summary>
     /// 对Analyze方法进行测试，希望得到的数据。
