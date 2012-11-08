@@ -55,7 +55,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.Testing
                 actual.AnalyzeOutputs[i] = new AnalyzeOutput { Id = i, CarNumber = laneCapture.Cars.Length };
                 Console.WriteLine("{0,-10}{1,-10}{2,-10}", i, expected.AnalyzeOutputs[i].CarNumber, actual.AnalyzeOutputs[i].CarNumber);
             }
-            Console.WriteLine("{0}{1,-10}{2,-10}", padRightEx("和", 10), expected.AnalyzeOutputs.Sum(o => o.CarNumber), actual.AnalyzeOutputs.Sum(o => o.CarNumber));
+            actual.ActualSum = actual.AnalyzeOutputs.Sum(o => o.CarNumber);
+            actual.ExpectedSum = expected.AnalyzeOutputs.Sum(o => o.CarNumber);
+            Console.WriteLine("{0}{1,-10}{2,-10}", padRightEx("和", 10), actual.ExpectedSum, actual.ActualSum);
             Console.WriteLine(Environment.NewLine + "测试完成");
             //测试部分结束
 

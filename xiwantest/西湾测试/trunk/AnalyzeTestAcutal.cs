@@ -5,8 +5,13 @@ namespace Gqqnbig.TrafficVolumeMonitor.Testing
     /// </summary>
     public class AnalyzeTestAcutal
     {
+        public string Comment { get; set; }
+        
         public AnalyzeOutput[] AnalyzeOutputs { get; set; }
 
-        public string Comment { get; set; }
+        public int ExpectedSum { get; set; }
+
+        public int ActualSum { get; set; }
+
     }
 }
