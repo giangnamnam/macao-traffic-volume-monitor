@@ -4,7 +4,7 @@ using System.Windows.Data;
 using System.Linq;
 using Emgu.CV;
 
-namespace Gqqnbig.TrafficVolumeCalculator
+namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
     public class MultiplicationConverter : IMultiValueConverter
     {

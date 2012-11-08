@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Gqqnbig.TrafficVolumeCalculator
+namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
     /// <summary>
     /// Interaction logic for App.xaml

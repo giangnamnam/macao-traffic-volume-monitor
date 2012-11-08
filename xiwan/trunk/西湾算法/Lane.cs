@@ -8,9 +8,8 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Gqqnbig.Statistics;
-using System.Linq;
 
-namespace Gqqnbig.TrafficVolumeCalculator
+namespace Gqqnbig.TrafficVolumeMonitor
 {
     public class Lane
     {

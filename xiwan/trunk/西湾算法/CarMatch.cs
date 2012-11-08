@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 
-namespace Gqqnbig.TrafficVolumeCalculator
+namespace Gqqnbig.TrafficVolumeMonitor
 {
     /// <summary>
     /// 表示两辆车相似性的比较。

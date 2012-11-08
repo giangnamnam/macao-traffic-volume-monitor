@@ -5,7 +5,7 @@ using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Gqqnbig.TrafficVolumeCalculator
+namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
     /// <summary>
     /// CaptureViewer.xaml 的交互逻辑

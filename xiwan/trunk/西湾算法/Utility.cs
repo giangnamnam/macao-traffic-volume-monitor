@@ -6,7 +6,7 @@ using System.Windows.Media.Imaging;
 using Emgu.CV;
 using Emgu.CV.Structure;
 
-namespace Gqqnbig.TrafficVolumeCalculator
+namespace Gqqnbig.TrafficVolumeMonitor
 {
     static class Utility
     {
@@ -167,11 +167,6 @@ namespace Gqqnbig.TrafficVolumeCalculator
                 }
             }
             return result;
-        }
-
-        public static System.Windows.Media.Color ToWpfColor(this System.Drawing.Color color)
-        {
-            return System.Windows.Media.Color.FromRgb(color.R, color.G, color.B);
         }
     }
 }

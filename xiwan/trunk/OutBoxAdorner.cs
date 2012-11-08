@@ -5,9 +5,10 @@ using System.Windows.Media;
 using Brushes = System.Windows.Media.Brushes;
 using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
-    //using System.Drawing;
 
-namespace Gqqnbig.TrafficVolumeCalculator
+//using System.Drawing;
+
+namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
     class OutBoxAdorner : Adorner
     {

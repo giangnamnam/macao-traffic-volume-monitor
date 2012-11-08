@@ -4,7 +4,7 @@ using Emgu.CV;
 using Emgu.CV.Structure;
 using Gqqnbig.Drawing;
 
-namespace Gqqnbig.TrafficVolumeCalculator
+namespace Gqqnbig.TrafficVolumeMonitor
 {
     class PossibleCarGroup
     {

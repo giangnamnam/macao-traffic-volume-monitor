@@ -4,7 +4,7 @@ using System.Windows.Media;
 using Emgu.CV;
 using Emgu.CV.Structure;
 
-namespace Gqqnbig.TrafficVolumeCalculator
+namespace Gqqnbig.TrafficVolumeMonitor
 {
     public class Car
     {
