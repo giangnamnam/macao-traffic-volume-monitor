@@ -16,10 +16,12 @@ namespace Gqqnbig.TrafficVolumeCalculator.Testing
         {
             DiskCaptureRetriever captureRetriever = new DiskCaptureRetriever(@"D:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg");
 
-            lane = new Lane(captureRetriever);
+            //lane = new Lane(captureRetriever);
             //BuildTestBase();
 
-            AnalyseTest();
+            //AnalyseTest();
+
+            BuildTestPlan();
         }
 
         static void AnalyseTest()
@@ -51,7 +53,7 @@ namespace Gqqnbig.TrafficVolumeCalculator.Testing
                 actual[i] = laneCapture.Cars.Length;
                 Console.WriteLine("{0,-10}{1,-10}{2,-10}", i, actual[i], expected[i]);
             }
-            Console.WriteLine("{0}{1,-10}{2,-10}", padRightEx("和",10), actual.Sum(), expected.Sum());
+            Console.WriteLine("{0}{1,-10}{2,-10}", padRightEx("和", 10), actual.Sum(), expected.Sum());
             Console.WriteLine(Environment.NewLine + "测试完成");
             //测试部分结束
 
@@ -113,6 +115,54 @@ namespace Gqqnbig.TrafficVolumeCalculator.Testing
             xmlWriter.WriteEndElement();
             xmlWriter.WriteEndDocument();
             xmlWriter.Close();
+        }
+
+        static void BuildTestPlan()
+        {
+            AnalyzeTestExpected expected = new AnalyzeTestExpected();
+            expected.AnalyzeOutputs = new[]
+                                        {
+                                           new AnalyzeOutput{ Id=0, CarNumber=7},
+                                           new AnalyzeOutput{ Id=1, CarNumber=4},
+                                           new AnalyzeOutput{ Id=2, CarNumber=3},
+                                           new AnalyzeOutput{ Id=3, CarNumber=4},
+                                           new AnalyzeOutput{ Id=4, CarNumber=9},
+                                           new AnalyzeOutput{ Id=5, CarNumber=7},
+                                           new AnalyzeOutput{ Id=6, CarNumber=6},
+                                           new AnalyzeOutput{ Id=7, CarNumber=8},
+                                           new AnalyzeOutput{ Id=8, CarNumber=7},
+                                           new AnalyzeOutput{ Id=9, CarNumber=8},
+                                           new AnalyzeOutput{ Id=10, CarNumber=15},
+                                           new AnalyzeOutput{ Id=11, CarNumber=14},
+                                           new AnalyzeOutput{ Id=12, CarNumber=16},
+                                           new AnalyzeOutput{ Id=13, CarNumber=12},
+                                           new AnalyzeOutput{ Id=14, CarNumber=6},
+                                           new AnalyzeOutput{ Id=15, CarNumber=4},
+                                           new AnalyzeOutput{ Id=16, CarNumber=4},
+                                           new AnalyzeOutput{ Id=17, CarNumber=3},
+                                           new AnalyzeOutput{ Id=18, CarNumber=4},
+                                           new AnalyzeOutput{ Id=19, CarNumber=7},
+                                           new AnalyzeOutput{ Id=20, CarNumber=8},
+                                           new AnalyzeOutput{ Id=21, CarNumber=8}
+                                        };
+
+            XmlSerializer serializer = new XmlSerializer(typeof(AnalyzeTestExpected));
+
+            XmlTextWriter xmlWriter = new XmlTextWriter("B:\\a.xml", Encoding.UTF8);
+            xmlWriter.Formatting = Formatting.Indented;
+            //serializer.Serialize(xmlWriter, expected);
+
+            AnalyzeTestPlan testPlan = new AnalyzeTestPlan();
+            testPlan.SampleLength = 21;
+            testPlan.SampleFilePathPattern = @"D:\文件\毕业设计\西湾大桥氹仔端\图片";
+            testPlan.ExpectedDataPath = @"D:\文件\毕业设计\西湾大桥氹仔端\测试\expected.xml";
+            serializer = new XmlSerializer(typeof(AnalyzeTestPlan));
+            xmlWriter = new XmlTextWriter("B:\\test plan.xml", Encoding.UTF8);
+            xmlWriter.Formatting = Formatting.Indented;
+            serializer.Serialize(xmlWriter, testPlan);
+
+            //AnalyzeTestPlan testPlan = new AnalyzeTestPlan();
+            //testPlan.
         }
 
         private static string padRightEx(string str, int totalByteCount)

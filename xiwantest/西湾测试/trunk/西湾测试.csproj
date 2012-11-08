@@ -40,10 +40,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Emgu.CV">
-      <HintPath>..\西湾\dependencies\Emgu.CV.dll</HintPath>
+      <HintPath>..\dependencies\Emgu.CV.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.Util">
-      <HintPath>..\西湾\dependencies\Emgu.Util.dll</HintPath>
+      <HintPath>..\dependencies\Emgu.Util.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,11 +54,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyzeTestExpected.cs" />
+    <Compile Include="AnalyzeTestPlan.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\西湾\集合处理.csproj">
+    <ProjectReference Include="..\集合处理.csproj">
       <Project>{32D9FB93-F461-48CD-B35B-BD836EB8F389}</Project>
       <Name>集合处理</Name>
     </ProjectReference>
