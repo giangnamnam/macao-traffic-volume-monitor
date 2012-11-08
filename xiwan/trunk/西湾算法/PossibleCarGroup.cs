@@ -6,6 +6,7 @@ using Gqqnbig.Drawing;
 
 namespace Gqqnbig.TrafficVolumeMonitor
 {
+    [Obsolete]
     class PossibleCarGroup
     {
         private readonly Image<Bgr, byte> sourceImage;
@@ -75,14 +76,14 @@ namespace Gqqnbig.TrafficVolumeMonitor
                 return new Car[0];
 
 
-            if (CarNumber == 1)
+            if (CarNumber >= 1)
             {
                 try
                 {
                     return new[] { Car.CreateCar(BoundingRectangle //new DRectangle(BoundingRectangle.X-1,BoundingRectangle.Y-1,BoundingRectangle.Width+2,BoundingRectangle.Height+2)
                     , sourceImage,objectImage) };
                 }
-                catch(NotProperCarException)
+                catch (NotProperCarException)
                 {
                     return new Car[0];
                 }

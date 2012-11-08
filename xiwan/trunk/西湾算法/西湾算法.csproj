@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -51,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Car.cs" />
+    <Compile Include="CarContourAdvisor.cs" />
     <Compile Include="CarMatch.cs" />
     <Compile Include="E:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Drawing\ColorConversion.cs">
       <Link>ColorConversion.cs</Link>

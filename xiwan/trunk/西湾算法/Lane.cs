@@ -65,24 +65,49 @@ namespace Gqqnbig.TrafficVolumeMonitor
             CvInvoke.cvThreshold(gaussianImage, afterThreshold, 0, 255, THRESH.CV_THRESH_OTSU);
 
             var finalImage = afterThreshold.Erode(1).Dilate(1);
-
             var contours = finalImage.FindContours();
-            List<Car> groups = new List<Car>();
             var inContourColor = new Gray(255);
             while (contours != null)
             {
                 //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
                 finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
+                contours = contours.HNext;
+            }
 
-                var carGroup = new PossibleCarGroup(focusedImage, finalImage, contours, maxCarWidth, maxCarLength, 12);
+            List<Car> groups = new List<Car>();
+            CarContourAdvisor advisor = new CarContourAdvisor(focusedImage);
+            List<Contour<Point>> contourList = new List<Contour<Point>>();
+            contours = finalImage.FindContours();//第二次取连通域，这下没有洞了。
+            while (contours != null)
+            {
+                contourList.AddRange(advisor.GetContours(contours));
+                contours = contours.HNext;
+            }
+
+            foreach (var element in contourList)
+            {
+                var carGroup = new PossibleCarGroup(focusedImage, finalImage, element, maxCarWidth, maxCarLength, 12);
                 if (carGroup.CarNumber > 0)
                 {
                     var cars = carGroup.GetCars();
                     Array.ForEach(cars, c => { if (c != null)groups.Add(c); });
                 }
-                //break;
-                contours = contours.HNext;
             }
+            //var inContourColor = new Gray(255);
+            //while (contours != null)
+            //{
+            //    //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
+            //    finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
+
+            //    var carGroup = new PossibleCarGroup(focusedImage, finalImage, contours, maxCarWidth, maxCarLength, 12);
+            //    if (carGroup.CarNumber > 0)
+            //    {
+            //        var cars = carGroup.GetCars();
+            //        Array.ForEach(cars, c => { if (c != null)groups.Add(c); });
+            //    }
+            //    //break;
+            //    contours = contours.HNext;
+            //}
 
             car1.Dispose();
             gaussianImage.Dispose();
@@ -348,7 +373,6 @@ namespace Gqqnbig.TrafficVolumeMonitor
             }
             return samples;
         }
-
 
     }
 
