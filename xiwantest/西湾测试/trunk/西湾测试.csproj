@@ -54,6 +54,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyzeOutput.cs" />
+    <Compile Include="AnalyzeTestAcutal.cs" />
     <Compile Include="AnalyzeTestExpected.cs" />
     <Compile Include="AnalyzeTestPlan.cs" />
     <Compile Include="Program.cs" />
