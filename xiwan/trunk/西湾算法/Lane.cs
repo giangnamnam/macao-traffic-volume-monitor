@@ -30,7 +30,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
                                        new Point(101, 162), new Point(116, 162), new Point(125, 162), new Point(160, 162), new Point(170, 162), new Point(187, 162)
                                    };
 
-        readonly int maxCarWidth = 15;
+        readonly int maxCarWidth = 17;
         readonly int maxCarLength = 15;
 
         public int Width { get; private set; }
