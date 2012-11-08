@@ -39,10 +39,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         public int CaptureId { get; set; }
 
-        public Lane(DiskCaptureRetriever captureRetriever)
+        public Lane(DiskCaptureRetriever captureRetriever, string maskFilePath)
         {
             CaptureRetriever = captureRetriever;
-            mask = new Image<Gray, byte>(@"D:\文件\毕业设计\西湾大桥氹仔端\图片\mask-Lane1.gif");
+            mask = new Image<Gray, byte>(maskFilePath);
             //TrafficDirection = TrafficDirection.GoUp;
 
             var contours = mask.FindContours();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -21,12 +22,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         public MainWindow()
         {
-            lane = new Lane(new DiskCaptureRetriever(@"D:\文件\毕业设计\西湾大桥氹仔端\图片\{0}.jpg"));
+            Title = GetType().Assembly.Location;
+            //Environment.CurrentDirectory = Path.GetDirectoryName(Title);
+
+            lane = new Lane(new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg"), @"..\..\西湾算法\mask-Lane1.gif");
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
 
             InitializeComponent();
 
-            Title = GetType().Assembly.Location;
+
 
             PicId = 0;
             captureViewers.Add(new CaptureViewer { Lane = lane });
