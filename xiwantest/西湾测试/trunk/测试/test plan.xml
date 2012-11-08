@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AnalyzeTestPlan xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SampleFilePathPattern>D:\文件\毕业设计\西湾大桥氹仔端\图片</SampleFilePathPattern>
+  <SampleLength>21</SampleLength>
+  <ExpectedDataPath>D:\文件\毕业设计\西湾大桥氹仔端\测试\expected.xml</ExpectedDataPath>
+</AnalyzeTestPlan>

@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AnalyzeTestExpected xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AnalyzeOutputs>
+    <AnalyzeOutput Id="0" CarNumber="7" />
+    <AnalyzeOutput Id="1" CarNumber="4" />
+    <AnalyzeOutput Id="2" CarNumber="3" />
+    <AnalyzeOutput Id="3" CarNumber="4" />
+    <AnalyzeOutput Id="4" CarNumber="9" />
+    <AnalyzeOutput Id="5" CarNumber="7" />
+    <AnalyzeOutput Id="6" CarNumber="6" />
+    <AnalyzeOutput Id="7" CarNumber="7" />
+    <AnalyzeOutput Id="8" CarNumber="7" />
+    <AnalyzeOutput Id="9" CarNumber="8" />
+    <AnalyzeOutput Id="10" CarNumber="15" />
+    <AnalyzeOutput Id="11" CarNumber="14" />
+    <AnalyzeOutput Id="12" CarNumber="16" />
+    <AnalyzeOutput Id="13" CarNumber="12" />
+    <AnalyzeOutput Id="14" CarNumber="6" />
+    <AnalyzeOutput Id="15" CarNumber="4" />
+    <AnalyzeOutput Id="16" CarNumber="4" />
+    <AnalyzeOutput Id="17" CarNumber="3" />
+    <AnalyzeOutput Id="18" CarNumber="4" />
+    <AnalyzeOutput Id="19" CarNumber="7" />
+    <AnalyzeOutput Id="20" CarNumber="8" />
+    <AnalyzeOutput Id="21" CarNumber="8" />
+  </AnalyzeOutputs>
+</AnalyzeTestExpected>
