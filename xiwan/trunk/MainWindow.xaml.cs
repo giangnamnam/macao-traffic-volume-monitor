@@ -32,7 +32,6 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
 
 
-            PicId = 0;
             captureViewers.Add(new CaptureViewer { Lane = lane });
             captureViewers.Add(new CaptureViewer { Lane = lane });
             captureViewers.Add(new CaptureViewer { Lane = lane });
@@ -53,18 +52,38 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             //try
             //{
+
+            PicId = 5;
             captureViewers[0].View(PicId);
-            captureViewers[1].View(PicId + 1);
+            //captureViewers[1].View(PicId + 1);
 
             picIdTextRun1.Text = PicId.ToString();
             picIdTextRun2.Text = (PicId + 1).ToString();
 
-            LoadCompleted();
+            //LoadCompleted();
             //}
             //catch (Exception ex)
             //{
 
             //}
+        }
+
+        private void LoadCompleted()
+        {
+            lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
+            LabelMatch(lastMatch);
+
+            var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
+
+            averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
+            leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
+            enterToPic2Run.Text = carMove.EnterToPic2.ToString();
+
+            laneMonitor.AddHistory(carMove);
+            volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+            volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+
+            PreloadImage();
         }
 
         private void LabelMatch(CarMatch[] matches)
@@ -82,9 +101,6 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void UnlabelMatch(CarMatch[] matches)
         {
-            double h = 360.0 / (matches.Length + 1);
-            int n = 1;
-
             foreach (var m in matches)
             {
                 captureViewers[0].UnboxCar("match", m.Car1);
@@ -158,24 +174,6 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             captureViewers.Add(n);
 
             LoadCompleted();
-        }
-
-        private void LoadCompleted()
-        {
-            lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
-            LabelMatch(lastMatch);
-
-            var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
-
-            averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
-            leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
-            enterToPic2Run.Text = carMove.EnterToPic2.ToString();
-
-            laneMonitor.AddHistory(carMove);
-            volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
-            volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
-
-            PreloadImage();
         }
 
         void PreloadImage()
