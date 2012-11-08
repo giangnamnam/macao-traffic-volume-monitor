@@ -10,16 +10,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.Testing
     class Program
     {
         static Lane lane;
-        //private const string resultPath = @"D:\文件\毕业设计\西湾大桥氹仔端\测试\TestResults";
 
         static void Main(string[] args)
         {
-            DiskCaptureRetriever captureRetriever = new DiskCaptureRetriever(@"..\..\测试\测试图片\{0}.jpg");
+            DiskCaptureRetriever captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
 
-            lane = new Lane(captureRetriever, @"..\..\..\西湾算法\mask-Lane1.gif");
+            lane = new Lane(captureRetriever, @"..\..\西湾算法\mask-Lane1.gif");
 
             AnalyzeTestPlan testPlan;
-            using (XmlReader reader = XmlReader.Create((@"..\..\测试\test plan.xml")))
+            using (XmlReader reader = XmlReader.Create((@"..\..\西湾测试\测试\test plan.xml")))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(AnalyzeTestPlan));
                 testPlan = (AnalyzeTestPlan)serializer.Deserialize(reader);

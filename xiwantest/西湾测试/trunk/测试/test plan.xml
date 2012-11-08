@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <AnalyzeTestPlan xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <SampleFilePathPattern>..\..\测试\测试结果</SampleFilePathPattern>
+  <SampleFilePathPattern>..\..\西湾测试\测试\测试结果</SampleFilePathPattern>
   <SampleLength>21</SampleLength>
-  <ExpectedDataPath>..\..\测试\expected.xml</ExpectedDataPath>
+  <ExpectedDataPath>..\..\西湾测试\测试\expected.xml</ExpectedDataPath>
 </AnalyzeTestPlan>
