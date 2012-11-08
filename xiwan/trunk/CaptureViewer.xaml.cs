@@ -34,9 +34,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                 totalCarNumberTextRun.Text = string.Empty;
                 return;
             }
-
-            Lane.CaptureId = id.Value;
             var laneCapture = Lane.Analyze(id.Value);
+
             Cars = laneCapture.Cars;
 
             imageBox.Source = laneCapture.FocusedImage.ToBitmap().ToBitmapImage();
