@@ -17,7 +17,6 @@ namespace Gqqnbig.TrafficVolumeMonitor
         private readonly int laneWidth;
         private readonly int maxCarLength;
         private readonly int minArea;
-        private readonly int maxArea;
         private readonly int carNumber;
         /// <summary>
         /// 水平方向上有多少车
@@ -28,14 +27,13 @@ namespace Gqqnbig.TrafficVolumeMonitor
         /// </summary>
         private int verticalNumber;
 
-        public PossibleCarGroup(Image<Bgr, byte> sourceImage, Image<Gray, byte> objectImage, Contour<Point> contour, int laneWidth, int maxCarLength, int minArea, int maxArea)
+        public PossibleCarGroup(Image<Bgr, byte> sourceImage, Image<Gray, byte> objectImage, Contour<Point> contour, int laneWidth, int maxCarLength, int minArea)
         {
             this.sourceImage = sourceImage;
             this.objectImage = objectImage;
             this.laneWidth = laneWidth;
             this.maxCarLength = maxCarLength;
             this.minArea = minArea;
-            this.maxArea = maxArea;
             Contour = contour;
 
             carNumber = GetCarNumber();

@@ -76,7 +76,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
                 //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
                 finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
 
-                var carGroup = new PossibleCarGroup(focusedImage, finalImage, contours, maxCarWidth, maxCarLength, 12, 85);
+                var carGroup = new PossibleCarGroup(focusedImage, finalImage, contours, maxCarWidth, maxCarLength, 12);
                 if (carGroup.CarNumber > 0)
                 {
                     var cars = carGroup.GetCars();
