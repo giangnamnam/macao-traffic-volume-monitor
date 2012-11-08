@@ -8,7 +8,7 @@
     <ProjectGuid>{BE53027A-8FA7-469C-BB5C-FFF28D8A92E9}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Gqqnbig.TrafficVolumeCalculator.Testing</RootNamespace>
+    <RootNamespace>Gqqnbig.TrafficVolumeMonitor.Testing</RootNamespace>
     <AssemblyName>西湾测试</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
@@ -60,9 +60,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\集合处理.csproj">
-      <Project>{32D9FB93-F461-48CD-B35B-BD836EB8F389}</Project>
-      <Name>集合处理</Name>
+    <ProjectReference Include="..\西湾算法\西湾算法.csproj">
+      <Project>{FB2005CE-5393-4DC6-8399-EB216BE10CF5}</Project>
+      <Name>西湾算法</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
