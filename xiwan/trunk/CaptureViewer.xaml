@@ -80,9 +80,9 @@
         </DataTemplate>
     </UserControl.Resources>
     <DockPanel>
+        <Image Name="objectImageBox" DockPanel.Dock="Left" VerticalAlignment="Center" Stretch="None"/>
         <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center" Margin="5">
             <Image Name="imageBox" Grid.Column="0" Stretch="None" />
-
             <TextBlock Grid.Column="2">
                 <TextBlock.Inlines>
                     <Run>汽车总数量：</Run>
