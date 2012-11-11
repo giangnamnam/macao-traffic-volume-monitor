@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using Emgu.CV;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
@@ -20,12 +21,20 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         readonly LaneMonitor laneMonitor;
         private CarMatch[] lastMatch;
 
+        bool viewOn1 = false;
+        bool viewOn2 = false;
+
+
         public MainWindow()
         {
             Title = GetType().Assembly.Location;
             //Environment.CurrentDirectory = Path.GetDirectoryName(Title);
 
-            lane = new Lane(new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg"), @"..\..\西湾算法\mask-Lane1.gif");
+            var diskCaptureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
+            var realtimeRetriever = new RealtimeCaptureRetriever(5000, "http://www.dsat.gov.mo/cams/cam27/AxisPic-Cam27.jpg");
+            realtimeRetriever.Downloaded += realtimeRetriever_Downloaded;
+
+            lane = new Lane(realtimeRetriever, @"..\..\西湾算法\mask-Lane1.gif");
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
 
             InitializeComponent();
@@ -36,6 +45,60 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             captureViewers.Add(new CaptureViewer { Lane = lane });
             captureViewers.Add(new CaptureViewer { Lane = lane });
             captureViewerList.ItemsSource = captureViewers;
+
+            realtimeRetriever.Start();
+
+            //realtimeRetriever.EnsureNext(6);
+            //realtimeRetriever.GetCapture();
+            //realtimeRetriever.GetCapture();
+            //realtimeRetriever.GetCapture();
+            //realtimeRetriever.EnsureNext(1);
+
+        }
+
+        void realtimeRetriever_Downloaded(object sender, CaptureRetrieverEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("InCacheCount={0}, view1={1}, view2={2}", e.InCacheCount, viewOn1, viewOn2);
+
+            if (e.InCacheCount == 6)
+            {
+                if (viewOn1 == false)
+                {
+                    RealtimeCaptureRetriever retriever = (RealtimeCaptureRetriever)sender;
+                    retriever.GetCapture();
+                    retriever.GetCapture();
+                    //retriever.GetCapture();
+
+                    Dispatcher.Invoke(new Action(() => captureViewers[0].View()));
+
+                    viewOn1 = true;
+                }
+                else if (viewOn2 == false)
+                {
+                    //RealtimeCaptureRetriever retriever = (RealtimeCaptureRetriever)sender;
+                    //retriever.GetCapture();
+                    //retriever.GetCapture();
+                    ////retriever.GetCapture();
+
+                    Dispatcher.Invoke(new Action(() =>
+                                                     {
+                                                         captureViewers[1].View();
+                                                         LoadCompleted();
+                                                     }));
+
+                    viewOn2 = true;
+
+
+                }
+                else if (viewOn1 && viewOn2)
+                {
+                    Dispatcher.Invoke(new Action(() =>
+                                                     {
+                                                         captureViewers[2].View();
+                                                         nextButton_Click(null, new RoutedEventArgs());
+                                                     }));
+                }
+            }
         }
 
         public int PicId
@@ -53,14 +116,19 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             //try
             //{
 
-            PicId = 5;
-            captureViewers[0].View(PicId);
-            //captureViewers[1].View(PicId + 1);
+            //PicId = 5;
+            //captureViewers[0].View();
+            //captureViewers[1].View();
 
-            picIdTextRun1.Text = PicId.ToString();
-            picIdTextRun2.Text = (PicId + 1).ToString();
+            //picIdTextRun1.Text = PicId.ToString();
+            //picIdTextRun2.Text = (PicId + 1).ToString();
 
             //LoadCompleted();
+
+            //DispatcherTimer timer = new DispatcherTimer();
+            //timer.Interval = TimeSpan.FromSeconds(5);
+            //timer.Tick += (o, ex) => nextButton_Click(null, new RoutedEventArgs());
+            //timer.Start();
             //}
             //catch (Exception ex)
             //{
@@ -83,7 +151,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
             volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
 
-            PreloadImage();
+            //PreloadImage();
         }
 
         private void LabelMatch(CarMatch[] matches)
@@ -143,8 +211,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
 
             PicId++;
-            if (captureViewers[2].CurrentPicId != PicId + 1)
-                captureViewers[2].View(PicId + 1);
+            //if (captureViewers[2].CurrentPicId != PicId + 1)
+            //    captureViewers[2].View(PicId + 1);
             UpdateLayout();
 
 
@@ -180,7 +248,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Dispatcher.BeginInvoke(new Action(() =>
                                                   {
-                                                      captureViewers[2].View(PicId + 2);
+                                                      captureViewers[2].View();
                                                       System.Diagnostics.Debug.WriteLine("预加载" + (PicId + 2) + "完成");
                                                   }), System.Windows.Threading.DispatcherPriority.Background);
         }

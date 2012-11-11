@@ -13,7 +13,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     public partial class CaptureViewer : UserControl
     {
         public Car[] Cars { get; private set; }
-        public int? CurrentPicId { get; private set; }
+        //public int? CurrentPicId { get; private set; }
 
         internal Lane Lane { get; set; }
 
@@ -24,20 +24,23 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
 
 
-        public void View(int? id)
+        public void View()
         {
-            CurrentPicId = id;
-            if (id.HasValue == false)
-            {
-                imageBox.Source = null;
-                listView.ItemsSource = null;
-                totalCarNumberTextRun.Text = string.Empty;
-                return;
-            }
-            var laneCapture = Lane.Analyze(id.Value);
+            //CurrentPicId = id;
+            //if (id.HasValue == false)
+            //{
+            //    imageBox.Source = null;
+            //    listView.ItemsSource = null;
+            //    totalCarNumberTextRun.Text = string.Empty;
+            //    return;
+            //}
 
+            var laneCapture = Lane.Analyze();
+
+            //Emgu.CV.CvInvoke.cvShowImage("back", laneCapture.BackgroundImage);
             Cars = laneCapture.Cars;
 
+            objectImageBox.Source = laneCapture.ObjectImage.ToBitmap().ToBitmapImage();
             imageBox.Source = laneCapture.FocusedImage.ToBitmap().ToBitmapImage();
             listView.ItemsSource = Cars;
             totalCarNumberTextRun.Text = Cars.Length.ToString();
