@@ -13,7 +13,11 @@ namespace Gqqnbig.TrafficVolumeMonitor
 {
     public class Lane
     {
-        internal RealtimeCaptureRetriever CaptureRetriever { get; set; }
+        //public TrafficDirection TrafficDirection { get; private set; }
+
+        public double RgbSimilarityThreshold = 0.4031;
+
+        internal DiskCaptureRetriever CaptureRetriever { get; set; }
 
         readonly Image<Gray, byte> mask;
         readonly Rectangle regionOfInterest;
@@ -33,7 +37,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         public int Height { get; private set; }
 
-        public Lane(RealtimeCaptureRetriever captureRetriever, string maskFilePath)
+        public Lane(DiskCaptureRetriever captureRetriever, string maskFilePath)
         {
             CaptureRetriever = captureRetriever;
             mask = new Image<Gray, byte>(maskFilePath);
@@ -43,16 +47,16 @@ namespace Gqqnbig.TrafficVolumeMonitor
             regionOfInterest = contours.BoundingRectangle;
         }
 
-        public LaneCapture Analyze()
+        public LaneCapture Analyze(int id)
         {
-            var orginialImage = CaptureRetriever.GetCapture();
+            var orginialImage = CaptureRetriever.GetCapture(id);
             var focusedImage = GetFocusArea(orginialImage);
 
             Width = focusedImage.Width;
             Height = focusedImage.Height;
 
             var roadColor = GetRoadColor(orginialImage);
-            var backgroundImage = GetBackground(roadColor);
+            var backgroundImage = GetBackground(roadColor, id);
             var car1 = Utility.RemoveSame(focusedImage, backgroundImage, tolerance);
 
 
@@ -120,9 +124,11 @@ namespace Gqqnbig.TrafficVolumeMonitor
         //    return GetFocusArea(capture);
         //}
 
-        private Image<Bgra, byte> GetBackground(Bgr roadColor)
+        private Image<Bgra, byte> GetBackground(Bgr roadColor, int forCapturer)
         {
-            Image<Bgr, byte>[] samples = GetSamples(6);
+            int sampleStart = forCapturer - 3;
+
+            Image<Bgr, byte>[] samples = GetSamples(sampleStart < 0 ? 0 : sampleStart, 6);
 
             Parallel.For(0, samples.Length, i =>
                                                             {
@@ -354,15 +360,16 @@ namespace Gqqnbig.TrafficVolumeMonitor
         }
 
 
-        private Image<Bgr, byte>[] GetSamples(int length)
+        private Image<Bgr, byte>[] GetSamples(int sampleStart, int length)
         {
+            Contract.Requires(sampleStart >= 0);
             Contract.Requires(length >= 0);
 
             Image<Bgr, byte>[] samples = new Image<Bgr, byte>[length];
 
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < samples.Length; i++)
             {
-                samples[i] = CaptureRetriever.GetRelativeCapture(i - (int)Math.Ceiling(length / 2.0));
+                samples[i] = CaptureRetriever.GetCapture(sampleStart++);
             }
             return samples;
         }
