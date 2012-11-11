@@ -68,6 +68,42 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="测试\11.11\测试图\0.jpg" />
+    <Content Include="测试\11.11\测试图\1.jpg" />
+    <Content Include="测试\11.11\测试图\10.jpg" />
+    <Content Include="测试\11.11\测试图\11.jpg" />
+    <Content Include="测试\11.11\测试图\12.jpg" />
+    <Content Include="测试\11.11\测试图\13.jpg" />
+    <Content Include="测试\11.11\测试图\14.jpg" />
+    <Content Include="测试\11.11\测试图\15.jpg" />
+    <Content Include="测试\11.11\测试图\16.jpg" />
+    <Content Include="测试\11.11\测试图\17.jpg" />
+    <Content Include="测试\11.11\测试图\18.jpg" />
+    <Content Include="测试\11.11\测试图\19.jpg" />
+    <Content Include="测试\11.11\测试图\2.jpg" />
+    <Content Include="测试\11.11\测试图\20.jpg" />
+    <Content Include="测试\11.11\测试图\21.jpg" />
+    <Content Include="测试\11.11\测试图\22.jpg" />
+    <Content Include="测试\11.11\测试图\23.jpg" />
+    <Content Include="测试\11.11\测试图\24.jpg" />
+    <Content Include="测试\11.11\测试图\25.jpg" />
+    <Content Include="测试\11.11\测试图\26.jpg" />
+    <Content Include="测试\11.11\测试图\27.jpg" />
+    <Content Include="测试\11.11\测试图\28.jpg" />
+    <Content Include="测试\11.11\测试图\29.jpg" />
+    <Content Include="测试\11.11\测试图\3.jpg" />
+    <Content Include="测试\11.11\测试图\30.jpg" />
+    <Content Include="测试\11.11\测试图\31.jpg" />
+    <Content Include="测试\11.11\测试图\32.jpg" />
+    <Content Include="测试\11.11\测试图\33.jpg" />
+    <Content Include="测试\11.11\测试图\34.jpg" />
+    <Content Include="测试\11.11\测试图\36.jpg" />
+    <Content Include="测试\11.11\测试图\4.jpg" />
+    <Content Include="测试\11.11\测试图\5.jpg" />
+    <Content Include="测试\11.11\测试图\6.jpg" />
+    <Content Include="测试\11.11\测试图\7.jpg" />
+    <Content Include="测试\11.11\测试图\8.jpg" />
+    <Content Include="测试\11.11\测试图\9.jpg" />
     <Content Include="测试\expected.xml" />
     <Content Include="测试\test plan.xml" />
     <Content Include="测试\测试图片\0.jpg" />
