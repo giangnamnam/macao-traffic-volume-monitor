@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Emgu.CV;
+using Emgu.CV.Structure;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
@@ -13,6 +16,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        readonly Queue<Image<Bgr, byte>> bufferImages = new Queue<Image<Bgr, byte>>(6);
+        ICaptureRetriever captureRetriever;
+
         private int m_picId;
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
 
@@ -25,7 +31,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             Title = GetType().Assembly.Location;
             //Environment.CurrentDirectory = Path.GetDirectoryName(Title);
 
-            lane = new Lane(new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg"), @"..\..\西湾算法\mask-Lane1.gif");
+            captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
+
+            lane = new Lane(@"..\..\西湾算法\mask-Lane1.gif");
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
 
             InitializeComponent();
@@ -50,17 +58,24 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            for (int i = 0; i < 6; i++)
+            {
+                bufferImages.Enqueue(captureRetriever.GetCapture());
+            }
+
+
             //try
             //{
+            captureViewers[0].View(bufferImages.ElementAt(3), bufferImages.ToArray());
 
-            PicId = 5;
-            captureViewers[0].View(PicId);
-            //captureViewers[1].View(PicId + 1);
+            bufferImages.Dequeue();
+            bufferImages.Enqueue(captureRetriever.GetCapture());
+            captureViewers[1].View(bufferImages.ElementAt(3), bufferImages.ToArray());
 
             picIdTextRun1.Text = PicId.ToString();
             picIdTextRun2.Text = (PicId + 1).ToString();
 
-            //LoadCompleted();
+            LoadCompleted();
             //}
             //catch (Exception ex)
             //{
@@ -143,8 +158,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
 
             PicId++;
-            if (captureViewers[2].CurrentPicId != PicId + 1)
-                captureViewers[2].View(PicId + 1);
+            //if (captureViewers[2].CurrentPicId != PicId + 1)
+            //    captureViewers[2].View(PicId + 1);
             UpdateLayout();
 
 
@@ -159,28 +174,24 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             DoubleAnimation animation = new DoubleAnimation(-captureViewerList.RenderSize.Height / 2, new Duration(TimeSpan.FromMilliseconds(1000)));
             animation.FillBehavior = FillBehavior.Stop;
-            animation.Completed += new EventHandler(animation_Completed);
+            animation.Completed += (a, b) =>
+                                       {
+                                           captureViewers.Move(0, captureViewers.Count - 1);
+                                           LoadCompleted();
+                                       };
             translateTransform.BeginAnimation(TranslateTransform.YProperty, animation);
-
-
 
             Mouse.OverrideCursor = originalCursor;
         }
 
-        void animation_Completed(object sender, EventArgs e)
-        {
-            var n = captureViewers[0];
-            captureViewers.RemoveAt(0);
-            captureViewers.Add(n);
-
-            LoadCompleted();
-        }
-
         void PreloadImage()
         {
+            bufferImages.Dequeue();
+            bufferImages.Enqueue(captureRetriever.GetCapture());
+
             Dispatcher.BeginInvoke(new Action(() =>
                                                   {
-                                                      captureViewers[2].View(PicId + 2);
+                                                      captureViewers[2].View(bufferImages.ElementAt(3), bufferImages.ToArray());
                                                       System.Diagnostics.Debug.WriteLine("预加载" + (PicId + 2) + "完成");
                                                   }), System.Windows.Threading.DispatcherPriority.Background);
         }

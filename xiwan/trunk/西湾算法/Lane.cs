@@ -13,8 +13,6 @@ namespace Gqqnbig.TrafficVolumeMonitor
 {
     public class Lane
     {
-        internal RealtimeCaptureRetriever CaptureRetriever { get; set; }
-
         readonly Image<Gray, byte> mask;
         readonly Rectangle regionOfInterest;
 
@@ -33,9 +31,8 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         public int Height { get; private set; }
 
-        public Lane(RealtimeCaptureRetriever captureRetriever, string maskFilePath)
+        public Lane(string maskFilePath)
         {
-            CaptureRetriever = captureRetriever;
             mask = new Image<Gray, byte>(maskFilePath);
             //TrafficDirection = TrafficDirection.GoUp;
 
@@ -43,16 +40,15 @@ namespace Gqqnbig.TrafficVolumeMonitor
             regionOfInterest = contours.BoundingRectangle;
         }
 
-        public LaneCapture Analyze()
+        public LaneCapture Analyze(Image<Bgr, byte> orginialImage, ICollection<Image<Bgr, byte>> samples)
         {
-            var orginialImage = CaptureRetriever.GetCapture();
             var focusedImage = GetFocusArea(orginialImage);
 
             Width = focusedImage.Width;
             Height = focusedImage.Height;
 
             var roadColor = GetRoadColor(orginialImage);
-            var backgroundImage = GetBackground(roadColor);
+            var backgroundImage = GetBackground(roadColor, samples);
             var car1 = Utility.RemoveSame(focusedImage, backgroundImage, tolerance);
 
 
@@ -120,25 +116,22 @@ namespace Gqqnbig.TrafficVolumeMonitor
         //    return GetFocusArea(capture);
         //}
 
-        private Image<Bgra, byte> GetBackground(Bgr roadColor)
+        private Image<Bgra, byte> GetBackground(Bgr roadColor, ICollection<Image<Bgr, byte>> samples)
         {
-            Image<Bgr, byte>[] samples = GetSamples(6);
+            Contract.Requires(samples.Count > 0);
 
-            Parallel.For(0, samples.Length, i =>
-                                                            {
-                                                                samples[i] = GetFocusArea(samples[i]);
-                                                            });
+            var focusedSamples = samples.AsParallel().Select(GetFocusArea).ToArray();
 
-            int width = samples[0].Width;
-            int height = samples[0].Height;
+            int width = focusedSamples[0].Width;
+            int height = focusedSamples[0].Height;
             Image<Bgra, byte> background = new Image<Bgra, byte>(width, height);
 
             Parallel.For(0, width, x =>
                                        {
-                                           List<Bgr> colors = new List<Bgr>(samples.Length + 1);
+                                           List<Bgr> colors = new List<Bgr>(focusedSamples.Length + 1);
                                            for (int y = 0; y < height; y++)
                                            {
-                                               colors.AddRange(samples.Select(f => f[y, x]));
+                                               colors.AddRange(focusedSamples.Select(f => f[y, x]));
                                                //System.Diagnostics.Debug.WriteLine(x + "," + y);
                                                colors.Add(roadColor);
                                                //colors.Add(roadColor);
@@ -354,18 +347,18 @@ namespace Gqqnbig.TrafficVolumeMonitor
         }
 
 
-        private Image<Bgr, byte>[] GetSamples(int length)
-        {
-            Contract.Requires(length >= 0);
+        //private Image<Bgr, byte>[] GetSamples(int length)
+        //{
+        //    Contract.Requires(length >= 0);
 
-            Image<Bgr, byte>[] samples = new Image<Bgr, byte>[length];
+        //    Image<Bgr, byte>[] samples = new Image<Bgr, byte>[length];
 
-            for (int i = 0; i < length; i++)
-            {
-                samples[i] = CaptureRetriever.GetRelativeCapture(i - (int)Math.Ceiling(length / 2.0));
-            }
-            return samples;
-        }
+        //    for (int i = 0; i < length; i++)
+        //    {
+        //        samples[i] = CaptureRetriever.GetRelativeCapture(i - (int)Math.Ceiling(length / 2.0));
+        //    }
+        //    return samples;
+        //}
 
     }
 

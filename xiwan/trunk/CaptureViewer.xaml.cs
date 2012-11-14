@@ -1,9 +1,14 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Emgu.CV;
+using Emgu.CV.Structure;
+using System.Linq;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
@@ -12,8 +17,11 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     /// </summary>
     public partial class CaptureViewer : UserControl
     {
+
+
+
         public Car[] Cars { get; private set; }
-        public int? CurrentPicId { get; private set; }
+        //public int? CurrentPicId { get; private set; }
 
         internal Lane Lane { get; set; }
 
@@ -22,25 +30,28 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             InitializeComponent();
         }
 
+        internal ICaptureRetriever CaptureRetriever { get; set; }
 
+        internal bool IsViewing { get; private set; }
 
-        public void View(int? id)
+        public void View(Image<Bgr, byte> orginialImage, ICollection<Image<Bgr, byte>> samples)
         {
-            CurrentPicId = id;
-            if (id.HasValue == false)
-            {
-                imageBox.Source = null;
-                listView.ItemsSource = null;
-                totalCarNumberTextRun.Text = string.Empty;
-                return;
-            }
-            var laneCapture = Lane.Analyze(id.Value);
+            //if (id.HasValue == false)
+            //{
+            //    imageBox.Source = null;
+            //    listView.ItemsSource = null;
+            //    totalCarNumberTextRun.Text = string.Empty;
+            //    return;
+            //}
+
+            var laneCapture = Lane.Analyze(orginialImage,samples);
 
             Cars = laneCapture.Cars;
 
             imageBox.Source = laneCapture.FocusedImage.ToBitmap().ToBitmapImage();
             listView.ItemsSource = Cars;
             totalCarNumberTextRun.Text = Cars.Length.ToString();
+
         }
 
 
