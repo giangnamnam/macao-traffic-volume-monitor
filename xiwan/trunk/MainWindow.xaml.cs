@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 using Emgu.CV;
 using Emgu.CV.Structure;
 
@@ -32,7 +33,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Title = GetType().Assembly.Location;
 
-            captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
+            captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam27/AxisPic-Cam27.jpg", 5000);
 
             lane = new Lane(@"..\..\西湾算法\mask-Lane1.gif");
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
@@ -64,7 +65,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             ThreadPool.QueueUserWorkItem(o =>
             {
                 for (int i = 0; i < 6; i++)
+                {
                     bufferImages.Enqueue(captureRetriever.GetCapture());
+                    System.Diagnostics.Debug.WriteLine("获得图片");
+                }
                 InitialView();
             });
         }
@@ -85,11 +89,11 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(3);
             ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
             var laneCapture2 = lane.Analyze(orginialImage1, samples1);
-                
+
             Dispatcher.BeginInvoke(new Action(() =>
                 {
-                   captureViewers[0].View(laneCapture1);
-                   captureViewers[1].View(laneCapture2);
+                    captureViewers[0].View(laneCapture1);
+                    captureViewers[1].View(laneCapture2);
 
                     picIdTextRun1.Text = PicId.ToString();
                     picIdTextRun2.Text = (PicId + 1).ToString();
@@ -100,6 +104,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void LoadCompleted()
         {
+            if (captureRetriever.SuggestedInterval != 0)
+            {
+                DispatcherTimer timer = new DispatcherTimer();
+                timer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
+                timer.Interval = TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
+                timer.Start();
+            }
+
+
             lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
             LabelMatch(lastMatch);
 

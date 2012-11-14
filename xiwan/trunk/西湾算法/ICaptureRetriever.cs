@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -15,55 +16,57 @@ namespace Gqqnbig.TrafficVolumeMonitor
         /// </summary>
         /// <returns></returns>
         Image<Bgr, byte> GetCapture();
+
+        /// <summary>
+        /// 获取建议的读取间隔（毫秒）。如果为0表示随意读取。
+        /// </summary>
+        int SuggestedInterval { get; }
     }
 
     public class RealtimeCaptureRetriever : ICaptureRetriever
     {
         private readonly string url;
         private readonly WebClient client;
+        DateTime lastReadTime;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="url"></param>
-        public RealtimeCaptureRetriever(string url)
+        /// <param name="interval">每次读取图片至少间隔多少毫秒</param>
+        public RealtimeCaptureRetriever(string url, int interval)
         {
             this.url = url;
+            SuggestedInterval = interval;
             client = new WebClient();
+
+            lastReadTime = DateTime.Now.AddMilliseconds(-interval);
         }
 
 
+        public int SuggestedInterval { get; private set; }
+
         public Image<Bgr, byte> GetCapture()
         {
-            byte[] data = client.DownloadData(url);
-
-            using (MemoryStream stream = new MemoryStream(data.Length))
+            var timeSpan = DateTime.Now - lastReadTime;
+            double diff = SuggestedInterval - timeSpan.TotalMilliseconds;
+            if (diff > 0)
             {
-                stream.Write(data, 0, data.Length);
-                return new Image<Bgr, byte>(new System.Drawing.Bitmap(stream));
+                System.Threading.Thread.Sleep((int)diff);
+            }
+
+            lock (client)
+            {
+                lastReadTime = DateTime.Now;
+                byte[] data = client.DownloadData(url);
+
+                using (MemoryStream stream = new MemoryStream(data.Length))
+                {
+                    stream.Write(data, 0, data.Length);
+                    return new Image<Bgr, byte>(new System.Drawing.Bitmap(stream));
+                }
             }
         }
-    }
 
-    public class DiskCaptureRetriever : ICaptureRetriever
-    {
-        private readonly string filePathPattern;
-        private int id;
-
-        public DiskCaptureRetriever(string filePathPattern, int startId = 0)
-        {
-            this.filePathPattern = filePathPattern;
-            id = startId;
-        }
-
-        public bool IsNextAvailable
-        {
-            get { return System.IO.File.Exists(string.Format(filePathPattern, id + 1)); }
-        }
-
-        public Image<Bgr, byte> GetCapture()
-        {
-            return new Image<Bgr, byte>(string.Format(filePathPattern, id++));
-        }
     }
 }

@@ -54,6 +54,7 @@
     <Compile Include="Car.cs" />
     <Compile Include="CarContourAdvisor.cs" />
     <Compile Include="CarMatch.cs" />
+    <Compile Include="DiskCaptureRetriever.cs" />
     <Compile Include="E:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Drawing\ColorConversion.cs">
       <Link>ColorConversion.cs</Link>
     </Compile>
