@@ -64,6 +64,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             this.Image = image;
             //image.Save(@"D:\img.bmp");
             CarImage = Image.ToBitmap().ToBitmapImage();
+            CarImage.Freeze();
 
             this.CarRectangle = carRectangle;
 

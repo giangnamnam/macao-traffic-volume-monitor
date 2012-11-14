@@ -1,19 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Emgu.CV;
-using Emgu.CV.Structure;
-using System.Linq;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
     /// <summary>
-    /// CaptureViewer.xaml 的交互逻辑
+    /// 用于可视化LaneCapture的控件。
     /// </summary>
     public partial class CaptureViewer : UserControl
     {
@@ -34,7 +29,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         internal bool IsViewing { get; private set; }
 
-        public void View(Image<Bgr, byte> orginialImage, ICollection<Image<Bgr, byte>> samples)
+        public void View(LaneCapture laneCapture)
         {
             //if (id.HasValue == false)
             //{
@@ -43,8 +38,6 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             //    totalCarNumberTextRun.Text = string.Empty;
             //    return;
             //}
-
-            var laneCapture = Lane.Analyze(orginialImage,samples);
 
             Cars = laneCapture.Cars;
 

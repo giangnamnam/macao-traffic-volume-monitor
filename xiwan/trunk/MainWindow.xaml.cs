@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,7 +19,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     public partial class MainWindow : Window
     {
         readonly Queue<Image<Bgr, byte>> bufferImages = new Queue<Image<Bgr, byte>>(6);
-        ICaptureRetriever captureRetriever;
+        readonly ICaptureRetriever captureRetriever;
 
         private int m_picId;
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
@@ -29,7 +31,6 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         public MainWindow()
         {
             Title = GetType().Assembly.Location;
-            //Environment.CurrentDirectory = Path.GetDirectoryName(Title);
 
             captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
 
@@ -44,6 +45,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             captureViewers.Add(new CaptureViewer { Lane = lane });
             captureViewers.Add(new CaptureViewer { Lane = lane });
             captureViewerList.ItemsSource = captureViewers;
+
+
         }
 
         public int PicId
@@ -58,29 +61,41 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < 6; i++)
+            ThreadPool.QueueUserWorkItem(o =>
             {
-                bufferImages.Enqueue(captureRetriever.GetCapture());
-            }
+                for (int i = 0; i < 6; i++)
+                    bufferImages.Enqueue(captureRetriever.GetCapture());
+                InitialView();
+            });
+        }
 
+        /// <summary>
+        /// InitialView方法极为耗时，不允许在Dispatcher线程上运行。
+        /// </summary>
+        private void InitialView()
+        {
+            Contract.Requires(Dispatcher.CheckAccess() == false, "InitialView方法极为耗时，不允许在Dispatcher线程上运行。");
 
-            //try
-            //{
-            captureViewers[0].View(bufferImages.ElementAt(3), bufferImages.ToArray());
+            Image<Bgr, byte> orginialImage = bufferImages.ElementAt(3);
+            ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
+            var laneCapture1 = lane.Analyze(orginialImage, samples);
 
             bufferImages.Dequeue();
             bufferImages.Enqueue(captureRetriever.GetCapture());
-            captureViewers[1].View(bufferImages.ElementAt(3), bufferImages.ToArray());
+            Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(3);
+            ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
+            var laneCapture2 = lane.Analyze(orginialImage1, samples1);
+                
+            Dispatcher.BeginInvoke(new Action(() =>
+                {
+                   captureViewers[0].View(laneCapture1);
+                   captureViewers[1].View(laneCapture2);
 
-            picIdTextRun1.Text = PicId.ToString();
-            picIdTextRun2.Text = (PicId + 1).ToString();
+                    picIdTextRun1.Text = PicId.ToString();
+                    picIdTextRun2.Text = (PicId + 1).ToString();
 
-            LoadCompleted();
-            //}
-            //catch (Exception ex)
-            //{
-
-            //}
+                    LoadCompleted();
+                }));
         }
 
         private void LoadCompleted()
@@ -98,7 +113,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
             volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
 
-            PreloadImage();
+            ThreadPool.QueueUserWorkItem(o => PreloadImage());
         }
 
         private void LabelMatch(CarMatch[] matches)
@@ -184,14 +199,22 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             Mouse.OverrideCursor = originalCursor;
         }
 
+        /// <summary>
+        /// PreloadImage方法极为耗时，不允许在Dispatcher线程上运行。
+        /// </summary>
         void PreloadImage()
         {
+            Contract.Requires(Dispatcher.CheckAccess() == false, "PreloadImage方法极为耗时，不允许在Dispatcher线程上运行。");
+
             bufferImages.Dequeue();
             bufferImages.Enqueue(captureRetriever.GetCapture());
-
+            Image<Bgr, byte> orginialImage = bufferImages.ElementAt(3);
+            ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
+            var laneCapture = lane.Analyze(orginialImage, samples);
+            System.Diagnostics.Debug.WriteLine("分析完成");
             Dispatcher.BeginInvoke(new Action(() =>
                                                   {
-                                                      captureViewers[2].View(bufferImages.ElementAt(3), bufferImages.ToArray());
+                                                      captureViewers[2].View(laneCapture);
                                                       System.Diagnostics.Debug.WriteLine("预加载" + (PicId + 2) + "完成");
                                                   }), System.Windows.Threading.DispatcherPriority.Background);
         }
