@@ -1,21 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using Emgu.CV;
+using Emgu.CV.Structure;
 
 namespace Gqqnbig.TrafficVolumeMonitor.Testing
 {
     class Program
     {
         static Lane lane;
+        private static DiskCaptureRetriever captureRetriever;
 
         static void Main(string[] args)
         {
-            DiskCaptureRetriever captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
+            captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
 
-            lane = new Lane(captureRetriever, @"..\..\西湾算法\mask-Lane1.gif");
+            lane = new Lane(@"..\..\西湾算法\mask-Lane1.gif");
 
             AnalyzeTestPlan testPlan;
             using (XmlReader reader = XmlReader.Create((@"..\..\西湾测试\测试\test plan.xml")))
@@ -46,14 +50,27 @@ namespace Gqqnbig.TrafficVolumeMonitor.Testing
             if (string.IsNullOrEmpty(comment) == false)
                 actual.Comment = comment;
 
+
+            Queue<Image<Bgr, byte>> bufferImages = new Queue<Image<Bgr, byte>>(6);
+            for (int i = 0; i < 6; i++)
+            {
+                bufferImages.Enqueue(captureRetriever.GetCapture());
+            }
+
+
             //测试部分开始
             string formatString = "{0}{1}{2}";
             Console.WriteLine(formatString, padRightEx("序号", 10), padRightEx("人脑计数", 10), padRightEx("电脑计数", 10));
             for (int i = 0; i < actual.AnalyzeOutputs.Length; i++)
             {
-                var laneCapture = lane.Analyze(i);
+                Image<Bgr, byte> orginialImage = bufferImages.ElementAt(3);
+                ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
+                var laneCapture = lane.Analyze(orginialImage, samples);
                 actual.AnalyzeOutputs[i] = new AnalyzeOutput { Id = i, CarNumber = laneCapture.Cars.Length };
                 Console.WriteLine("{0,-10}{1,-10}{2,-10}", i, expected.AnalyzeOutputs[i].CarNumber, actual.AnalyzeOutputs[i].CarNumber);
+
+                bufferImages.Dequeue();
+                bufferImages.Enqueue(captureRetriever.GetCapture());
             }
             actual.ActualSum = actual.AnalyzeOutputs.Sum(o => o.CarNumber);
             actual.ExpectedSum = expected.AnalyzeOutputs.Sum(o => o.CarNumber);
