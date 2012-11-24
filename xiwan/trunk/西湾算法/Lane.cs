@@ -211,9 +211,28 @@ namespace Gqqnbig.TrafficVolumeMonitor
         /// <returns></returns>
         private Image<Bgr, byte> GetFocusArea(Image<Bgr, byte> originalImage)
         {
-            var image = UnDistort(originalImage);
-            image = image.Copy(mask).Copy(regionOfInterest);
-            return image;
+            var image = originalImage.Copy(mask).Copy(regionOfInterest);
+
+            var roi = new Rectangle(new Point(30, 30), image.Size);
+            var newImage = new Image<Bgr, byte>(image.Width + 30 * 2, image.Height + 30 * 2);
+            newImage.ROI = roi;
+
+            image.Copy(newImage, null);
+            newImage.ROI = Rectangle.Empty;
+                
+            Matrix<double> mat = new Matrix<double>(2, 3);
+            mat[0, 0] = 1;
+            mat[0, 1] = -0.249884;
+            mat[0, 2] = 0;
+            mat[1, 0] = 0;
+            mat[1, 1] = 1;
+            mat[1, 2] = 0;
+
+            var warpImage = newImage.WarpAffine(mat, INTER.CV_INTER_LINEAR, WARP.CV_WARP_DEFAULT, new Bgr(0, 0, 0));
+            //CvInvoke.cvShowImage("WarpAffine", warpImage);
+            return warpImage;
+
+            return warpImage;
         }
 
         private Bgr GetRoadColor(Image<Bgr, byte> frame)

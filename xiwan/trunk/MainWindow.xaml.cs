@@ -33,9 +33,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Title = GetType().Assembly.Location;
 
-            captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam27/AxisPic-Cam27.jpg", 5000);
+            //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam27/AxisPic-Cam27.jpg", 5000);
+            captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
 
-            lane = new Lane(@"..\..\西湾算法\mask-Lane1.gif");
+            lane = new Lane(@"..\..\西湾算法\mask-Lane1 original.gif");
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
 
             InitializeComponent();
@@ -84,21 +85,21 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
             var laneCapture1 = lane.Analyze(orginialImage, samples);
 
-            bufferImages.Dequeue();
-            bufferImages.Enqueue(captureRetriever.GetCapture());
-            Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(3);
-            ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
-            var laneCapture2 = lane.Analyze(orginialImage1, samples1);
+            //bufferImages.Dequeue();
+            //bufferImages.Enqueue(captureRetriever.GetCapture());
+            //Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(3);
+            //ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
+            //var laneCapture2 = lane.Analyze(orginialImage1, samples1);
 
             Dispatcher.BeginInvoke(new Action(() =>
                 {
                     captureViewers[0].View(laneCapture1);
-                    captureViewers[1].View(laneCapture2);
+                    //captureViewers[1].View(laneCapture2);
 
                     picIdTextRun1.Text = PicId.ToString();
                     picIdTextRun2.Text = (PicId + 1).ToString();
 
-                    LoadCompleted();
+                    //LoadCompleted();
                 }));
         }
 
