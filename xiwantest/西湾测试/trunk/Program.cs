@@ -17,16 +17,27 @@ namespace Gqqnbig.TrafficVolumeMonitor.Testing
 
         static void Main(string[] args)
         {
-            captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
+            if (args.Length != 1)
+            {
+                Console.WriteLine("运行此程序必须带有一个参数。该参数指定测试计划的路径。");
+                return;
+            }
 
-            lane = new Lane(@"..\..\西湾算法\mask-Lane1.gif");
+            string testPlanPath = args[0];
+
 
             AnalyzeTestPlan testPlan;
-            using (XmlReader reader = XmlReader.Create((@"..\..\西湾测试\测试\test plan.xml")))
+            using (XmlReader reader = XmlReader.Create(testPlanPath))
             {
                 XmlSerializer serializer = new XmlSerializer(typeof(AnalyzeTestPlan));
                 testPlan = (AnalyzeTestPlan)serializer.Deserialize(reader);
             }
+
+            captureRetriever = new DiskCaptureRetriever(testPlan.SampleFilePathPattern);
+
+            lane = new Lane(@"..\..\西湾算法\mask-Lane1 original.gif");
+
+
             AnalyseTest(testPlan);
 
             //BuildTestPlan();
@@ -40,6 +51,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.Testing
                 XmlSerializer serializer = new XmlSerializer(typeof(AnalyzeTestExpected));
                 expected = (AnalyzeTestExpected)serializer.Deserialize(reader);
             }
+
+            if (testPlan.WriteOutFocus)
+                Directory.CreateDirectory(Path.GetDirectoryName(testPlan.FocusFilePathPattern));
 
 
             AnalyzeTestAcutal actual = new AnalyzeTestAcutal();
@@ -66,6 +80,11 @@ namespace Gqqnbig.TrafficVolumeMonitor.Testing
                 Image<Bgr, byte> orginialImage = bufferImages.ElementAt(3);
                 ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
                 var laneCapture = lane.Analyze(orginialImage, samples);
+
+                if (testPlan.WriteOutFocus)
+                    laneCapture.FocusedImage.Save(string.Format(testPlan.FocusFilePathPattern, i));
+
+
                 actual.AnalyzeOutputs[i] = new AnalyzeOutput { Id = i, CarNumber = laneCapture.Cars.Length };
                 Console.WriteLine("{0,-10}{1,-10}{2,-10}", i, expected.AnalyzeOutputs[i].CarNumber, actual.AnalyzeOutputs[i].CarNumber);
 
@@ -78,8 +97,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.Testing
             Console.WriteLine(Environment.NewLine + "测试完成");
             //测试部分结束
 
-            Directory.CreateDirectory(testPlan.SampleFilePathPattern);
-            string filePath = Path.Combine(testPlan.SampleFilePathPattern,
+            Directory.CreateDirectory(testPlan.ActualPath);
+            string filePath = Path.Combine(testPlan.ActualPath,
                         DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss") + " AnalyseTest.xml");
             using (XmlTextWriter xmlWriter = new XmlTextWriter(filePath, Encoding.UTF8))
             {
