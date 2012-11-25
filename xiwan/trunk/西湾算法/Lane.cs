@@ -108,14 +108,6 @@ namespace Gqqnbig.TrafficVolumeMonitor
             return new LaneCapture(orginialImage, focusedImage, backgroundImage, finalImage, groups.ToArray());
         }
 
-
-
-        //public Image<Bgr, byte> GetFocusCapture()
-        //{
-        //    var capture = CaptureRetriever.GetCapture(CaptureId);
-        //    return GetFocusArea(capture);
-        //}
-
         private Image<Bgra, byte> GetBackground(Bgr roadColor, ICollection<Image<Bgr, byte>> samples)
         {
             Contract.Requires(samples.Count > 0);
@@ -213,26 +205,76 @@ namespace Gqqnbig.TrafficVolumeMonitor
         {
             var image = originalImage.Copy(mask).Copy(regionOfInterest);
 
-            var roi = new Rectangle(new Point(30, 30), image.Size);
-            var newImage = new Image<Bgr, byte>(image.Width + 30 * 2, image.Height + 30 * 2);
+            image = SkewTransform(image);
+            image = VerticalExpand(image);
+
+            return image;
+        }
+
+        /// <summary>
+        /// 切变
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
+        private static Image<Bgr, byte> SkewTransform(Image<Bgr, byte> image)
+        {
+            int leftSpace = (int)(Math.Tan(8.2 / 180 * Math.PI) * image.Height);
+            var roi = new Rectangle(new Point(leftSpace, 0), image.Size);
+            var newImage = new Image<Bgr, byte>(image.Width + leftSpace, image.Height);
             newImage.ROI = roi;
 
             image.Copy(newImage, null);
             newImage.ROI = Rectangle.Empty;
-                
+
             Matrix<double> mat = new Matrix<double>(2, 3);
             mat[0, 0] = 1;
-            mat[0, 1] = -0.249884;
+            mat[0, 1] = -Math.Tan(8.2 / 180 * Math.PI);
             mat[0, 2] = 0;
             mat[1, 0] = 0;
             mat[1, 1] = 1;
             mat[1, 2] = 0;
 
             var warpImage = newImage.WarpAffine(mat, INTER.CV_INTER_LINEAR, WARP.CV_WARP_DEFAULT, new Bgr(0, 0, 0));
-            //CvInvoke.cvShowImage("WarpAffine", warpImage);
             return warpImage;
+        }
 
-            return warpImage;
+        /// <summary>
+        /// 进行纵向拉伸，取消近大远小。
+        /// </summary>
+        /// <param name="image"></param>
+        private static Image<Bgr, byte> VerticalExpand(Image<Bgr, byte> image)
+        {
+            Func<double, double> f = y => 1.0 / 18 * (6089 - Math.Sqrt(37075921 - 127512 * y));
+            var newImage = new Image<Bgr, byte>(image.Width, 210);
+            for (int x = 0; x < newImage.Width; x++)
+            {
+                for (int y = 0; y < newImage.Height; y++)
+                {
+                    double oy = f(y); //获取原图的y。
+
+                    if (Math.Abs(oy - (int)oy) > double.Epsilon)
+                    {
+                        //oy一般是小数，获得oy的上下界。
+                        int yl = (int)Math.Floor(oy);
+                        int yh = (int)Math.Ceiling(oy);
+
+                        var cl = image[yl, x];
+                        var ch = image[yh, x];
+
+                        double red = cl.Red * (oy - yl) + ch.Red * (yh - oy);
+                        double green = cl.Green * (oy - yl) + ch.Green * (yh - oy);
+                        double blue = cl.Blue * (oy - yl) + ch.Blue * (yh - oy);
+
+
+                        newImage[y, x] = new Bgr(blue, green, red);
+                    }
+                    else
+                        newImage[y, x] = image[(int)oy, x];
+                }
+            }
+
+            //CvInvoke.cvShowImage("NewGetOldInterpolate " + imageWindowId++, newImage);
+            return newImage;
         }
 
         private Bgr GetRoadColor(Image<Bgr, byte> frame)
