@@ -150,51 +150,6 @@ namespace Gqqnbig.TrafficVolumeMonitor
             return background;
         }
 
-        //public Car[] GetCars()
-        //{
-        //    var image = GetFocusCapture();
-        //    Width = image.Width;
-        //    Height = image.Height;
-
-        //    var backgroundImage = GetBackground(GetRoadColor(CaptureRetriever.GetCapture(CaptureId)));
-        //    var car1 = Utility.RemoveSame(image, backgroundImage, tolerance);
-
-        //    Image<Gray, byte> gaussianImage = car1.SmoothGaussian(3);
-        //    Image<Gray, byte> afterThreshold = new Image<Gray, byte>(gaussianImage.Width, gaussianImage.Height);
-        //    CvInvoke.cvThreshold(gaussianImage, afterThreshold, 0, 255, THRESH.CV_THRESH_OTSU);
-
-        //    var finalImage = afterThreshold.Erode(1).Dilate(1);
-        //    //CvInvoke.cvShowImage("final", finalImage);
-
-        //    var contours = finalImage.FindContours();
-
-        //    List<Car> groups = new List<Car>();
-        //    var inContourColor = new Gray(255);
-        //    while (contours != null)
-        //    {
-        //        //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
-        //        finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
-
-        //        //System.Diagnostics.Debug.WriteLine(contours.Area);
-        //        //if(contours.Area>40) 进行两次腐蚀
-
-
-        //        var carGroup = new PossibleCarGroup(image, finalImage, contours, maxCarWidth, maxCarLength, 12, 85);
-        //        if (carGroup.CarNumber > 0)
-        //        {
-        //            var cars = carGroup.GetCars();
-        //            Array.ForEach(cars, c => { if (c != null)groups.Add(c); });
-        //        }
-        //        //break;
-        //        contours = contours.HNext;
-        //    }
-
-        //    car1.Dispose();
-        //    gaussianImage.Dispose();
-        //    afterThreshold.Dispose();
-
-        //    return groups.ToArray();
-        //}
 
         /// <summary>
         /// 处理原始图像，获得用于后续处理的部分。
@@ -206,7 +161,8 @@ namespace Gqqnbig.TrafficVolumeMonitor
             var image = originalImage.Copy(mask).Copy(regionOfInterest);
 
             image = SkewTransform(image);
-            image = VerticalExpand(image);
+            image = MakeRectangle(image);
+            //image = VerticalExpand(image);
 
             return image;
         }
@@ -235,7 +191,55 @@ namespace Gqqnbig.TrafficVolumeMonitor
             mat[1, 2] = 0;
 
             var warpImage = newImage.WarpAffine(mat, INTER.CV_INTER_LINEAR, WARP.CV_WARP_DEFAULT, new Bgr(0, 0, 0));
-            return warpImage;
+
+            return Utility.AutoCrop(warpImage);
+        }
+
+        private static Image<Bgr,byte> MakeRectangle(Image<Bgr,byte> image)
+        {
+            Func<int, double> f = y => -0.00409494 * y + 1.647;
+            Image<Bgr, byte> newImage = new Image<Bgr, byte>(image.Size);
+
+            double halfWidth = image.Width / 2.0;
+
+            for (int j = 0; j < image.Height; j++)
+            {
+                double factor = f(j);
+                for (int i = 0; i <= halfWidth; i++)
+                {
+                    double oldI = halfWidth - (halfWidth - i) / factor; // (-halfWidth + factor * halfWidth + i) / factor;
+
+                    int l = (int)Math.Floor(oldI);
+                    int h = (int)Math.Ceiling(oldI);
+
+                    var cl = image[j, l];
+                    var ch = image[j, h];
+
+                    double red = cl.Red * (oldI - l) + ch.Red * (h - oldI);
+                    double green = cl.Green * (oldI - l) + ch.Green * (h - oldI);
+                    double blue = cl.Blue * (oldI - l) + ch.Blue * (h - oldI);
+                    newImage[j, i] = new Bgr(blue, green, red);
+                }
+
+                for (int i = (int)halfWidth; i < image.Width; i++)
+                {
+                    double oldI = halfWidth + (i - halfWidth) / factor; //(-halfWidth + factor * halfWidth + i) / factor;
+
+                    int l = (int)Math.Floor(oldI);
+                    int h = (int)Math.Ceiling(oldI);
+
+                    var cl = image[j, l];
+                    var ch = image[j, h];
+
+                    double red = cl.Red * (oldI - l) + ch.Red * (h - oldI);
+                    double green = cl.Green * (oldI - l) + ch.Green * (h - oldI);
+                    double blue = cl.Blue * (oldI - l) + ch.Blue * (h - oldI);
+
+                    newImage[j, i] = new Bgr(blue, green, red);
+                }
+            }
+
+            return newImage;
         }
 
         /// <summary>
@@ -244,8 +248,12 @@ namespace Gqqnbig.TrafficVolumeMonitor
         /// <param name="image"></param>
         private static Image<Bgr, byte> VerticalExpand(Image<Bgr, byte> image)
         {
+            double a =9 ;
+            double b = -6089;
+            double c = 3542;
+
             Func<double, double> f = y => 1.0 / 18 * (6089 - Math.Sqrt(37075921 - 127512 * y));
-            var newImage = new Image<Bgr, byte>(image.Width, 210);
+            var newImage = new Image<Bgr, byte>(image.Width, (int)(a*image.Height*image.Height+b*image.Height+c));
             for (int x = 0; x < newImage.Width; x++)
             {
                 for (int y = 0; y < newImage.Height; y++)
