@@ -162,7 +162,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
             image = SkewTransform(image);
             image = MakeRectangle(image);
-            //image = VerticalExpand(image);
+            image = VerticalExpand(image);
 
             return image;
         }
@@ -248,36 +248,37 @@ namespace Gqqnbig.TrafficVolumeMonitor
         /// <param name="image"></param>
         private static Image<Bgr, byte> VerticalExpand(Image<Bgr, byte> image)
         {
-            double a =9 ;
-            double b = -6089;
-            double c = 3542;
+            double a = -0.404667, b = 1.71457, c = 0;
 
-            Func<double, double> f = y => 1.0 / 18 * (6089 - Math.Sqrt(37075921 - 127512 * y));
-            var newImage = new Image<Bgr, byte>(image.Width, (int)(a*image.Height*image.Height+b*image.Height+c));
-            for (int x = 0; x < newImage.Width; x++)
+            Image<Bgr, byte> newImage = new Image<Bgr, byte>(image.Width, (int)((a + b + c) * image.Height));
+
+            int h = image.Height;
+            for (int y = 0; y < newImage.Height; y++)
             {
-                for (int y = 0; y < newImage.Height; y++)
-                {
-                    double oy = f(y); //获取原图的y。
+                //Console.WriteLine(y);
 
-                    if (Math.Abs(oy - (int)oy) > double.Epsilon)
+                double oldY = h * (-b + Math.Sqrt(b * b - 4 * a * c + 4 * a * (y + 1) / h)) / 2 / a - 1;
+
+                for (int x = 0; x < image.Width; x++)
+                {
+                    if (Math.Abs(oldY - (int)oldY) > double.Epsilon)
                     {
                         //oy一般是小数，获得oy的上下界。
-                        int yl = (int)Math.Floor(oy);
-                        int yh = (int)Math.Ceiling(oy);
+                        int yl = (int)Math.Floor(oldY);
+                        int yh = (int)Math.Ceiling(oldY);
 
-                        var cl = image[yl, x];
+                        var cl = image[yl < 0 ? 0 : yl, x];
                         var ch = image[yh, x];
 
-                        double red = cl.Red * (oy - yl) + ch.Red * (yh - oy);
-                        double green = cl.Green * (oy - yl) + ch.Green * (yh - oy);
-                        double blue = cl.Blue * (oy - yl) + ch.Blue * (yh - oy);
+                        double red = cl.Red * (oldY - yl) + ch.Red * (yh - oldY);
+                        double green = cl.Green * (oldY - yl) + ch.Green * (yh - oldY);
+                        double blue = cl.Blue * (oldY - yl) + ch.Blue * (yh - oldY);
 
 
                         newImage[y, x] = new Bgr(blue, green, red);
                     }
                     else
-                        newImage[y, x] = image[(int)oy, x];
+                        newImage[y, x] = image[(int)oldY, x];
                 }
             }
 
