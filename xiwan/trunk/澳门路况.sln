@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "西湾大桥监视器", "西湾大桥监视器.csproj", "{32D9FB93-F461-48CD-B35B-BD836EB8F389}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "监视器", "监视器.csproj", "{32D9FB93-F461-48CD-B35B-BD836EB8F389}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "西湾测试", "西湾测试\西湾测试.csproj", "{BE53027A-8FA7-469C-BB5C-FFF28D8A92E9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "西湾算法", "西湾算法\西湾算法.csproj", "{FB2005CE-5393-4DC6-8399-EB216BE10CF5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "高荷算法", "高伟乐街与荷兰园大马路交界\算法\高荷算法.csproj", "{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "模块", "模块\模块.csproj", "{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}"
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
@@ -51,6 +55,26 @@ Global
 		{FB2005CE-5393-4DC6-8399-EB216BE10CF5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{FB2005CE-5393-4DC6-8399-EB216BE10CF5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FB2005CE-5393-4DC6-8399-EB216BE10CF5}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}.Release|x86.ActiveCfg = Release|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
