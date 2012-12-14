@@ -32,8 +32,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Title = GetType().Assembly.Location;
 
-            //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam27/AxisPic-Cam27.jpg", 5000);
-            captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
+            captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg", 5000);
+            //captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg");
 
             lane = new Lane(@"..\..\西湾算法\mask-Lane1 original.gif");
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
@@ -211,10 +211,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Contract.Requires(Dispatcher.CheckAccess() == false, "PreloadImage方法极为耗时，不允许在Dispatcher线程上运行。");
 
-            bufferImages.Dequeue();
-            bufferImages.Enqueue(captureRetriever.GetCapture());
-            Image<Bgr, byte> orginialImage = bufferImages.ElementAt(3);
-            ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
+            Image<Bgr, byte> orginialImage;
+            ICollection<Image<Bgr, byte>> samples;
+            lock (bufferImages)
+            {
+                bufferImages.Dequeue();
+                bufferImages.Enqueue(captureRetriever.GetCapture());
+                orginialImage = bufferImages.ElementAt(3);
+                samples = bufferImages.ToArray();
+            }
             var laneCapture = lane.Analyze(orginialImage, samples);
             System.Diagnostics.Debug.WriteLine("分析完成");
             Dispatcher.BeginInvoke(new Action(() =>
