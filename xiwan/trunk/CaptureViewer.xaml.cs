@@ -31,13 +31,6 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         public void View(LaneCapture laneCapture)
         {
-            //if (id.HasValue == false)
-            //{
-            //    imageBox.Source = null;
-            //    listView.ItemsSource = null;
-            //    totalCarNumberTextRun.Text = string.Empty;
-            //    return;
-            //}
 
             Cars = laneCapture.Cars;
 
@@ -124,7 +117,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void saveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            BitmapImage context = (BitmapImage)((MenuItem)sender).DataContext;
+            ContextMenu cm = (ContextMenu) ((MenuItem)sender).Parent;
+
+            BitmapImage context = (BitmapImage) ((Image)cm.PlacementTarget).Source;
 
             Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.DefaultExt = ".bmp";
