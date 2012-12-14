@@ -22,7 +22,6 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         readonly Queue<Image<Bgr, byte>> bufferImages = new Queue<Image<Bgr, byte>>(6);
         readonly ICaptureRetriever captureRetriever;
 
-        private int m_picId;
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
 
         readonly Lane lane;
@@ -51,15 +50,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         }
 
-        public int PicId
-        {
-            get { return m_picId; }
-            set
-            {
-                m_picId = value;
-                previousButton.IsEnabled = m_picId > 0;
-            }
-        }
+        public int PicId { get; set; }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -85,21 +76,21 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
             var laneCapture1 = lane.Analyze(orginialImage, samples);
 
-            //bufferImages.Dequeue();
-            //bufferImages.Enqueue(captureRetriever.GetCapture());
-            //Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(3);
-            //ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
-            //var laneCapture2 = lane.Analyze(orginialImage1, samples1);
+            bufferImages.Dequeue();
+            bufferImages.Enqueue(captureRetriever.GetCapture());
+            Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(3);
+            ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
+            var laneCapture2 = lane.Analyze(orginialImage1, samples1);
 
             Dispatcher.BeginInvoke(new Action(() =>
                 {
                     captureViewers[0].View(laneCapture1);
-                    //captureViewers[1].View(laneCapture2);
+                    captureViewers[1].View(laneCapture2);
 
                     picIdTextRun1.Text = PicId.ToString();
                     picIdTextRun2.Text = (PicId + 1).ToString();
 
-                    //LoadCompleted();
+                    LoadCompleted();
                 }));
         }
 
@@ -231,13 +222,6 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                                                       captureViewers[2].View(laneCapture);
                                                       System.Diagnostics.Debug.WriteLine("预加载" + (PicId + 2) + "完成");
                                                   }), System.Windows.Threading.DispatcherPriority.Background);
-        }
-
-
-        private void previousButton_Click(object sender, RoutedEventArgs e)
-        {
-            PicId--;
-            //InspectCapture();
         }
 
         private void captureViewerList_SizeChanged(object sender, SizeChangedEventArgs e)
