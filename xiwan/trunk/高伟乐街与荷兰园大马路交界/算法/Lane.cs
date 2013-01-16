@@ -171,16 +171,44 @@ namespace Gqqnbig.TrafficVolumeMonitor
         /// <returns></returns>
         private Image<Bgr, byte> GetFocusArea(Image<Bgr, byte> originalImage)
         {
-            var image = originalImage.Copy(mask).Copy(regionOfInterest);
+            var image = originalImage.Copy(mask);//.Copy(regionOfInterest);
 
-            image = new AddSpaceModule { Right = 50 }.Run(image);
-            image = new SkewTransformModule { Angle = -19.75 }.Run(image);
-            image = new AddSpaceModule { Left = 13 }.Run(image);
-            image = new MakeRectangleModule { FarWidth = 48 }.Run(image);
+            image = PerspectiveTransform(image);
+
+            image = Utility.AutoCrop(image);
+            //image = new AddSpaceModule { Right = 50 }.Run(image);
+            //image = new SkewTransformModule { Angle = -19.75 }.Run(image);
+            //image = new AddSpaceModule { Left = 13 }.Run(image);
+            //image = new MakeRectangleModule { FarWidth = 48 }.Run(image);
             //image = VerticalExpand(image);
 
             return image;
         }
+
+
+        private Image<Bgr,byte> PerspectiveTransform(Image<Bgr, byte> image)
+        {
+            PointF[] srcs = new PointF[4];
+            srcs[0] = new PointF(75, 149);
+            srcs[1] = new PointF(130, 149);
+            srcs[2] = new PointF(0, 288);
+            srcs[3] = new PointF(112, 288);
+
+
+            PointF[] dsts = new PointF[4];
+            dsts[0] = new PointF(0, 149);
+            dsts[1] = new PointF(112, 149);
+            dsts[2] = new PointF(0, 288);
+            dsts[3] = new PointF(112, 288);
+
+            HomographyMatrix mywarpmat = CameraCalibration.GetPerspectiveTransform(srcs, dsts);
+
+            Image<Bgr, byte> newImage = image.WarpPerspective(mywarpmat, Emgu.CV.CvEnum.INTER.CV_INTER_NN,
+    Emgu.CV.CvEnum.WARP.CV_WARP_FILL_OUTLIERS, new Bgr(255, 255, 255));
+
+            return newImage;
+        }
+
 
         /// <summary>
         /// 进行纵向拉伸，取消近大远小。
