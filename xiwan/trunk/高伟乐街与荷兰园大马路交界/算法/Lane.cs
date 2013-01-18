@@ -63,7 +63,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
 
 
-            Image<Gray, Byte> modelImage = new Image<Gray, byte>(@"B:\arrow2.bmp");
+            Image<Gray, Byte> modelImage = new Image<Gray, byte>(@"..\..\高伟乐街与荷兰园大马路交界\算法\arrow.bmp");
             Image<Gray, Byte> observedImage = focusedImage.Copy(new Rectangle(20, 190, 55, 85)).Convert<Gray, byte>();
 
             //CvInvoke.cvShowImage("observedImage", observedImage);

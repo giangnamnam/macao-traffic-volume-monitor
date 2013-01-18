@@ -34,7 +34,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg", 5000) { SavePath = @"B:\test\{0}.jpg" };
             captureRetriever = new DiskCaptureRetriever(@"..\..\高伟乐街与荷兰园大马路交界\测试\2\{0}.jpg",0);
 
-            lane = new Lane(@"..\..\高伟乐街与荷兰园大马路交界\算法\mask2.bmp");
+            lane = new Lane(@"..\..\高伟乐街与荷兰园大马路交界\算法\mask1.bmp");
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
 
             InitializeComponent();
