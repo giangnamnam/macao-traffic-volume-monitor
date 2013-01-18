@@ -31,11 +31,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         public MainWindow()
         {
             Title = GetType().Assembly.Location;
+            //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg", 5000) { SavePath = @"B:\test\{0}.jpg" };
+            captureRetriever = new DiskCaptureRetriever(@"..\..\高伟乐街与荷兰园大马路交界\测试\2\{0}.jpg",0);
 
-            //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg", 5000);
-            captureRetriever = new DiskCaptureRetriever(@"..\..\高伟乐街与荷兰园大马路交界\测试\测试图\{0}.jpg",20);
-
-            lane = new Lane(@"..\..\高伟乐街与荷兰园大马路交界\算法\mask1.bmp");
+            lane = new Lane(@"..\..\高伟乐街与荷兰园大马路交界\算法\mask2.bmp");
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
 
             InitializeComponent();
@@ -56,7 +55,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             ThreadPool.QueueUserWorkItem(o =>
             {
-                for (int i = 0; i < 6; i++)
+                for (int i = 0; i < 1; i++)
                 {
                     bufferImages.Enqueue(captureRetriever.GetCapture());
                     System.Diagnostics.Debug.WriteLine("获得图片");
@@ -72,25 +71,25 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Contract.Requires(Dispatcher.CheckAccess() == false, "InitialView方法极为耗时，不允许在Dispatcher线程上运行。");
 
-            Image<Bgr, byte> orginialImage = bufferImages.ElementAt(3);
+            Image<Bgr, byte> orginialImage = bufferImages.ElementAt(0);
             ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
             var laneCapture1 = lane.Analyze(orginialImage, samples);
 
             bufferImages.Dequeue();
-            //bufferImages.Enqueue(captureRetriever.GetCapture());
-            //Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(3);
-            //ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
-            //var laneCapture2 = lane.Analyze(orginialImage1, samples1);
+            bufferImages.Enqueue(captureRetriever.GetCapture());
+            Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(0);
+            ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
+            var laneCapture2 = lane.Analyze(orginialImage1, samples1);
 
             Dispatcher.BeginInvoke(new Action(() =>
                 {
                     captureViewers[0].View(laneCapture1);
-                    //captureViewers[1].View(laneCapture2);
+                    captureViewers[1].View(laneCapture2);
 
                     picIdTextRun1.Text = PicId.ToString();
                     picIdTextRun2.Text = (PicId + 1).ToString();
 
-                    //LoadCompleted();
+                    LoadCompleted();
                 }));
         }
 
@@ -105,18 +104,18 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             }
 
 
-            lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
-            LabelMatch(lastMatch);
+            //lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
+            //LabelMatch(lastMatch);
 
-            var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
+            //var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
 
-            averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
-            leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
-            enterToPic2Run.Text = carMove.EnterToPic2.ToString();
+            //averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
+            //leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
+            //enterToPic2Run.Text = carMove.EnterToPic2.ToString();
 
-            laneMonitor.AddHistory(carMove);
-            volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
-            volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+            //laneMonitor.AddHistory(carMove);
+            //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+            //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
 
             ThreadPool.QueueUserWorkItem(o => PreloadImage());
         }
@@ -171,7 +170,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
-            UnlabelMatch(lastMatch);
+            //UnlabelMatch(lastMatch);
 
             var originalCursor = Mouse.OverrideCursor;
             Mouse.OverrideCursor = Cursors.Wait;
@@ -217,7 +216,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             {
                 bufferImages.Dequeue();
                 bufferImages.Enqueue(captureRetriever.GetCapture());
-                orginialImage = bufferImages.ElementAt(3);
+                orginialImage = bufferImages.ElementAt(0);
                 samples = bufferImages.ToArray();
             }
             var laneCapture = lane.Analyze(orginialImage, samples);

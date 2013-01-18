@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
+using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 using Gqqnbig.Statistics;
 using Gqqnbig.TrafficVolumeMonitor.Modules;
 
@@ -55,70 +58,178 @@ namespace Gqqnbig.TrafficVolumeMonitor
         public LaneCapture Analyze(Image<Bgr, byte> orginialImage, ICollection<Image<Bgr, byte>> samples)
         {
             var focusedImage = GetFocusArea(orginialImage);
-            return new LaneCapture(orginialImage, focusedImage, null, null, new Car[0]);
 
-            Width = focusedImage.Width;
-            Height = focusedImage.Height;
-
-            var roadColor = GetRoadColor(orginialImage);
-            var backgroundImage = GetBackground(roadColor, samples);
-            var car1 = Utility.RemoveSame(focusedImage, backgroundImage, tolerance);
+            var objectImage = Utility.FindSobelEdge(focusedImage.Convert<Gray, byte>());
 
 
-            Image<Gray, byte> gaussianImage = car1.SmoothGaussian(3);
-            Image<Gray, byte> afterThreshold = new Image<Gray, byte>(gaussianImage.Width, gaussianImage.Height);
-            CvInvoke.cvThreshold(gaussianImage, afterThreshold, 0, 255, THRESH.CV_THRESH_OTSU);
 
-            var finalImage = afterThreshold.Erode(1).Dilate(1);
-            var contours = finalImage.FindContours();
-            var inContourColor = new Gray(255);
-            while (contours != null)
+            Image<Gray, Byte> modelImage = new Image<Gray, byte>(@"B:\arrow2.bmp");
+            Image<Gray, Byte> observedImage = focusedImage.Copy(new Rectangle(20, 190, 55, 85)).Convert<Gray, byte>();
+
+            //CvInvoke.cvShowImage("observedImage", observedImage);
+
+            HomographyMatrix homography = null;
+
+            SURFDetector surfCPU = new SURFDetector(500, false);
+
+            Matrix<byte> mask;
+            const int k = 2;
+            const double uniquenessThreshold = 0.8;
+
+            //extract features from the object image
+            VectorOfKeyPoint modelKeyPoints = surfCPU.DetectKeyPointsRaw(modelImage, null);
+            Matrix<float> modelDescriptors = surfCPU.ComputeDescriptorsRaw(modelImage, null, modelKeyPoints);
+
+            // extract features from the observed image
+            VectorOfKeyPoint observedKeyPoints = surfCPU.DetectKeyPointsRaw(observedImage, null);
+            Matrix<float> observedDescriptors = surfCPU.ComputeDescriptorsRaw(observedImage, null, observedKeyPoints);
+            if (observedDescriptors != null)
             {
-                //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
-                finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
-                contours = contours.HNext;
-            }
+                BruteForceMatcher<float> matcher = new BruteForceMatcher<float>(DistanceType.L2);
+                matcher.Add(modelDescriptors);
 
-            List<Car> groups = new List<Car>();
-            CarContourAdvisor advisor = new CarContourAdvisor(focusedImage);
-            List<Contour<Point>> contourList = new List<Contour<Point>>();
-            contours = finalImage.FindContours();//第二次取连通域，这下没有洞了。
-            while (contours != null)
-            {
-                contourList.AddRange(advisor.GetContours(contours));
-                contours = contours.HNext;
-            }
-
-            foreach (var element in contourList)
-            {
-                var carGroup = new PossibleCarGroup(focusedImage, finalImage, element, maxCarWidth, maxCarLength, 12);
-                if (carGroup.CarNumber > 0)
+                Matrix<int> indices = new Matrix<int>(observedDescriptors.Rows, k);
+                using (Matrix<float> dist = new Matrix<float>(observedDescriptors.Rows, k))
                 {
-                    var cars = carGroup.GetCars();
-                    Array.ForEach(cars, c => { if (c != null)groups.Add(c); });
+                    matcher.KnnMatch(observedDescriptors, indices, dist, k, null);
+                    mask = new Matrix<byte>(dist.Rows, 1);
+                    mask.SetValue(255);
+                    Features2DToolbox.VoteForUniqueness(dist, uniquenessThreshold, mask);
                 }
+
+                //int nonZeroCount = CvInvoke.cvCountNonZero(mask);
+                //if (nonZeroCount >= 4)
+                //{
+                //    nonZeroCount = Features2DToolbox.VoteForSizeAndOrientation(modelKeyPoints, observedKeyPoints, indices, mask, 1.5, 20);
+                //    if (nonZeroCount >= 4)
+                //        homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(modelKeyPoints, observedKeyPoints, indices, mask, 2);
+                //}
+
+
+                Image<Bgr, Byte> result = Features2DToolbox.DrawMatches(modelImage, modelKeyPoints, observedImage, observedKeyPoints,
+       indices, new Bgr(255, 255, 255), new Bgr(255, 255, 255), mask, Features2DToolbox.KeypointDrawType.DEFAULT);
+
+
+
+                //#region draw the projected region on the image
+                //if (homography != null)
+                //{  //draw a rectangle along the projected model
+                //    Rectangle rect = modelImage.ROI;
+                //    PointF[] pts = new PointF[] { 
+                //   new PointF(rect.Left, rect.Bottom),
+                //   new PointF(rect.Right, rect.Bottom),
+                //   new PointF(rect.Right, rect.Top),
+                //   new PointF(rect.Left, rect.Top)};
+                //    homography.ProjectPoints(pts);
+
+                //    result.DrawPolyline(Array.ConvertAll<PointF, Point>(pts, Point.Round), true, new Bgr(Color.Red), 5);
+                //}
+                //#endregion
+
+                //Debug.WriteLine("Width={0}, Height={1}", indices.Width, indices.Height);
+
+                //for (int i = 0; i < indices.Height; i++)
+                //{
+                //    Debug.WriteLine(indices[i, 0] + "<-->" + indices[i, 1]);
+
+                //}
+
+                //Debug.WriteLine("modelKeyPoints");
+                //MKeyPoint[] arr = modelKeyPoints.ToArray();
+                //foreach (var p in arr)
+                //{
+                //    Debug.WriteLine(p.Point);
+                //}
+
+                //Debug.WriteLine("observedKeyPoints");
+                //arr = observedKeyPoints.ToArray();
+                //foreach (var p in arr)
+                //{
+                //    Debug.WriteLine(p.Point);
+                //}
+
+
+                int numberOfGoodMatches = 0;
+                for (int i = 0; i < mask.Height; i++)
+                {
+                    if (mask[i, 0] > 0)
+                        numberOfGoodMatches++;
+                }
+                Debug.WriteLine("最佳匹配数量：" + numberOfGoodMatches);
+
+
+                if (numberOfGoodMatches < 4)
+                {
+                    var c = new Car[] { Car.CreateCar(new Rectangle(20, 190, 55, 85), focusedImage, objectImage) };
+                    return new LaneCapture(orginialImage, result, null, focusedImage.Convert<Gray, byte>(), c);
+                }
+                else
+                    return new LaneCapture(orginialImage, result, null, focusedImage.Convert<Gray, byte>(), new Car[0]);
             }
+            return new LaneCapture(orginialImage, focusedImage, null, observedImage, new Car[] { Car.CreateCar(new Rectangle(20, 190, 55, 85), focusedImage, objectImage) });
+
+            //Width = focusedImage.Width;
+            //Height = focusedImage.Height;
+
+            //var roadColor = GetRoadColor(orginialImage);
+            //var backgroundImage = GetBackground(roadColor, samples);
+            //var car1 = Utility.RemoveSame(focusedImage, backgroundImage, tolerance);
+
+
+            //Image<Gray, byte> gaussianImage = car1.SmoothGaussian(3);
+            //Image<Gray, byte> afterThreshold = new Image<Gray, byte>(gaussianImage.Width, gaussianImage.Height);
+            //CvInvoke.cvThreshold(gaussianImage, afterThreshold, 0, 255, THRESH.CV_THRESH_OTSU);
+
+            //var finalImage = afterThreshold.Erode(1).Dilate(1);
+            //var contours = finalImage.FindContours();
             //var inContourColor = new Gray(255);
             //while (contours != null)
             //{
             //    //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
             //    finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
+            //    contours = contours.HNext;
+            //}
 
-            //    var carGroup = new PossibleCarGroup(focusedImage, finalImage, contours, maxCarWidth, maxCarLength, 12);
+            //List<Car> groups = new List<Car>();
+            //CarContourAdvisor advisor = new CarContourAdvisor(focusedImage);
+            //List<Contour<Point>> contourList = new List<Contour<Point>>();
+            //contours = finalImage.FindContours();//第二次取连通域，这下没有洞了。
+            //while (contours != null)
+            //{
+            //    contourList.AddRange(advisor.GetContours(contours));
+            //    contours = contours.HNext;
+            //}
+
+            //foreach (var element in contourList)
+            //{
+            //    var carGroup = new PossibleCarGroup(focusedImage, finalImage, element, maxCarWidth, maxCarLength, 12);
             //    if (carGroup.CarNumber > 0)
             //    {
             //        var cars = carGroup.GetCars();
             //        Array.ForEach(cars, c => { if (c != null)groups.Add(c); });
             //    }
-            //    //break;
-            //    contours = contours.HNext;
             //}
+            ////var inContourColor = new Gray(255);
+            ////while (contours != null)
+            ////{
+            ////    //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
+            ////    finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
 
-            car1.Dispose();
-            gaussianImage.Dispose();
-            afterThreshold.Dispose();
+            ////    var carGroup = new PossibleCarGroup(focusedImage, finalImage, contours, maxCarWidth, maxCarLength, 12);
+            ////    if (carGroup.CarNumber > 0)
+            ////    {
+            ////        var cars = carGroup.GetCars();
+            ////        Array.ForEach(cars, c => { if (c != null)groups.Add(c); });
+            ////    }
+            ////    //break;
+            ////    contours = contours.HNext;
+            ////}
 
-            return new LaneCapture(orginialImage, focusedImage, backgroundImage, finalImage, groups.ToArray());
+            //car1.Dispose();
+            //gaussianImage.Dispose();
+            //afterThreshold.Dispose();
+
+            //return new LaneCapture(orginialImage, focusedImage, backgroundImage, finalImage, groups.ToArray());
         }
 
         private Image<Bgra, byte> GetBackground(Bgr roadColor, ICollection<Image<Bgr, byte>> samples)
@@ -186,7 +297,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
         }
 
 
-        private Image<Bgr,byte> PerspectiveTransform(Image<Bgr, byte> image)
+        private Image<Bgr, byte> PerspectiveTransform(Image<Bgr, byte> image)
         {
             PointF[] srcs = new PointF[4];
             srcs[0] = new PointF(75, 149);
