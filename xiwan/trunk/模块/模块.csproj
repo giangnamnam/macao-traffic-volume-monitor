@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddSpaceModule.cs" />
+    <Compile Include="CarMatchParameter.cs" />
     <Compile Include="MakeRectangleModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkewTransformModule.cs" />

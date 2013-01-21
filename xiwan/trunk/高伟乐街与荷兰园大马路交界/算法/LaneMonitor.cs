@@ -2,12 +2,18 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using Gqqnbig.Statistics;
+using Gqqnbig.TrafficVolumeMonitor.Modules;
 
 namespace Gqqnbig.TrafficVolumeMonitor
 {
     public class LaneMonitor
     {
+        #region static
+
         static List<CarMatch> FindOneToOneBestMatch(List<CarMatch> list)
         {
             if (list.Count == 0)
@@ -64,6 +70,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         }
 
+        #endregion
+
+        readonly CarMatchParameter carMatchParameter;
+
         LinkedList<int> volumeIn60secondsData = new LinkedList<int>();
 
         /// <summary>
@@ -81,6 +91,16 @@ namespace Gqqnbig.TrafficVolumeMonitor
         {
             Lane = lane;
             TrafficDirection = trafficDirection;
+
+
+
+            //carMatchParameter = new CarMatchParameter { SimilarityThreshold = 0.26 };
+            //XmlSerializer serializer = new XmlSerializer(typeof(CarMatchParameter));
+
+            //XmlTextWriter xmlWriter = new XmlTextWriter("B:\\a.xml", Encoding.UTF8);
+            //xmlWriter.Formatting = Formatting.Indented;
+            //serializer.Serialize(xmlWriter, carMatchParameter);
+            //xmlWriter.Close();
         }
 
         public TrafficDirection TrafficDirection { get; private set; }
@@ -89,7 +109,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         public CarMatch[] FindCarMatch(Car[] cars1, Car[] cars2)
         {
+            // ReSharper disable ConvertToConstant.Local
             double similarityThreshold = 0.26;
+            bool allowSamePosition = true;
+            // ReSharper restore ConvertToConstant.Local
 
             List<CarMatch> list = new List<CarMatch>();
             if (TrafficDirection == TrafficDirection.GoUp)
@@ -98,8 +121,20 @@ namespace Gqqnbig.TrafficVolumeMonitor
                 {
                     foreach (var c1 in cars1)
                     {
-                        if (c1.CarRectangle.Top <= c2.CarRectangle.Top)
-                            break;
+                        // ReSharper disable HeuristicUnreachableCode
+                        // ReSharper disable ConditionIsAlwaysTrueOrFalse
+                        if (allowSamePosition)
+                        // ReSharper restore ConditionIsAlwaysTrueOrFalse
+                        {
+                            if (c1.CarRectangle.Top < c2.CarRectangle.Top)
+                                break;
+                        }
+                        else
+                        {
+                            if (c1.CarRectangle.Top == c2.CarRectangle.Top)
+                                break;
+                        }
+                        // ReSharper restore HeuristicUnreachableCode
 
                         //假设车不改变车道。
                         if (Math.Abs(c1.CarRectangle.Left - c2.CarRectangle.Left) > 5)

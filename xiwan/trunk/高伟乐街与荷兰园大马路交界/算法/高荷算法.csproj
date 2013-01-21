@@ -88,6 +88,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="mask1.bmp" />
+    <Content Include="高荷CarMatchParameter.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

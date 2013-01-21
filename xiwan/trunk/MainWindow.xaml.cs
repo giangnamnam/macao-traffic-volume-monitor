@@ -32,7 +32,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Title = GetType().Assembly.Location;
             //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg", 5000) { SavePath = @"B:\test\{0}.jpg" };
-            captureRetriever = new DiskCaptureRetriever(@"..\..\高伟乐街与荷兰园大马路交界\测试\2\{0}.jpg",0);
+            captureRetriever = new DiskCaptureRetriever(@"..\..\高伟乐街与荷兰园大马路交界\测试\测试图\{0}.jpg", 0);
 
             lane = new Lane(@"..\..\高伟乐街与荷兰园大马路交界\算法\mask1.bmp");
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
@@ -104,18 +104,18 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             }
 
 
-            //lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
-            //LabelMatch(lastMatch);
+            lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
+            LabelMatch(lastMatch);
 
-            //var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
+            var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
 
-            //averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
-            //leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
-            //enterToPic2Run.Text = carMove.EnterToPic2.ToString();
+            averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
+            leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
+            enterToPic2Run.Text = carMove.EnterToPic2.ToString();
 
-            //laneMonitor.AddHistory(carMove);
-            //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
-            //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+            laneMonitor.AddHistory(carMove);
+            volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+            volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
 
             ThreadPool.QueueUserWorkItem(o => PreloadImage());
         }
