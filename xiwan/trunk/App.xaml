@@ -4,5 +4,6 @@
              xmlns:Self="clr-namespace:Gqqnbig.TrafficVolumeMonitor.UI" StartupUri="MainWindow.xaml">
     <Application.Resources>
         <Self:DenseHistogramConverter x:Key="histogramConverter"/>
+        <Self:BitmapConverter x:Key="bitmapConverter"/>
     </Application.Resources>
 </Application>

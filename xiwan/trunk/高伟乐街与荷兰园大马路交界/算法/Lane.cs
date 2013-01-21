@@ -10,6 +10,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using Gqqnbig.Mathematics.Geometry;
 using Gqqnbig.Statistics;
 using Gqqnbig.TrafficVolumeMonitor.Modules;
 
@@ -57,179 +58,54 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         public LaneCapture Analyze(Image<Bgr, byte> orginialImage, ICollection<Image<Bgr, byte>> samples)
         {
+            List<Image<Bgr, byte>> progressImages = new List<Image<Bgr, byte>>();
+
             var focusedImage = GetFocusArea(orginialImage);
+            progressImages.Add(focusedImage);
 
             var objectImage = Utility.FindSobelEdge(focusedImage.Convert<Gray, byte>());
 
-
-
-            Image<Gray, Byte> modelImage = new Image<Gray, byte>(@"..\..\高伟乐街与荷兰园大马路交界\算法\arrow.bmp");
+            //Image<Gray, Byte> modelImage = new Image<Gray, byte>(@"..\..\高伟乐街与荷兰园大马路交界\算法\arrow.bmp");
             Image<Gray, Byte> observedImage = focusedImage.Copy(new Rectangle(20, 190, 55, 85)).Convert<Gray, byte>();
 
-            //CvInvoke.cvShowImage("observedImage", observedImage);
+            Image<Gray, byte> threshImage = new Image<Gray, byte>(observedImage.Width, observedImage.Height);
 
-            HomographyMatrix homography = null;
+            CvInvoke.cvThreshold(observedImage, threshImage, 0, 255, THRESH.CV_THRESH_OTSU);
+            //progressImages.Add(threshImage.Convert<Bgr, byte>());
+            progressImages.Add(threshImage.Canny(new Gray(50), new Gray(100)).Convert<Bgr, byte>());
 
-            SURFDetector surfCPU = new SURFDetector(500, false);
 
-            Matrix<byte> mask;
-            const int k = 2;
-            const double uniquenessThreshold = 0.8;
+            LineSegment2D[] lines = threshImage.HoughLines(new Gray(50), new Gray(100), 1, System.Math.PI / 180,
+                threshold: 12, minLineWidth: 10, gapBetweenLines: 10)[0];
 
-            //extract features from the object image
-            VectorOfKeyPoint modelKeyPoints = surfCPU.DetectKeyPointsRaw(modelImage, null);
-            Matrix<float> modelDescriptors = surfCPU.ComputeDescriptorsRaw(modelImage, null, modelKeyPoints);
+            //image1 = grayImage.Convert<Bgr, byte>();
 
-            // extract features from the observed image
-            VectorOfKeyPoint observedKeyPoints = surfCPU.DetectKeyPointsRaw(observedImage, null);
-            Matrix<float> observedDescriptors = surfCPU.ComputeDescriptorsRaw(observedImage, null, observedKeyPoints);
-            if (observedDescriptors != null)
+
+            Image<Bgr, byte> tmpImage = observedImage.Convert<Bgr, byte>().Copy();
+            for (int i = 0; i < lines.Length; i++)
             {
-                BruteForceMatcher<float> matcher = new BruteForceMatcher<float>(DistanceType.L2);
-                matcher.Add(modelDescriptors);
-
-                Matrix<int> indices = new Matrix<int>(observedDescriptors.Rows, k);
-                using (Matrix<float> dist = new Matrix<float>(observedDescriptors.Rows, k))
-                {
-                    matcher.KnnMatch(observedDescriptors, indices, dist, k, null);
-                    mask = new Matrix<byte>(dist.Rows, 1);
-                    mask.SetValue(255);
-                    Features2DToolbox.VoteForUniqueness(dist, uniquenessThreshold, mask);
-                }
-
-                //int nonZeroCount = CvInvoke.cvCountNonZero(mask);
-                //if (nonZeroCount >= 4)
-                //{
-                //    nonZeroCount = Features2DToolbox.VoteForSizeAndOrientation(modelKeyPoints, observedKeyPoints, indices, mask, 1.5, 20);
-                //    if (nonZeroCount >= 4)
-                //        homography = Features2DToolbox.GetHomographyMatrixFromMatchedFeatures(modelKeyPoints, observedKeyPoints, indices, mask, 2);
-                //}
-
-
-                Image<Bgr, Byte> result = Features2DToolbox.DrawMatches(modelImage, modelKeyPoints, observedImage, observedKeyPoints,
-       indices, new Bgr(255, 255, 255), new Bgr(255, 255, 255), mask, Features2DToolbox.KeypointDrawType.DEFAULT);
-
-
-
-                //#region draw the projected region on the image
-                //if (homography != null)
-                //{  //draw a rectangle along the projected model
-                //    Rectangle rect = modelImage.ROI;
-                //    PointF[] pts = new PointF[] { 
-                //   new PointF(rect.Left, rect.Bottom),
-                //   new PointF(rect.Right, rect.Bottom),
-                //   new PointF(rect.Right, rect.Top),
-                //   new PointF(rect.Left, rect.Top)};
-                //    homography.ProjectPoints(pts);
-
-                //    result.DrawPolyline(Array.ConvertAll<PointF, Point>(pts, Point.Round), true, new Bgr(Color.Red), 5);
-                //}
-                //#endregion
-
-                //Debug.WriteLine("Width={0}, Height={1}", indices.Width, indices.Height);
-
-                //for (int i = 0; i < indices.Height; i++)
-                //{
-                //    Debug.WriteLine(indices[i, 0] + "<-->" + indices[i, 1]);
-
-                //}
-
-                //Debug.WriteLine("modelKeyPoints");
-                //MKeyPoint[] arr = modelKeyPoints.ToArray();
-                //foreach (var p in arr)
-                //{
-                //    Debug.WriteLine(p.Point);
-                //}
-
-                //Debug.WriteLine("observedKeyPoints");
-                //arr = observedKeyPoints.ToArray();
-                //foreach (var p in arr)
-                //{
-                //    Debug.WriteLine(p.Point);
-                //}
-
-
-                int numberOfGoodMatches = 0;
-                for (int i = 0; i < mask.Height; i++)
-                {
-                    if (mask[i, 0] > 0)
-                        numberOfGoodMatches++;
-                }
-                Debug.WriteLine("最佳匹配数量：" + numberOfGoodMatches);
-
-
-                if (numberOfGoodMatches < 4)
-                {
-                    var c = new Car[] { Car.CreateCar(new Rectangle(20, 190, 55, 85), focusedImage, objectImage) };
-                    return new LaneCapture(orginialImage, result, null, focusedImage.Convert<Gray, byte>(), c);
-                }
-                else
-                    return new LaneCapture(orginialImage, result, null, focusedImage.Convert<Gray, byte>(), new Car[0]);
+                LineSegment2D m = lines[i];
+                tmpImage.Draw(m, new Bgr(0, 255, 0), 1);
             }
-            return new LaneCapture(orginialImage, focusedImage, null, observedImage, new Car[] { Car.CreateCar(new Rectangle(20, 190, 55, 85), focusedImage, objectImage) });
-
-            //Width = focusedImage.Width;
-            //Height = focusedImage.Height;
-
-            //var roadColor = GetRoadColor(orginialImage);
-            //var backgroundImage = GetBackground(roadColor, samples);
-            //var car1 = Utility.RemoveSame(focusedImage, backgroundImage, tolerance);
+            progressImages.Add(tmpImage.Copy());
 
 
-            //Image<Gray, byte> gaussianImage = car1.SmoothGaussian(3);
-            //Image<Gray, byte> afterThreshold = new Image<Gray, byte>(gaussianImage.Width, gaussianImage.Height);
-            //CvInvoke.cvThreshold(gaussianImage, afterThreshold, 0, 255, THRESH.CV_THRESH_OTSU);
 
-            //var finalImage = afterThreshold.Erode(1).Dilate(1);
-            //var contours = finalImage.FindContours();
-            //var inContourColor = new Gray(255);
-            //while (contours != null)
-            //{
-            //    //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
-            //    finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
-            //    contours = contours.HNext;
-            //}
 
-            //List<Car> groups = new List<Car>();
-            //CarContourAdvisor advisor = new CarContourAdvisor(focusedImage);
-            //List<Contour<Point>> contourList = new List<Contour<Point>>();
-            //contours = finalImage.FindContours();//第二次取连通域，这下没有洞了。
-            //while (contours != null)
-            //{
-            //    contourList.AddRange(advisor.GetContours(contours));
-            //    contours = contours.HNext;
-            //}
+            //CvInvoke.cvShowImage("tmpImage", tmpImage);
 
-            //foreach (var element in contourList)
-            //{
-            //    var carGroup = new PossibleCarGroup(focusedImage, finalImage, element, maxCarWidth, maxCarLength, 12);
-            //    if (carGroup.CarNumber > 0)
-            //    {
-            //        var cars = carGroup.GetCars();
-            //        Array.ForEach(cars, c => { if (c != null)groups.Add(c); });
-            //    }
-            //}
-            ////var inContourColor = new Gray(255);
-            ////while (contours != null)
-            ////{
-            ////    //填充连通域。有时候背景图和前景图可能颜色相似，导致车的轮廓里面有洞。
-            ////    finalImage.Draw(contours, inContourColor, inContourColor, 0, -1);
+            if (new TolerantValue { Value = 7, Tolerance = 3.1 }.IsInRangle(lines.Length) &&
+                IsArrow(lines, new TolerantValue { Value = -64, Tolerance = 14 },
+                                new TolerantValue { Value = 69, Tolerance = 14 },
+                                new TolerantValue { Value = 86, Tolerance = 5 }))
+            {
+                Debug.WriteLine("有箭头");
+                return new LaneCapture(progressImages.ToArray(), new Car[0]);
+            }
+            else
+                return new LaneCapture(progressImages.ToArray(), new[] { Car.CreateCar(new Rectangle(20, 190, 55, 85), focusedImage, objectImage) });
 
-            ////    var carGroup = new PossibleCarGroup(focusedImage, finalImage, contours, maxCarWidth, maxCarLength, 12);
-            ////    if (carGroup.CarNumber > 0)
-            ////    {
-            ////        var cars = carGroup.GetCars();
-            ////        Array.ForEach(cars, c => { if (c != null)groups.Add(c); });
-            ////    }
-            ////    //break;
-            ////    contours = contours.HNext;
-            ////}
 
-            //car1.Dispose();
-            //gaussianImage.Dispose();
-            //afterThreshold.Dispose();
-
-            //return new LaneCapture(orginialImage, focusedImage, backgroundImage, finalImage, groups.ToArray());
         }
 
         private Image<Bgra, byte> GetBackground(Bgr roadColor, ICollection<Image<Bgr, byte>> samples)
@@ -508,6 +384,101 @@ namespace Gqqnbig.TrafficVolumeMonitor
         //    }
         //    return samples;
         //}
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="lines"></param>
+        /// <param name="headAngle">箭头头部两条线的夹角</param>
+        /// <param name="rightHeadLineAngle"> </param>
+        /// <param name="verticalLineAngle"> </param>
+        /// <param name="leftHeadLineAngle"> </param>
+        /// <returns></returns>
+        static bool IsArrow(LineSegment2D[] lines, TolerantValue leftHeadLineAngle, TolerantValue rightHeadLineAngle, TolerantValue verticalLineAngle)
+        {
+            int drawWidth = lines.Max(l => System.Math.Max(l.P1.X, l.P2.X)) + 10;
+            int drawHeight = lines.Max(l => System.Math.Max(l.P1.Y, l.P2.Y)) + 10;
+
+            Line leftHeadLine = null;
+            Line rightHeadLine = null;
+
+            List<LineSegment2D> lineList = new List<LineSegment2D>(lines);
+            for (int i = 0; i < lineList.Count; i++)
+            {
+                double angleInRadian = System.Math.Atan(lineList[i].Direction.Y / lineList[i].Direction.X);
+                double angleInDegree = 180 * angleInRadian / System.Math.PI;
+                Debug.WriteLine(angleInDegree);
+                if (leftHeadLine == null && leftHeadLineAngle.IsInRangle(angleInDegree))
+                {
+                    leftHeadLine = Line.FromTwoPoint(new PointD(lineList[i].P1), new PointD(lineList[i].P2));
+                    lineList.RemoveAt(i--);
+                }
+                else if (rightHeadLine == null && rightHeadLineAngle.IsInRangle(angleInDegree))
+                {
+                    rightHeadLine = Line.FromTwoPoint(new PointD(lineList[i].P1), new PointD(lineList[i].P2));
+                    lineList.RemoveAt(i--);
+                }
+            }
+
+            if (leftHeadLine == null || rightHeadLine == null)
+                return false;
+
+            PointD headIntersection = LineCalculation.GetIntersection(leftHeadLine, rightHeadLine);
+
+            Image<Bgr, byte> tmpImage = new Image<Bgr, byte>(drawWidth, drawHeight);
+            tmpImage.Draw(new LineSegment2DF(leftHeadLine.EndPoint1.ConvertToFloat(), leftHeadLine.EndPoint2.ConvertToFloat()), new Bgr(0, 255, 0), 1);
+            tmpImage.Draw(new LineSegment2DF(rightHeadLine.EndPoint1.ConvertToFloat(), rightHeadLine.EndPoint2.ConvertToFloat()), new Bgr(0, 255, 0), 1);
+            tmpImage.Draw(new Ellipse(headIntersection.ConvertToFloat(), new SizeF(1, 1), 0), new Bgr(0, 0, 255), 2);
+
+
+            List<Line> bodyLines = new List<Line>();
+
+            for (int i = 0; i < lineList.Count; i++)
+            {
+                Line testingLine = Line.FromTwoPoint(new PointD(lineList[i].P1), new PointD(lineList[i].P2));
+                if (verticalLineAngle.IsInRangle(testingLine.Angle))
+                {
+                    double d = LineCalculation.GetDistanceBetweenPointAndLine(headIntersection, testingLine);
+
+                    if (d < 8)
+                    {
+                        bodyLines.Add(testingLine);
+                        lineList.RemoveAt(i--);
+                    }
+                }
+            }
+
+            //已经限制了线的方向（verticalLineAngle）和位置（headIntersection），
+            //找到的线多一点也没关系
+
+            if (bodyLines.Count == 0)
+                return false;
+
+            foreach (var line in bodyLines)
+            {
+                tmpImage.Draw(new LineSegment2DF(line.EndPoint1.ConvertToFloat(), line.EndPoint2.ConvertToFloat()), new Bgr(0, 255, 0), 1);
+            }
+
+
+
+            for (int i = 0; i < lineList.Count; i++)
+            {
+                Line testingLine = Line.FromTwoPoint(new PointD(lineList[i].P1), new PointD(lineList[i].P2));
+
+                double angle = System.Math.Abs(testingLine.Angle - bodyLines[0].Angle);
+
+                if (angle > 80 && angle < 100)
+                {
+                    //tmpImage.Draw(new LineSegment2DF(testingLine.EndPoint1.ConvertToFloat(), testingLine.EndPoint2.ConvertToFloat()), new Bgr(0, 255, 0), 1);
+                    //CvInvoke.cvShowImage("IsArrow", tmpImage);
+                    return true;
+                }
+
+            }
+
+
+            return false;
+        }
 
     }
 

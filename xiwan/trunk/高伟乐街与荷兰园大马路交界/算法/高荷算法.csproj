@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Gqqnbig.TrafficVolumeMonitor</RootNamespace>
     <AssemblyName>gaohe</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseIntermediateOutputPath>$(TEMP)\$(MSBuildProjectName)\obj</BaseIntermediateOutputPath>
   </PropertyGroup>
@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Emgu.CV">
@@ -55,6 +57,7 @@
     <Compile Include="Car.cs" />
     <Compile Include="CarContourAdvisor.cs" />
     <Compile Include="CarMatch.cs" />
+    <Compile Include="TolerantValue.cs" />
     <Compile Include="DiskCaptureRetriever.cs" />
     <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Drawing\ColorConversion.cs">
       <Link>ColorConversion.cs</Link>
@@ -78,9 +81,12 @@
       <Project>{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}</Project>
       <Name>模块</Name>
     </ProjectReference>
+    <ProjectReference Include="D:\MySourceCode\C#\类库\GMath\GMath.csproj">
+      <Project>{7032c768-0015-4434-8f55-d45ef245fcf4}</Project>
+      <Name>GMath</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="arrow.bmp" />
     <Content Include="mask1.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

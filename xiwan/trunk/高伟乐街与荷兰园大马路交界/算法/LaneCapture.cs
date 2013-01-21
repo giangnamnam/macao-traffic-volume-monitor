@@ -1,5 +1,9 @@
-﻿using Emgu.CV;
+﻿using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Media.Imaging;
+using Emgu.CV;
 using Emgu.CV.Structure;
+using System.Linq;
 
 namespace Gqqnbig.TrafficVolumeMonitor
 {
@@ -17,6 +21,12 @@ namespace Gqqnbig.TrafficVolumeMonitor
             OriginalImage = originalImage;
         }
 
+        public LaneCapture(IEnumerable<Image<Bgr, byte>> progrssImages, Car[] cars)
+        {
+            ProgrssImages = progrssImages.Select(i=>i.ToBitmap()).ToArray();
+            Cars = cars;
+        }
+
         public Image<Bgr, byte> OriginalImage { get; private set; }
 
         public Image<Bgr, byte> FocusedImage { get; private set; }
@@ -26,6 +36,9 @@ namespace Gqqnbig.TrafficVolumeMonitor
         public Image<Gray, byte> ObjectImage { get; private set; }
 
         public Car[] Cars { get; private set; }
+
+        public Bitmap[] ProgrssImages { get; private set; }
+
 
     }
 }

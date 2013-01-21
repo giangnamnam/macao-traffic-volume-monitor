@@ -3,8 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             mc:Ignorable="d" >
     <UserControl.Resources>
         <DataTemplate x:Key="checkBoxTemplate">
             <CheckBox Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
@@ -79,24 +78,45 @@
             </ItemsControl>
         </DataTemplate>
     </UserControl.Resources>
-    <DockPanel>
-        <Image Name="objectImageBox" DockPanel.Dock="Left" VerticalAlignment="Center" Stretch="None"/>
-        <StackPanel DockPanel.Dock="Left" VerticalAlignment="Center" Margin="5">
-            <Image Name="imageBox" Grid.Column="0" Stretch="None" >
-                <Image.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="保存图片..." Click="saveMenuItem_Click" />
-                    </ContextMenu>
-                </Image.ContextMenu>
-            </Image>
-            <TextBlock Grid.Column="2">
-                <TextBlock.Inlines>
-                    <Run>汽车总数量：</Run>
-                    <Run Name="totalCarNumberTextRun"/>
-                </TextBlock.Inlines>
-            </TextBlock>
-        </StackPanel>
-        <ListView Name="listView" ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        <ItemsControl Name="progressImagesControl" Grid.Row="0" Grid.Column="0">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Image Stretch="None" Source="{Binding Converter={StaticResource bitmapConverter}}">
+                        <Image.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="保存图片..." Click="saveMenuItem_Click" />
+                            </ContextMenu>
+                        </Image.ContextMenu>
+                    </Image>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+
+        <TextBlock Grid.Row="1" Grid.Column="0">
+            <TextBlock.Inlines>
+                <Run>汽车总数量：</Run>
+                <Run Name="totalCarNumberTextRun"/>
+            </TextBlock.Inlines>
+        </TextBlock>
+        
+        <ListView Name="listView" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto" 
                   SnapsToDevicePixels="True" SelectionChanged="listView_SelectionChanged">
             <ListView.View>
                 <GridView>
@@ -109,5 +129,5 @@
                 </GridView>
             </ListView.View>
         </ListView>
-    </DockPanel>
+    </Grid>
 </UserControl>

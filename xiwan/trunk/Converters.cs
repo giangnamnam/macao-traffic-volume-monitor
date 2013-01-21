@@ -1,7 +1,9 @@
 using System;
+using System.Drawing;
 using System.Globalization;
 using System.Windows.Data;
 using System.Linq;
+using System.Windows.Media.Imaging;
 using Emgu.CV;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
@@ -26,7 +28,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            DenseHistogram hist = (DenseHistogram) value;
+            DenseHistogram hist = (DenseHistogram)value;
             double maxHeight = System.Convert.ToDouble(parameter);
 
             float[] arr = new float[hist.BinDimension[0].Size];
@@ -63,5 +65,23 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             throw new NotImplementedException();
         }
+    }
+
+    [ValueConversion(typeof(Bitmap), typeof(BitmapImage))]
+    public class BitmapConverter : IValueConverter
+    {
+        #region Implementation of IValueConverter
+
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((Bitmap)value).ToBitmapImage();
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }
