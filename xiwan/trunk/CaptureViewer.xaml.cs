@@ -76,14 +76,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         /// <returns></returns>
         internal void BoxCar(Car car, object tag, Brush brush, double thickness = 2)
         {
-            //var adornerLayer = AdornerLayer.GetAdornerLayer(imageBox);
+            UIElement targetElement = (UIElement)progressImagesControl.ItemContainerGenerator.ContainerFromIndex(0);
+            var adornerLayer = AdornerLayer.GetAdornerLayer(targetElement);
 
-            ////加上Adorner
-            //OutBoxAdorner outBoxAdorner = new OutBoxAdorner(imageBox);
-            //outBoxAdorner.Tag = tag;
-            //outBoxAdorner.Pen = new Pen(brush, thickness);
-            //outBoxAdorner.Rectangle = car.CarRectangle;
-            //adornerLayer.Add(outBoxAdorner);
+            //加上Adorner
+            OutBoxAdorner outBoxAdorner = new OutBoxAdorner(targetElement);
+            outBoxAdorner.Tag = tag;
+            outBoxAdorner.Pen = new Pen(brush, thickness);
+            outBoxAdorner.Rectangle = car.CarRectangle;
+            adornerLayer.Add(outBoxAdorner);
         }
 
         /// <summary>
@@ -93,22 +94,24 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         /// <param name="car"></param>
         internal void UnboxCar(object tag, Car car = null)
         {
-            //var adornerLayer = AdornerLayer.GetAdornerLayer(imageBox);
-            //var adorners = adornerLayer.GetAdorners(imageBox);
-            //if (adorners != null)
-            //{
-            //    for (int i = 0; i < adorners.Length; i++)
-            //    {
-            //        OutBoxAdorner oba = adorners[i] as OutBoxAdorner;
-            //        if (car == null)
-            //            adornerLayer.Remove(adorners[i]);
-            //        else if (oba != null && oba.Rectangle.Equals(car.CarRectangle) && oba.Tag == tag)
-            //        {
-            //            adornerLayer.Remove(adorners[i]);
-            //            break;
-            //        }
-            //    }
-            //}
+            UIElement targetElement = (UIElement)progressImagesControl.ItemContainerGenerator.ContainerFromIndex(0);
+
+            var adornerLayer = AdornerLayer.GetAdornerLayer(targetElement);
+            var adorners = adornerLayer.GetAdorners(targetElement);
+            if (adorners != null)
+            {
+                for (int i = 0; i < adorners.Length; i++)
+                {
+                    OutBoxAdorner oba = adorners[i] as OutBoxAdorner;
+                    if (car == null)
+                        adornerLayer.Remove(adorners[i]);
+                    else if (oba != null && oba.Rectangle.Equals(car.CarRectangle) && oba.Tag == tag)
+                    {
+                        adornerLayer.Remove(adorners[i]);
+                        break;
+                    }
+                }
+            }
         }
 
         private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
