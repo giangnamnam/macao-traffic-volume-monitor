@@ -32,8 +32,15 @@ namespace Gqqnbig.TrafficVolumeMonitor
         readonly int maxCarWidth = 17;
         readonly int maxCarLength = 15;
 
+        /// <summary>
+        /// 获取本车道在图片中的宽度
+        /// </summary>
         public int Width { get; private set; }
 
+
+        /// <summary>
+        /// 获取本车道在图片中的长度
+        /// </summary>
         public int Height { get; private set; }
 
         public Lane(string maskFilePath)
@@ -61,6 +68,8 @@ namespace Gqqnbig.TrafficVolumeMonitor
             List<Image<Bgr, byte>> progressImages = new List<Image<Bgr, byte>>();
 
             var focusedImage = GetFocusArea(orginialImage);
+            Width = focusedImage.Width;
+            Height = focusedImage.Height;
             progressImages.Add(focusedImage);
 
             var objectImage = Utility.FindSobelEdge(focusedImage.Convert<Gray, byte>());
