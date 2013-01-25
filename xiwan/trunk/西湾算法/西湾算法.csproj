@@ -70,7 +70,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="mask-Lane1 original.gif" />
-    <Content Include="mask-Lane1.gif" />
     <Content Include="西湾CarMatchParameter.xml" />
   </ItemGroup>
   <ItemGroup>
