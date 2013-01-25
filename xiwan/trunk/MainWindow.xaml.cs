@@ -3,14 +3,19 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
+using System.Xml;
+using System.Xml.Serialization;
 using Emgu.CV;
 using Emgu.CV.Structure;
+using Gqqnbig.TrafficVolumeMonitor.Modules;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
@@ -19,49 +24,31 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        readonly Queue<Image<Bgr, byte>> bufferImages = new Queue<Image<Bgr, byte>>(6);
-        readonly ICaptureRetriever captureRetriever;
+        Queue<Image<Bgr, byte>> bufferImages = new Queue<Image<Bgr, byte>>(6);
+        ICaptureRetriever captureRetriever;
 
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
 
-        readonly Lane lane;
-        readonly LaneMonitor laneMonitor;
+        ILane lane;
+        LaneMonitor laneMonitor;
         private CarMatch[] lastMatch;
+        private LocationParameter locationParameter;
 
         public MainWindow()
         {
             Title = GetType().Assembly.Location;
-            //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg", 5000) { SavePath = @"B:\test\{0}.jpg" };
-            captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg", 0);
 
-            lane = new Lane(@"..\..\西湾算法\mask-Lane1 original.gif");
-            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, @"..\..\西湾算法\西湾CarMatchParameter.xml");
+
 
             InitializeComponent();
-
-
-
-            captureViewers.Add(new CaptureViewer { Lane = lane });
-            captureViewers.Add(new CaptureViewer { Lane = lane });
-            captureViewers.Add(new CaptureViewer { Lane = lane });
-            captureViewerList.ItemsSource = captureViewers;
-
-
         }
 
         public int PicId { get; set; }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            ThreadPool.QueueUserWorkItem(o =>
-            {
-                for (int i = 0; i < 6; i++)
-                {
-                    bufferImages.Enqueue(captureRetriever.GetCapture());
-                    System.Diagnostics.Debug.WriteLine("获得图片");
-                }
-                InitialView();
-            });
+
+            locationsMenuItem.ItemsSource = Directory.GetFiles(".\\", "*.lol");
         }
 
         /// <summary>
@@ -71,13 +58,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Contract.Requires(Dispatcher.CheckAccess() == false, "InitialView方法极为耗时，不允许在Dispatcher线程上运行。");
 
-            Image<Bgr, byte> orginialImage = bufferImages.ElementAt(3);
+            int index = locationParameter.BufferImagesCount / 2;
+
+            Image<Bgr, byte> orginialImage = bufferImages.ElementAt(index);
             ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
             var laneCapture1 = lane.Analyze(orginialImage, samples);
 
             bufferImages.Dequeue();
             bufferImages.Enqueue(captureRetriever.GetCapture());
-            Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(3);
+            Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(index);
             ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
             var laneCapture2 = lane.Analyze(orginialImage1, samples1);
 
@@ -225,7 +214,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                                                   {
                                                       captureViewers[2].View(laneCapture);
                                                       System.Diagnostics.Debug.WriteLine("预加载" + (PicId + 2) + "完成");
-                                                  }), System.Windows.Threading.DispatcherPriority.Background);
+                                                  }), DispatcherPriority.Background);
         }
 
         private void captureViewerList_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -234,6 +223,72 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             {
                 viewer.Height = captureViewerList.RenderSize.Height / 2;
             }
+        }
+
+        private void LocationRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton button = (RadioButton)sender;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(LocationParameter));
+
+            //locationParameter = new LocationParameter();
+            //locationParameter.AlgorithmName = "near-single";
+            //locationParameter.BufferImagesCount = 1;
+            //locationParameter.CarMatchParameter = new CarMatchParameter();
+            //locationParameter.CarMatchParameter.AllowSamePosition = true;
+            //locationParameter.CarMatchParameter.SimilarityThreshold = 0.26;
+            //locationParameter.MaskFilePath = @"..\..\高伟乐街与荷兰园大马路交界\算法\mask1.bmp";
+            //locationParameter.SourcePath = @"..\..\高伟乐街与荷兰园大马路交界\测试\测试图\{0}.jpg";
+
+            //XmlTextWriter xmlWriter = new XmlTextWriter("B:\\gaohe.xml", System.Text.Encoding.UTF8);
+            //xmlWriter.Formatting = Formatting.Indented;
+            //serializer.Serialize(xmlWriter, locationParameter);
+            //xmlWriter.Close();
+            XmlTextReader xmlReader = new XmlTextReader((string)button.Content);
+            locationParameter = (LocationParameter)serializer.Deserialize(xmlReader);
+            xmlReader.Close();
+
+            //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg", 5000) { SavePath = @"B:\test\{0}.jpg" };
+            captureRetriever = new DiskCaptureRetriever(locationParameter.SourcePath, 0);
+
+            var ass = Assembly.LoadFrom("Algorithms\\" + locationParameter.AlgorithmName + ".dll");
+            Type[] exportedTypes = ass.GetExportedTypes();
+            foreach (var t in exportedTypes)
+            {
+                if (typeof(ILane).IsAssignableFrom(t))
+                {
+                    lane = (ILane)Activator.CreateInstance(t, locationParameter.MaskFilePath);
+                    break;
+                }
+            }
+
+            if (lane == null)
+                throw new FileNotFoundException("找不到Algorithms\\" + locationParameter.AlgorithmName + ".dll");
+
+
+            //lane = new Lane(locationParameter.MaskFilePath);
+            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter);
+
+            ThreadPool.QueueUserWorkItem(o =>
+            {
+                bufferImages = new Queue<Image<Bgr, byte>>(locationParameter.BufferImagesCount);
+                for (int i = 0; i < locationParameter.BufferImagesCount; i++)
+                {
+                    bufferImages.Enqueue(captureRetriever.GetCapture());
+                    System.Diagnostics.Debug.WriteLine("获得图片");
+                }
+                InitialView();
+            });
+
+
+            captureViewers.Clear();
+            captureViewers.Add(new CaptureViewer { Lane = lane });
+            captureViewers.Add(new CaptureViewer { Lane = lane });
+            captureViewers.Add(new CaptureViewer { Lane = lane });
+            captureViewerList.ItemsSource = captureViewers;
+
+            //Width++;
+            //Width--;
         }
     }
 }
