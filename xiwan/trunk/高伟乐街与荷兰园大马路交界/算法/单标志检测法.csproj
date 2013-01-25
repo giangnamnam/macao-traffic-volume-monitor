@@ -70,6 +70,7 @@
     <ProjectReference Include="D:\MySourceCode\C#\类库\GMath\GMath.csproj">
       <Project>{7032c768-0015-4434-8f55-d45ef245fcf4}</Project>
       <Name>GMath</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
