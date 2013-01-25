@@ -72,17 +72,6 @@ namespace Gqqnbig.TrafficVolumeMonitor
             return array;
         }
 
-        public static bool IsSimilarTo(this Bgr color, Bgr anotherColor, double tolerance)
-        {
-            if (Math.Abs(color.Red - anotherColor.Red) > tolerance)
-                return false;
-            if (Math.Abs(color.Green - anotherColor.Green) > tolerance)
-                return false;
-            if (Math.Abs(color.Blue - anotherColor.Blue) > tolerance)
-                return false;
-            return true;
-        }
-
         public static bool IsSimilarTo(this Bgr color, Bgra anotherColor, double tolerance)
         {
             if (Math.Abs(color.Red - anotherColor.Red) > tolerance)
@@ -93,62 +82,6 @@ namespace Gqqnbig.TrafficVolumeMonitor
                 return false;
             return true;
         }
-
-        public static BitmapImage ToBitmapImage(this System.Drawing.Bitmap bitmap)
-        {
-            using (MemoryStream memory = new MemoryStream())
-            {
-                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Jpeg);
-                memory.Position = 0;
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = memory;
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                bitmapImage.EndInit();
-                return bitmapImage;
-            }
-        }
-
-        public static Image<Bgra, byte> OverlayImages(params Image<Bgra, byte>[] images)
-        {
-            int width = images[0].Width;
-            int height = images[0].Height;
-            Image<Bgra, byte> result = new Image<Bgra, byte>(width, height);
-
-            for (int row = 0; row < height; row++)
-            {
-                for (int column = 0; column < width; column++)
-                {
-                    Bgra[] cps = new Bgra[images.Length];
-                    for (int i = 1; i < images.Length; i++)
-                    {
-                        cps[i] = images[i][row, column];
-                    }
-
-                    var nonTransparentColors = cps.Where(c => c.Alpha > double.Epsilon).ToArray();//获取不透明的颜色点。
-                    if (nonTransparentColors.Length > 0)
-                        result[row, column] = new Bgra(nonTransparentColors.Average(bgr => bgr.Blue),
-                                                     nonTransparentColors.Average(bgr => bgr.Green),
-                                                     nonTransparentColors.Average(bgr => bgr.Red), 255);
-
-
-                    //if (Math.Abs(result[row, column].Alpha - 255) < double.Epsilon)
-                    //    continue;
-
-                    //var c1 = images[i - 1][row, column];
-                    //var c2 = images[i][row, column];
-
-                    //if (Math.Abs(c1.Alpha - 255) < double.Epsilon && Math.Abs(c2.Alpha - 255) < double.Epsilon)
-                    //    result[row, column] = new Bgra((c1.Blue + c2.Blue) / 2, (c1.Green + c2.Green) / 2, (c1.Red + c2.Red) / 2, 255);
-                    //else if (c1.Alpha <= double.Epsilon)//c1透明
-                    //    result[row, column] = c2;
-                    //else
-                    //    result[row, column] = c1;
-                }
-            }
-            return result;
-        }
-
 
         public static Image<Gray, byte> RemoveSame(Image<Bgr, byte> image1, Image<Bgra, byte> image2, int tolerance)
         {
