@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Gqqnbig.TrafficVolumeMonitor</RootNamespace>
-    <AssemblyName>xiwan</AssemblyName>
+    <AssemblyName>far-moving</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <BaseIntermediateOutputPath>$(TEMP)\$(MSBuildProjectName)\obj</BaseIntermediateOutputPath>
@@ -18,8 +18,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>..\bin\Debug\Algorithms\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
@@ -35,9 +35,11 @@
   <ItemGroup>
     <Reference Include="Emgu.CV">
       <HintPath>..\dependencies\Emgu.CV.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Emgu.Util">
       <HintPath>..\dependencies\Emgu.Util.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
@@ -64,6 +66,7 @@
     <ProjectReference Include="..\模块\模块.csproj">
       <Project>{2977e2b0-0d52-4180-a3bd-15e006d5d7a7}</Project>
       <Name>模块</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

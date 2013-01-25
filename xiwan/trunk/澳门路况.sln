@@ -5,13 +5,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "监视器", "监视器.cspr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "西湾测试", "西湾测试\西湾测试.csproj", "{BE53027A-8FA7-469C-BB5C-FFF28D8A92E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "西湾算法", "西湾算法\西湾算法.csproj", "{FB2005CE-5393-4DC6-8399-EB216BE10CF5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "毗邻作差法", "西湾算法\毗邻作差法.csproj", "{FB2005CE-5393-4DC6-8399-EB216BE10CF5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "高荷算法", "高伟乐街与荷兰园大马路交界\算法\高荷算法.csproj", "{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "单标志检测法", "高伟乐街与荷兰园大马路交界\算法\单标志检测法.csproj", "{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "模块", "模块\模块.csproj", "{2977E2B0-0D52-4180-A3BD-15E006D5D7A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GMath", "D:\MySourceCode\C#\类库\GMath\GMath.csproj", "{7032C768-0015-4434-8F55-D45EF245FCF4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "算法", "算法", "{F7841A27-3D8C-4188-9D63-23143056F860}"
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
@@ -90,5 +92,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7032C768-0015-4434-8F55-D45EF245FCF4} = {F7841A27-3D8C-4188-9D63-23143056F860}
+		{EF4B6868-B925-4BF9-83D8-3402F4ADF6F7} = {F7841A27-3D8C-4188-9D63-23143056F860}
+		{FB2005CE-5393-4DC6-8399-EB216BE10CF5} = {F7841A27-3D8C-4188-9D63-23143056F860}
 	EndGlobalSection
 EndGlobal

@@ -187,9 +187,9 @@
       <Project>{2977e2b0-0d52-4180-a3bd-15e006d5d7a7}</Project>
       <Name>模块</Name>
     </ProjectReference>
-    <ProjectReference Include="高伟乐街与荷兰园大马路交界\算法\高荷算法.csproj">
+    <ProjectReference Include="高伟乐街与荷兰园大马路交界\算法\单标志检测法.csproj">
       <Project>{ef4b6868-b925-4bf9-83d8-3402f4adf6f7}</Project>
-      <Name>高荷算法</Name>
+      <Name>单标志检测法</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
