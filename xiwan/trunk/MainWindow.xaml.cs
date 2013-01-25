@@ -32,10 +32,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Title = GetType().Assembly.Location;
             //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg", 5000) { SavePath = @"B:\test\{0}.jpg" };
-            captureRetriever = new DiskCaptureRetriever(@"..\..\高伟乐街与荷兰园大马路交界\测试\测试图\{0}.jpg", 0);
+            captureRetriever = new DiskCaptureRetriever(@"..\..\西湾测试\测试\测试图片\{0}.jpg", 0);
 
-            lane = new Lane(@"..\..\高伟乐街与荷兰园大马路交界\算法\mask1.bmp");
-            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane);
+            lane = new Lane(@"..\..\西湾算法\mask-Lane1 original.gif");
+            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, @"..\..\西湾算法\西湾CarMatchParameter.xml");
 
             InitializeComponent();
 
@@ -55,7 +55,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             ThreadPool.QueueUserWorkItem(o =>
             {
-                for (int i = 0; i < 1; i++)
+                for (int i = 0; i < 6; i++)
                 {
                     bufferImages.Enqueue(captureRetriever.GetCapture());
                     System.Diagnostics.Debug.WriteLine("获得图片");
@@ -71,13 +71,13 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Contract.Requires(Dispatcher.CheckAccess() == false, "InitialView方法极为耗时，不允许在Dispatcher线程上运行。");
 
-            Image<Bgr, byte> orginialImage = bufferImages.ElementAt(0);
+            Image<Bgr, byte> orginialImage = bufferImages.ElementAt(3);
             ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
             var laneCapture1 = lane.Analyze(orginialImage, samples);
 
             bufferImages.Dequeue();
             bufferImages.Enqueue(captureRetriever.GetCapture());
-            Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(0);
+            Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(3);
             ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
             var laneCapture2 = lane.Analyze(orginialImage1, samples1);
 
