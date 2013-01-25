@@ -69,6 +69,7 @@
     <Compile Include="ILane.cs" />
     <Compile Include="LaneCapture.cs" />
     <Compile Include="LaneMonitor.cs" />
+    <Compile Include="LocationParameter.cs" />
     <Compile Include="MakeRectangleModule.cs" />
     <Compile Include="PossibleCarGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

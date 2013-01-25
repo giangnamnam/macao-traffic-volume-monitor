@@ -87,19 +87,19 @@ namespace Gqqnbig.TrafficVolumeMonitor
         public double VolumeIn60seconds { get; private set; }
 
 
-        public LaneMonitor(TrafficDirection trafficDirection, ILane lane, string parametersFilePath)
+        public LaneMonitor(TrafficDirection trafficDirection, ILane lane, CarMatchParameter carMatchParameter)
         {
             Lane = lane;
             TrafficDirection = trafficDirection;
 
 
-
+            this.carMatchParameter = carMatchParameter;
             //carMatchParameter = new CarMatchParameter { SimilarityThreshold = 0.26 };
-            XmlSerializer serializer = new XmlSerializer(typeof(CarMatchParameter));
+            //XmlSerializer serializer = new XmlSerializer(typeof(CarMatchParameter));
 
-            XmlTextReader xmlReader = new XmlTextReader(parametersFilePath);
-            carMatchParameter = (CarMatchParameter)serializer.Deserialize(xmlReader);
-            xmlReader.Close();
+            //XmlTextReader xmlReader = new XmlTextReader(carMatchParameter);
+            //carMatchParameter = (CarMatchParameter)serializer.Deserialize(xmlReader);
+            //xmlReader.Close();
         }
 
         public TrafficDirection TrafficDirection { get; private set; }
