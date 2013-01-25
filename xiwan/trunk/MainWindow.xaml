@@ -3,72 +3,81 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        mc:Ignorable="d" d:DesignHeight="200"
-        Title="MainWindow" Loaded="Window_Loaded" Height="700">
+        mc:Ignorable="d" d:DesignHeight="200" d:DesignWidth="882.925"
+        Title="MainWindow" Loaded="Window_Loaded" Height="700" WindowStartupLocation="CenterScreen" >
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition />
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
 
-    <DockPanel Name="grid">
-        <Grid DockPanel.Dock="Bottom">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition />
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <Menu Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3">
+            <MenuItem Name="algorithmsMenuItem" Header="算法">
+                <MenuItem.ItemTemplate>
+                    <DataTemplate>
+                        <RadioButton Content="{Binding}" Padding="5,0" Margin="2,0" GroupName="alg"/>
+                    </DataTemplate>
+                </MenuItem.ItemTemplate>
+            </MenuItem>
+        </Menu>
 
-            <StackPanel Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
-                <TextBlock>
-                    <TextBlock.Inlines>
-                        <Run Text="当前图片："/>
-                        <Run Name="picIdTextRun1"/>
-                        <Run Text="、"/>
-                        <Run Name="picIdTextRun2"/>
-                    </TextBlock.Inlines>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Inlines>
-                        <Run Text="车辆平均移动距离（px）："/>
-                        <Run Name="averageRunLengthRun"/>
-                    </TextBlock.Inlines>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Inlines>
-                        <Run Text="在第一幅图中离开，不出现在第二幅图中的车："/>
-                        <Run Name="leaveFromPic1Run"/>
-                    </TextBlock.Inlines>
-                </TextBlock>
-                <TextBlock>
-                    <TextBlock.Inlines>
-                        <Run Text="进入第二幅图，不出现在第一幅图中的车："/>
-                        <Run Name="enterToPic2Run"/>
-                    </TextBlock.Inlines>
-                </TextBlock>
-                <TextBlock>
-                   <TextBlock.Inlines>
-                        <Run Text="5秒车流量："/>
-                        <Run Name="volume5Run"/>
-                    </TextBlock.Inlines>
-                </TextBlock>
-                <TextBlock>
-                   <TextBlock.Inlines>
-                        <Run Text="60秒车流量："/>
-                        <Run Name="volume60Run"/>
-                    </TextBlock.Inlines>
-                </TextBlock>
-            </StackPanel>
+        <ItemsControl Name="captureViewerList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Stretch" SizeChanged="captureViewerList_SizeChanged"/>
 
-            <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="1"  Content="下一张" FontSize="20" Padding="30,10" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <StackPanel Grid.Row="2" Grid.RowSpan="2" Grid.Column="0">
+            <TextBlock>
+                <TextBlock.Inlines>
+                    <Run Text="当前图片："/>
+                    <Run Name="picIdTextRun1"/>
+                    <Run Text="、"/>
+                    <Run Name="picIdTextRun2"/>
+                </TextBlock.Inlines>
+            </TextBlock>
+            <TextBlock>
+                <TextBlock.Inlines>
+                    <Run Text="车辆平均移动距离（px）："/>
+                    <Run Name="averageRunLengthRun"/>
+                </TextBlock.Inlines>
+            </TextBlock>
+            <TextBlock>
+                <TextBlock.Inlines>
+                    <Run Text="在第一幅图中离开，不出现在第二幅图中的车："/>
+                    <Run Name="leaveFromPic1Run"/>
+                </TextBlock.Inlines>
+            </TextBlock>
+            <TextBlock>
+                <TextBlock.Inlines>
+                    <Run Text="进入第二幅图，不出现在第一幅图中的车："/>
+                    <Run Name="enterToPic2Run"/>
+                </TextBlock.Inlines>
+            </TextBlock>
+            <TextBlock>
+                <TextBlock.Inlines>
+                    <Run Text="5秒车流量："/>
+                    <Run Name="volume5Run"/>
+                </TextBlock.Inlines>
+            </TextBlock>
+            <TextBlock>
+                <TextBlock.Inlines>
+                    <Run Text="60秒车流量："/>
+                    <Run Name="volume60Run"/>
+                </TextBlock.Inlines>
+            </TextBlock>
+        </StackPanel>
+
+        <Button Grid.Row="2" Grid.RowSpan="2" Grid.Column="1"  Content="下一张" FontSize="20" Padding="30,10" HorizontalAlignment="Center" VerticalAlignment="Center"
                     Click="nextButton_Click"/>
 
-
-            <Button Grid.Row="0" Grid.Column="2" Content="计算直方图相似度" 
+        <StackPanel Grid.Row="2" Grid.Column="2">
+            <Button Content="计算直方图相似度" 
                     VerticalAlignment="Center" HorizontalAlignment="Right"  Click="calculateSimilarityButton_Click" />
-            <TextBox Name="histSimilarityTextBox" Grid.Row="1" Grid.Column="2" AcceptsReturn="True" IsReadOnly="True"
+            <TextBox Name="histSimilarityTextBox" AcceptsReturn="True" IsReadOnly="True" MinWidth="100"
                      HorizontalAlignment="Right"/>
-        </Grid>
-
-        <ItemsControl Name="captureViewerList" VerticalAlignment="Stretch" SizeChanged="captureViewerList_SizeChanged"/>
-    </DockPanel>
+        </StackPanel>
+    </Grid>
 </Window>
