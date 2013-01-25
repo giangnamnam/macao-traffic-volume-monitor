@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using Gqqnbig.Statistics;
 using Gqqnbig.TrafficVolumeMonitor.Modules;
 
@@ -84,7 +87,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
         public double VolumeIn60seconds { get; private set; }
 
 
-        public LaneMonitor(TrafficDirection trafficDirection, Lane lane)
+        public LaneMonitor(TrafficDirection trafficDirection, Lane lane, string parametersFilePath)
         {
             Lane = lane;
             TrafficDirection = trafficDirection;
@@ -92,12 +95,11 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
 
             //carMatchParameter = new CarMatchParameter { SimilarityThreshold = 0.26 };
-            //XmlSerializer serializer = new XmlSerializer(typeof(CarMatchParameter));
+            XmlSerializer serializer = new XmlSerializer(typeof(CarMatchParameter));
 
-            //XmlTextWriter xmlWriter = new XmlTextWriter("B:\\a.xml", Encoding.UTF8);
-            //xmlWriter.Formatting = Formatting.Indented;
-            //serializer.Serialize(xmlWriter, carMatchParameter);
-            //xmlWriter.Close();
+            XmlTextReader xmlReader = new XmlTextReader(parametersFilePath);
+            carMatchParameter = (CarMatchParameter)serializer.Deserialize(xmlReader);
+            xmlReader.Close();
         }
 
         public TrafficDirection TrafficDirection { get; private set; }
@@ -107,8 +109,8 @@ namespace Gqqnbig.TrafficVolumeMonitor
         public CarMatch[] FindCarMatch(Car[] cars1, Car[] cars2)
         {
             // ReSharper disable ConvertToConstant.Local
-            double similarityThreshold = 0.26;
-            bool allowSamePosition = true;
+            double similarityThreshold = carMatchParameter.SimilarityThreshold;
+            bool allowSamePosition = carMatchParameter.AllowSamePosition;
             // ReSharper restore ConvertToConstant.Local
 
             List<CarMatch> list = new List<CarMatch>();

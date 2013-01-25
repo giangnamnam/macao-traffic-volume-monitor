@@ -6,5 +6,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.Modules
     public class CarMatchParameter
     {
         public double SimilarityThreshold { get; set; }
+
+        public bool AllowSamePosition { get; set; }
     }
 }

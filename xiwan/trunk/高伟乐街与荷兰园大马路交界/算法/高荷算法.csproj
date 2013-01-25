@@ -56,7 +56,6 @@
   <ItemGroup>
     <Compile Include="TolerantValue.cs" />
     <Compile Include="Lane.cs" />
-    <Compile Include="LaneMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
