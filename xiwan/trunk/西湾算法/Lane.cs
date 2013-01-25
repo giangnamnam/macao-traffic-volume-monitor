@@ -195,7 +195,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             return Utility.AutoCrop(warpImage);
         }
 
-        private static Image<Bgr,byte> MakeRectangle(Image<Bgr,byte> image)
+        private static Image<Bgr, byte> MakeRectangle(Image<Bgr, byte> image)
         {
             Func<int, double> f = y => -0.00409494 * y + 1.647;
             Image<Bgr, byte> newImage = new Image<Bgr, byte>(image.Size);
@@ -210,7 +210,12 @@ namespace Gqqnbig.TrafficVolumeMonitor
                     double oldI = halfWidth - (halfWidth - i) / factor; // (-halfWidth + factor * halfWidth + i) / factor;
 
                     int l = (int)Math.Floor(oldI);
+                    l = l < 0 ? 0 : l;
+
                     int h = (int)Math.Ceiling(oldI);
+
+                    Contract.Assert(l >= 0 && l < image.Width);
+                    Contract.Assert(h >= 0 && h < image.Width);
 
                     var cl = image[j, l];
                     var ch = image[j, h];
@@ -227,7 +232,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
                     int l = (int)Math.Floor(oldI);
                     int h = (int)Math.Ceiling(oldI);
+                    h = h >= image.Width ? image.Width - 1 : h;
 
+                    Contract.Assert(l >= 0 && l < image.Width);
+                    Contract.Assert(h >= 0 && h < image.Width);
                     var cl = image[j, l];
                     var ch = image[j, h];
 

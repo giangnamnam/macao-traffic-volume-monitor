@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Emgu.CV;
 using Emgu.CV.Structure;
 
@@ -63,7 +65,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
         {
             this.Image = image;
             //image.Save(@"D:\img.bmp");
-            CarImage = Image.ToBitmap().ToBitmapImage();
+            CarImage =ToBitmapImage( Image.ToBitmap());
             CarImage.Freeze();
 
             this.CarRectangle = carRectangle;
@@ -90,6 +92,21 @@ namespace Gqqnbig.TrafficVolumeMonitor
             HistHue.MatND.ManagedArray.SetValue(0, 0);
             HistHue.Normalize(1);
             //ValidateHistogram(HistHue);
+        }
+
+        public static BitmapImage ToBitmapImage(Bitmap bitmap)
+        {
+            using (MemoryStream memory = new MemoryStream())
+            {
+                bitmap.Save(memory, System.Drawing.Imaging.ImageFormat.Jpeg);
+                memory.Position = 0;
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                return bitmapImage;
+            }
         }
 
         //private static void ValidateHistogram(DenseHistogram histogram)

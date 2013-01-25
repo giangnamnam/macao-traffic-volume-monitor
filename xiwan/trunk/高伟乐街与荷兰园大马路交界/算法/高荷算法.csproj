@@ -54,11 +54,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Car.cs" />
-    <Compile Include="CarContourAdvisor.cs" />
-    <Compile Include="CarMatch.cs" />
     <Compile Include="TolerantValue.cs" />
-    <Compile Include="DiskCaptureRetriever.cs" />
     <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Drawing\ColorConversion.cs">
       <Link>ColorConversion.cs</Link>
     </Compile>
@@ -68,7 +64,6 @@
     <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Statistics\StatisticsOperations.cs">
       <Link>StatisticsOperations.cs</Link>
     </Compile>
-    <Compile Include="ICaptureRetriever.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="LaneCapture.cs" />
     <Compile Include="LaneMonitor.cs" />

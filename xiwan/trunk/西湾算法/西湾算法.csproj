@@ -52,10 +52,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Car.cs" />
-    <Compile Include="CarContourAdvisor.cs" />
-    <Compile Include="CarMatch.cs" />
-    <Compile Include="DiskCaptureRetriever.cs" />
     <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Drawing\ColorConversion.cs">
       <Link>ColorConversion.cs</Link>
     </Compile>
@@ -65,7 +61,6 @@
     <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Statistics\StatisticsOperations.cs">
       <Link>StatisticsOperations.cs</Link>
     </Compile>
-    <Compile Include="ICaptureRetriever.cs" />
     <Compile Include="Lane.cs" />
     <Compile Include="LaneCapture.cs" />
     <Compile Include="LaneMonitor.cs" />
@@ -77,6 +72,12 @@
     <Content Include="mask-Lane1 original.gif" />
     <Content Include="mask-Lane1.gif" />
     <Content Include="西湾CarMatchParameter.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\模块\模块.csproj">
+      <Project>{2977e2b0-0d52-4180-a3bd-15e006d5d7a7}</Project>
+      <Name>模块</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

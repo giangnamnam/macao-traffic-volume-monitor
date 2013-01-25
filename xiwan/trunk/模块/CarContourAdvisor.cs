@@ -12,7 +12,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
     /// <summary>
     /// 
     /// </summary>
-    class CarContourAdvisor
+    public class CarContourAdvisor
     {
         private readonly int maxCarLength;
         private readonly int minArea;

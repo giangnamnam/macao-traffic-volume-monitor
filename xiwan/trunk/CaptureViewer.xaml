@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" >
+             mc:Ignorable="d" d:DesignWidth="384" d:DesignHeight="160" >
     <UserControl.Resources>
         <DataTemplate x:Key="checkBoxTemplate">
             <CheckBox Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" />
@@ -80,7 +80,7 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -94,6 +94,11 @@
                     <StackPanel Orientation="Horizontal" IsItemsHost="True"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemContainerStyle>
+                <Style>
+                    <Setter Property="ContentPresenter.VerticalAlignment" Value="Top"/>
+                </Style>
+            </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Image Stretch="None" Source="{Binding Converter={StaticResource bitmapConverter}}">
@@ -122,10 +127,10 @@
                 <GridView>
                     <GridViewColumn CellTemplate="{StaticResource checkBoxTemplate}" />
                     <GridViewColumn Header="图片" CellTemplate="{StaticResource picTemplate}" />
-                    <GridViewColumn Header="R" CellTemplate="{StaticResource histRTemplate}" />
+                    <!--<GridViewColumn Header="R" CellTemplate="{StaticResource histRTemplate}" />
                     <GridViewColumn Header="G" CellTemplate="{StaticResource histGTemplate}" />
                     <GridViewColumn Header="B" CellTemplate="{StaticResource histBTemplate}" />
-                    <GridViewColumn Header="Hue" CellTemplate="{StaticResource histHueTemplate}" />
+                    <GridViewColumn Header="Hue" CellTemplate="{StaticResource histHueTemplate}" />-->
                 </GridView>
             </ListView.View>
         </ListView>

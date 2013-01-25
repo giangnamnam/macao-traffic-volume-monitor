@@ -43,7 +43,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
     /// <summary>
     /// 一个比较器，用于比较a与b的相似度是否比c与d更高。
     /// </summary>
-    class CarMatchComparer : IComparer<CarMatch>
+    public class CarMatchComparer : IComparer<CarMatch>
     {
         public int Compare(CarMatch x, CarMatch y)
         {
