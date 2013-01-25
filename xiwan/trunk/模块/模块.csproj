@@ -55,9 +55,17 @@
     <Compile Include="CarContourAdvisor.cs" />
     <Compile Include="CarMatch.cs" />
     <Compile Include="CarMatchParameter.cs" />
+    <Compile Include="D:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Drawing\ColorConversion.cs">
+      <Link>ColorConversion.cs</Link>
+    </Compile>
+    <Compile Include="D:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Drawing\RectangleOperations.cs">
+      <Link>RectangleOperations.cs</Link>
+    </Compile>
     <Compile Include="DiskCaptureRetriever.cs" />
     <Compile Include="ICaptureRetriever.cs" />
+    <Compile Include="LaneCapture.cs" />
     <Compile Include="MakeRectangleModule.cs" />
+    <Compile Include="PossibleCarGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkewTransformModule.cs" />
     <Compile Include="Utility.cs" />

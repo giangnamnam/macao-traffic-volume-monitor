@@ -7,7 +7,7 @@ using Gqqnbig.Drawing;
 namespace Gqqnbig.TrafficVolumeMonitor
 {
     [Obsolete]
-    class PossibleCarGroup
+    public class PossibleCarGroup
     {
         private readonly Image<Bgr, byte> sourceImage;
         private readonly Image<Gray, byte> objectImage;

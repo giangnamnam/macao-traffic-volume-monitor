@@ -105,7 +105,8 @@ namespace Gqqnbig.TrafficVolumeMonitor
             gaussianImage.Dispose();
             afterThreshold.Dispose();
 
-            return new LaneCapture(orginialImage, focusedImage, backgroundImage, finalImage, groups.ToArray());
+            return new LaneCapture(new Image<Bgr, byte>[] { focusedImage, finalImage.Convert<Bgr, byte>()/*, orginialImage, backgroundImage.Convert<Bgr, byte>()*/ },
+                groups.ToArray());
         }
 
         private Image<Bgra, byte> GetBackground(Bgr roadColor, ICollection<Image<Bgr, byte>> samples)
