@@ -170,7 +170,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
-            //UnlabelMatch(lastMatch);
+            UnlabelMatch(lastMatch);
 
             var originalCursor = Mouse.OverrideCursor;
             Mouse.OverrideCursor = Cursors.Wait;

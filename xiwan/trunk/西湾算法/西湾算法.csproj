@@ -52,9 +52,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Statistics\StatisticsOperations.cs">
-      <Link>StatisticsOperations.cs</Link>
-    </Compile>
     <Compile Include="Lane.cs" />
     <Compile Include="LaneMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

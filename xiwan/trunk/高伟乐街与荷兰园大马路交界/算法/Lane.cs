@@ -7,12 +7,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
-using Emgu.CV.Features2D;
 using Emgu.CV.Structure;
-using Emgu.CV.Util;
 using Gqqnbig.Mathematics.Geometry;
 using Gqqnbig.Statistics;
-using Gqqnbig.TrafficVolumeMonitor.Modules;
 
 namespace Gqqnbig.TrafficVolumeMonitor
 {
