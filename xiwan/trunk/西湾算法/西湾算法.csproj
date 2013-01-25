@@ -57,8 +57,8 @@
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="mask-Lane1 original.gif" />
-    <Content Include="西湾CarMatchParameter.xml" />
+    <None Include="mask-Lane1 original.gif" />
+    <None Include="西湾CarMatchParameter.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\模块\模块.csproj">
