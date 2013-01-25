@@ -10,7 +10,7 @@ using Gqqnbig.Mathematics.Geometry;
 
 namespace Gqqnbig.TrafficVolumeMonitor
 {
-    public class Lane
+    public class Lane : ILane
     {
         readonly Image<Gray, byte> mask;
 

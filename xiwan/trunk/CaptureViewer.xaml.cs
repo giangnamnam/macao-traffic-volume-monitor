@@ -18,7 +18,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         public Car[] Cars { get; private set; }
         //public int? CurrentPicId { get; private set; }
 
-        internal Lane Lane { get; set; }
+        internal ILane Lane { get; set; }
 
         public CaptureViewer()
         {

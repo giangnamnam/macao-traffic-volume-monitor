@@ -87,7 +87,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
         public double VolumeIn60seconds { get; private set; }
 
 
-        public LaneMonitor(TrafficDirection trafficDirection, Lane lane, string parametersFilePath)
+        public LaneMonitor(TrafficDirection trafficDirection, ILane lane, string parametersFilePath)
         {
             Lane = lane;
             TrafficDirection = trafficDirection;
@@ -104,7 +104,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         public TrafficDirection TrafficDirection { get; private set; }
 
-        public Lane Lane { get; private set; }
+        public ILane Lane { get; private set; }
 
         public CarMatch[] FindCarMatch(Car[] cars1, Car[] cars2)
         {

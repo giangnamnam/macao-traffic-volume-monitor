@@ -66,7 +66,9 @@
     </Compile>
     <Compile Include="DiskCaptureRetriever.cs" />
     <Compile Include="ICaptureRetriever.cs" />
+    <Compile Include="ILane.cs" />
     <Compile Include="LaneCapture.cs" />
+    <Compile Include="LaneMonitor.cs" />
     <Compile Include="MakeRectangleModule.cs" />
     <Compile Include="PossibleCarGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

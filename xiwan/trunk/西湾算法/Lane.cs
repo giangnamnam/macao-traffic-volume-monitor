@@ -11,7 +11,7 @@ using Gqqnbig.Statistics;
 
 namespace Gqqnbig.TrafficVolumeMonitor
 {
-    public class Lane
+    public class Lane:ILane
     {
         readonly Image<Gray, byte> mask;
         readonly Rectangle regionOfInterest;
