@@ -265,20 +265,18 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             if (lane == null)
                 throw new FileNotFoundException("找不到Algorithms\\" + locationParameter.AlgorithmName + ".dll");
 
-
-            //lane = new Lane(locationParameter.MaskFilePath);
             laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter);
 
-            ThreadPool.QueueUserWorkItem(o =>
-            {
-                bufferImages = new Queue<Image<Bgr, byte>>(locationParameter.BufferImagesCount);
-                for (int i = 0; i < locationParameter.BufferImagesCount; i++)
+                ThreadPool.QueueUserWorkItem(o =>
                 {
-                    bufferImages.Enqueue(captureRetriever.GetCapture());
-                    System.Diagnostics.Debug.WriteLine("获得图片");
-                }
-                InitialView();
-            });
+                    bufferImages = new Queue<Image<Bgr, byte>>(locationParameter.BufferImagesCount);
+                    for (int i = 0; i < locationParameter.BufferImagesCount; i++)
+                    {
+                        bufferImages.Enqueue(captureRetriever.GetCapture());
+                        System.Diagnostics.Debug.WriteLine("获得图片");
+                    }
+                    InitialView();
+                });
 
 
             captureViewers.Clear();
@@ -287,6 +285,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             captureViewers.Add(new CaptureViewer { Lane = lane });
             captureViewerList.ItemsSource = captureViewers;
 
+
+            captureViewerList_SizeChanged(null, null);
             //Width++;
             //Width--;
         }
