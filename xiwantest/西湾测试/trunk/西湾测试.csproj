@@ -62,7 +62,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\西湾算法\西湾算法.csproj">
+    <ProjectReference Include="..\西湾算法\毗邻作差法.csproj">
       <Project>{FB2005CE-5393-4DC6-8399-EB216BE10CF5}</Project>
       <Name>西湾算法</Name>
     </ProjectReference>
