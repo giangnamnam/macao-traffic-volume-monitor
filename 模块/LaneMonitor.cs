@@ -117,20 +117,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
                 {
                     foreach (var c1 in cars1)
                     {
-                        // ReSharper disable HeuristicUnreachableCode
-                        // ReSharper disable ConditionIsAlwaysTrueOrFalse
-                        if (allowSamePosition)
-                        // ReSharper restore ConditionIsAlwaysTrueOrFalse
-                        {
-                            if (c1.CarRectangle.Top < c2.CarRectangle.Top)
-                                break;
-                        }
-                        else
-                        {
-                            if (c1.CarRectangle.Top == c2.CarRectangle.Top)
-                                break;
-                        }
-                        // ReSharper restore HeuristicUnreachableCode
+                        if (c1.CarRectangle.Top < c2.CarRectangle.Top)
+                            break;
+                        if (allowSamePosition == false && c1.CarRectangle.Top == c2.CarRectangle.Top)
+                            break;
 
                         //假设车不改变车道。
                         if (Math.Abs(c1.CarRectangle.Left - c2.CarRectangle.Left) > 5)
@@ -194,6 +184,8 @@ namespace Gqqnbig.TrafficVolumeMonitor
     {
         public CarMove(int leaveFromPic1, int enterToPic2, double averageMove)
         {
+            Contract.Requires(averageMove >= 0, "车辆平均移动距离不能是负值。");
+
             AverageMove = averageMove;
             EnterToPic2 = enterToPic2;
             LeaveFromPic1 = leaveFromPic1;
