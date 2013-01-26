@@ -8,21 +8,21 @@ using Emgu.CV;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
-    public class MultiplicationConverter : IMultiValueConverter
-    {
-        public object Convert(object[] values, Type targetType,
-                              object parameter, CultureInfo culture)
-        {
-            var result = System.Convert.ToDouble(values[0]) * System.Convert.ToDouble(values[1]);
-            return result;
-        }
+    //public class MultiplicationConverter : IMultiValueConverter
+    //{
+    //    public object Convert(object[] values, Type targetType,
+    //                          object parameter, CultureInfo culture)
+    //    {
+    //        var result = System.Convert.ToDouble(values[0]) * System.Convert.ToDouble(values[1]);
+    //        return result;
+    //    }
 
-        public object[] ConvertBack(object value, Type[] targetTypes,
-                                    object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotSupportedException("Cannot convert back");
-        }
-    }
+    //    public object[] ConvertBack(object value, Type[] targetTypes,
+    //                                object parameter, System.Globalization.CultureInfo culture)
+    //    {
+    //        throw new NotSupportedException("Cannot convert back");
+    //    }
+    //}
 
     public class DenseHistogramConverter : IValueConverter
     {
