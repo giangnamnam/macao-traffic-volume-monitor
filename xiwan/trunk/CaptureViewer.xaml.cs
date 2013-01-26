@@ -12,7 +12,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     /// </summary>
     public partial class CaptureViewer : UserControl
     {
-
+        private object[] boxParameters;
 
 
         public Car[] Cars { get; private set; }
@@ -76,6 +76,18 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         /// <returns></returns>
         internal void BoxCar(Car car, object tag, Brush brush, double thickness = 2)
         {
+
+            if (progressImagesControl.ItemContainerGenerator.Status != System.Windows.Controls.Primitives.GeneratorStatus.ContainersGenerated)
+            {
+                System.Diagnostics.Debug.WriteLine("progressImagesControl.ItemContainerGenerator.Status=" + progressImagesControl.ItemContainerGenerator.Status 
+                    + "，加框操作被延后。");
+                boxParameters = new[] { car, tag, brush, thickness };
+                progressImagesControl.ItemContainerGenerator.StatusChanged += ItemContainerGenerator_StatusChanged;
+                return;
+            }
+
+            progressImagesControl.ItemContainerGenerator.StatusChanged -= ItemContainerGenerator_StatusChanged;
+
             UIElement targetElement = (UIElement)progressImagesControl.ItemContainerGenerator.ContainerFromIndex(0);
             var adornerLayer = AdornerLayer.GetAdornerLayer(targetElement);
 
@@ -85,6 +97,13 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             outBoxAdorner.Pen = new Pen(brush, thickness);
             outBoxAdorner.Rectangle = car.CarRectangle;
             adornerLayer.Add(outBoxAdorner);
+        }
+
+        void ItemContainerGenerator_StatusChanged(object sender, System.EventArgs e)
+        {
+            // ReSharper disable PossibleInvalidCastException
+            BoxCar((Car)boxParameters[0], boxParameters[1], (Brush)boxParameters[2], (double)boxParameters[3]);
+            // ReSharper restore PossibleInvalidCastException
         }
 
         /// <summary>
@@ -123,9 +142,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void saveMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ContextMenu cm = (ContextMenu) ((MenuItem)sender).Parent;
+            ContextMenu cm = (ContextMenu)((MenuItem)sender).Parent;
 
-            BitmapImage context = (BitmapImage) ((Image)cm.PlacementTarget).Source;
+            BitmapImage context = (BitmapImage)((Image)cm.PlacementTarget).Source;
 
             Microsoft.Win32.SaveFileDialog dialog = new Microsoft.Win32.SaveFileDialog();
             dialog.DefaultExt = ".bmp";
