@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{32D9FB93-F461-48CD-B35B-BD836EB8F389}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Gqqnbig.TrafficVolumeMonitor.UI</RootNamespace>
+    <AssemblyName>monitor</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Emgu.CV, Version=2.4.0.1717, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dependencies\Emgu.CV.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.Util, Version=2.4.0.1717, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>dependencies\Emgu.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="CaptureViewer.xaml.cs">
+      <DependentUpon>CaptureViewer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters.cs" />
+    <Compile Include="OutBoxAdorner.cs" />
+    <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Windows\Data\ArithmeticConverter.cs" />
+    <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Drawing\ColorConversion.cs" />
+    <Compile Include="WpfHelper.cs" />
+    <Page Include="CaptureViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="dependencies\Emgu.CV.dll" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\0.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\1.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\10.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\11.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\12.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\13.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\14.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\15.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\16.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\17.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\18.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\19.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\2.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\20.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\21.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\22.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\23.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\24.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\25.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\26.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\27.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\28.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\29.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\3.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\30.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\31.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\32.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\33.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\34.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\4.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\5.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\6.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\7.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\8.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\2\9.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\0.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\1.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\10.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\11.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\12.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\13.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\14.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\15.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\16.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\17.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\18.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\19.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\2.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\20.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\21.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\22.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\23.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\24.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\25.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\26.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\27.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\3.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\4.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\5.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\6.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\7.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\8.jpg" />
+    <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\9.jpg" />
+    <None Include="dependencies\Emgu.CV.xml" />
+    <None Include="dependencies\Emgu.Util.dll" />
+    <None Include="dependencies\Emgu.Util.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="模块\模块.csproj">
+      <Project>{2977e2b0-0d52-4180-a3bd-15e006d5d7a7}</Project>
+      <Name>模块</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gaohe.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="xiwan.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
