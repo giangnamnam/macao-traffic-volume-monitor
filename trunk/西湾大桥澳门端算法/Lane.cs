@@ -16,7 +16,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
         readonly Image<Gray, byte> mask;
         readonly Rectangle regionOfInterest;
 
-        const int tolerance = 20;
+        const int tolerance = 25;
 
         readonly Point[] backgroundPoints = new[]
                                    {
@@ -105,7 +105,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             gaussianImage.Dispose();
             afterThreshold.Dispose();
 
-            return new LaneCapture(new Image<Bgr, byte>[] { focusedImage, finalImage.Convert<Bgr, byte>()/*, orginialImage, backgroundImage.Convert<Bgr, byte>()*/ },
+            return new LaneCapture(new Image<Bgr, byte>[] { focusedImage, finalImage.Convert<Bgr, byte>()/*, orginialImage*/, backgroundImage.Convert<Bgr, byte>() },
                 groups.ToArray());
         }
 
@@ -129,9 +129,9 @@ namespace Gqqnbig.TrafficVolumeMonitor
                                                colors.Add(roadColor);
                                                //colors.Add(roadColor);
 
-                                               colors = Utility.RemoveDeviatedComponent(colors, c => c.Red, 10);
-                                               colors = Utility.RemoveDeviatedComponent(colors, c => c.Green, 10);
-                                               colors = Utility.RemoveDeviatedComponent(colors, c => c.Blue, 10);
+                                               colors = Utility.RemoveDeviatedComponent(colors, c => c.Red, tolerance / 2);
+                                               colors = Utility.RemoveDeviatedComponent(colors, c => c.Green, tolerance / 2);
+                                               colors = Utility.RemoveDeviatedComponent(colors, c => c.Blue, tolerance / 2);
 
                                                if (colors.Any())
                                                    background[y, x] = new Bgra(colors.Select(bgr => bgr.Blue).Median(),
