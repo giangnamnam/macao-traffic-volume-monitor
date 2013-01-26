@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -24,7 +25,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        Queue<Image<Bgr, byte>> bufferImages = new Queue<Image<Bgr, byte>>(6);
+        Queue<Image<Bgr, byte>> bufferImages;
         ICaptureRetriever captureRetriever;
 
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
@@ -33,6 +34,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         LaneMonitor laneMonitor;
         private CarMatch[] lastMatch;
         private LocationParameter locationParameter;
+        private DispatcherTimer realtimeLoadingTimer;
 
         public MainWindow()
         {
@@ -47,8 +49,78 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             locationsMenuItem.ItemsSource = Directory.GetFiles(".\\", "*.lol");
+        }
+
+
+        /// <summary>
+        /// 开始分析一个位置（一个位置包括很多张图片，每张图片包括很多辆车）
+        /// </summary>
+        /// <param name="locationSpecPath">位置设定文件的路径</param>
+        private void StartLocationAnalysis(string locationSpecPath)
+        {
+            realtimeLoadingTimer = null;
+
+            XmlSerializer serializer = new XmlSerializer(typeof(LocationParameter));
+
+            //locationParameter = new LocationParameter();
+            //locationParameter.AlgorithmName = "near-single";
+            //locationParameter.BufferImagesCount = 1;
+            //locationParameter.CarMatchParameter = new CarMatchParameter();
+            //locationParameter.CarMatchParameter.AllowSamePosition = true;
+            //locationParameter.CarMatchParameter.SimilarityThreshold = 0.26;
+            //locationParameter.MaskFilePath = @"..\..\高伟乐街与荷兰园大马路交界\算法\mask1.bmp";
+            //locationParameter.SourcePath = @"..\..\高伟乐街与荷兰园大马路交界\测试\测试图\{0}.jpg";
+
+            //XmlTextWriter xmlWriter = new XmlTextWriter("B:\\gaohe.xml", System.Text.Encoding.UTF8);
+            //xmlWriter.Formatting = Formatting.Indented;
+            //serializer.Serialize(xmlWriter, locationParameter);
+            //xmlWriter.Close();
+            XmlTextReader xmlReader = new XmlTextReader(locationSpecPath);
+            locationParameter = (LocationParameter)serializer.Deserialize(xmlReader);
+            xmlReader.Close();
+
+            captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam1/AxisPic-Cam1.jpg", 5000);
+            //captureRetriever = new DiskCaptureRetriever(locationParameter.SourcePath, 0);
+
+            var ass = Assembly.LoadFrom("Algorithms\\" + locationParameter.AlgorithmName + ".dll");
+            Type[] exportedTypes = ass.GetExportedTypes();
+            foreach (var t in exportedTypes)
+            {
+                if (typeof(ILane).IsAssignableFrom(t))
+                {
+                    lane = (ILane)Activator.CreateInstance(t, locationParameter.MaskFilePath);
+                    break;
+                }
+            }
+
+            if (lane == null)
+                throw new FileNotFoundException("找不到Algorithms\\" + locationParameter.AlgorithmName + ".dll");
+
+            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter);
+
+            bufferImages = new Queue<Image<Bgr, byte>>(locationParameter.BufferImagesCount);
+            for (int i = 0; i < locationParameter.BufferImagesCount; i++)
+            {
+                bufferImages.Enqueue(captureRetriever.GetCapture());
+                System.Diagnostics.Debug.WriteLine("获得图片");
+            }
+
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                InitialView();
+
+                captureViewers.Clear();
+                captureViewers.Add(new CaptureViewer { Lane = lane });
+                captureViewers.Add(new CaptureViewer { Lane = lane });
+                captureViewers.Add(new CaptureViewer { Lane = lane });
+                captureViewerList.ItemsSource = captureViewers;
+
+
+                captureViewerList_SizeChanged(null, null);
+                //Width++;
+                //Width--;
+            }));
         }
 
         /// <summary>
@@ -84,27 +156,27 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void LoadCompleted()
         {
-            if (captureRetriever.SuggestedInterval != 0)
+            if (captureRetriever.SuggestedInterval != 0 && realtimeLoadingTimer == null)
             {
-                DispatcherTimer timer = new DispatcherTimer();
-                timer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
-                timer.Interval = TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
-                timer.Start();
+                realtimeLoadingTimer = new DispatcherTimer();
+                realtimeLoadingTimer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
+                realtimeLoadingTimer.Interval = TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
+                realtimeLoadingTimer.Start();
             }
 
 
-            lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
-            LabelMatch(lastMatch);
+            //lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
+            //LabelMatch(lastMatch);
 
-            var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
+            //var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
 
-            averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
-            leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
-            enterToPic2Run.Text = carMove.EnterToPic2.ToString();
+            //averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
+            //leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
+            //enterToPic2Run.Text = carMove.EnterToPic2.ToString();
 
-            laneMonitor.AddHistory(carMove);
-            volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
-            volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+            //laneMonitor.AddHistory(carMove);
+            //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+            //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
 
             ThreadPool.QueueUserWorkItem(o => PreloadImage());
         }
@@ -159,12 +231,13 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
-            UnlabelMatch(lastMatch);
+            if (lastMatch != null)
+                UnlabelMatch(lastMatch);
 
             var originalCursor = Mouse.OverrideCursor;
             Mouse.OverrideCursor = Cursors.Wait;
 
-
+            System.Diagnostics.Debug.WriteLine("nextButton_Click");
             PicId++;
             //if (captureViewers[2].CurrentPicId != PicId + 1)
             //    captureViewers[2].View(PicId + 1);
@@ -227,68 +300,21 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void LocationRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            RadioButton button = (RadioButton)sender;
-
-            XmlSerializer serializer = new XmlSerializer(typeof(LocationParameter));
-
-            //locationParameter = new LocationParameter();
-            //locationParameter.AlgorithmName = "near-single";
-            //locationParameter.BufferImagesCount = 1;
-            //locationParameter.CarMatchParameter = new CarMatchParameter();
-            //locationParameter.CarMatchParameter.AllowSamePosition = true;
-            //locationParameter.CarMatchParameter.SimilarityThreshold = 0.26;
-            //locationParameter.MaskFilePath = @"..\..\高伟乐街与荷兰园大马路交界\算法\mask1.bmp";
-            //locationParameter.SourcePath = @"..\..\高伟乐街与荷兰园大马路交界\测试\测试图\{0}.jpg";
-
-            //XmlTextWriter xmlWriter = new XmlTextWriter("B:\\gaohe.xml", System.Text.Encoding.UTF8);
-            //xmlWriter.Formatting = Formatting.Indented;
-            //serializer.Serialize(xmlWriter, locationParameter);
-            //xmlWriter.Close();
-            XmlTextReader xmlReader = new XmlTextReader((string)button.Content);
-            locationParameter = (LocationParameter)serializer.Deserialize(xmlReader);
-            xmlReader.Close();
-
-            //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg", 5000) { SavePath = @"B:\test\{0}.jpg" };
-            captureRetriever = new DiskCaptureRetriever(locationParameter.SourcePath, 0);
-
-            var ass = Assembly.LoadFrom("Algorithms\\" + locationParameter.AlgorithmName + ".dll");
-            Type[] exportedTypes = ass.GetExportedTypes();
-            foreach (var t in exportedTypes)
+            MenuItem item = sender as MenuItem;
+            if (item != null)
             {
-                if (typeof(ILane).IsAssignableFrom(t))
+                RadioButton rb = item.Icon as RadioButton;
+                if (rb != null)
                 {
-                    lane = (ILane)Activator.CreateInstance(t, locationParameter.MaskFilePath);
-                    break;
+                    rb.IsChecked = true;
                 }
             }
 
-            if (lane == null)
-                throw new FileNotFoundException("找不到Algorithms\\" + locationParameter.AlgorithmName + ".dll");
+            //MenuItem item = (MenuItem)e.OriginalSource;
 
-            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter);
+            ////locationsMenuItem.Items
 
-                ThreadPool.QueueUserWorkItem(o =>
-                {
-                    bufferImages = new Queue<Image<Bgr, byte>>(locationParameter.BufferImagesCount);
-                    for (int i = 0; i < locationParameter.BufferImagesCount; i++)
-                    {
-                        bufferImages.Enqueue(captureRetriever.GetCapture());
-                        System.Diagnostics.Debug.WriteLine("获得图片");
-                    }
-                    InitialView();
-                });
-
-
-            captureViewers.Clear();
-            captureViewers.Add(new CaptureViewer { Lane = lane });
-            captureViewers.Add(new CaptureViewer { Lane = lane });
-            captureViewers.Add(new CaptureViewer { Lane = lane });
-            captureViewerList.ItemsSource = captureViewers;
-
-
-            captureViewerList_SizeChanged(null, null);
-            //Width++;
-            //Width--;
+            Task.Factory.StartNew(o => StartLocationAnalysis((string)o), item.Header);
         }
     }
 }

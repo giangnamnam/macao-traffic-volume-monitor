@@ -18,12 +18,18 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3">
-            <MenuItem Name="locationsMenuItem" Header="地点">
-                <MenuItem.ItemTemplate>
-                    <DataTemplate>
-                        <RadioButton Content="{Binding}" Padding="5,0" Margin="2,0" GroupName="alg" Checked="LocationRadioButton_Checked"/>
-                    </DataTemplate>
-                </MenuItem.ItemTemplate>
+            <MenuItem Name="locationsMenuItem" Header="地点" Checked="LocationRadioButton_Checked">
+                <MenuItem.Resources>
+                    <RadioButton x:Key="RadioButtonResource" x:Shared="false" HorizontalAlignment="Center"
+                     GroupName="MenuItemRadio" IsHitTestVisible="False"/>
+                </MenuItem.Resources>
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Icon" Value="{DynamicResource RadioButtonResource}"/>
+                        <Setter Property="StaysOpenOnClick" Value="True"/>
+                        <EventSetter Event="Click" Handler="LocationRadioButton_Checked" />
+                    </Style>
+                </MenuItem.ItemContainerStyle>
             </MenuItem>
         </Menu>
 
