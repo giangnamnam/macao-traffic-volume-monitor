@@ -46,6 +46,9 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         public int SuggestedInterval { get; private set; }
 
+#if DEBUG
+        int i = 0;
+#endif
         public Image<Bgr, byte> GetCapture()
         {
             var timeSpan = DateTime.Now - lastReadTime;
@@ -59,6 +62,13 @@ namespace Gqqnbig.TrafficVolumeMonitor
             {
                 lastReadTime = DateTime.Now;
                 byte[] data = client.DownloadData(url);
+
+#if DEBUG
+                using (FileStream fs = new FileStream("B:\\新图像\\" + i++ + ".jpg", FileMode.CreateNew))
+                {
+                    fs.Write(data, 0, data.Length);
+                }
+#endif
 
                 using (MemoryStream stream = new MemoryStream(data.Length))
                 {
