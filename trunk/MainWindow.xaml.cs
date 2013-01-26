@@ -278,7 +278,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             {
                 bufferImages.Dequeue();
                 bufferImages.Enqueue(captureRetriever.GetCapture());
-                orginialImage = bufferImages.ElementAt(0);
+                orginialImage = bufferImages.ElementAt(locationParameter.BufferImagesCount / 2);
                 samples = bufferImages.ToArray();
             }
             var laneCapture = lane.Analyze(orginialImage, samples);
