@@ -127,7 +127,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                     else if (oba != null && oba.Rectangle.Equals(car.CarRectangle) && oba.Tag == tag)
                     {
                         adornerLayer.Remove(adorners[i]);
-                        break;
+                        //break;
                     }
                 }
             }
