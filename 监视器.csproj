@@ -115,6 +115,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\Emgu.CV.dll" />
+    <None Include="xi%27ao.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </None>
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\0.jpg" />
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\1.jpg" />
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\10.jpg" />
@@ -186,6 +190,10 @@
     <ProjectReference Include="模块\模块.csproj">
       <Project>{2977e2b0-0d52-4180-a3bd-15e006d5d7a7}</Project>
       <Name>模块</Name>
+    </ProjectReference>
+    <ProjectReference Include="西湾大桥澳门端算法\西湾大桥澳门端算法.csproj">
+      <Project>{0c311a06-9c0a-4fbc-8965-d6473805ebed}</Project>
+      <Name>西湾大桥澳门端算法</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
