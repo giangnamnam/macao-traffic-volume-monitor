@@ -50,6 +50,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             locationsMenuItem.ItemsSource = Directory.GetFiles(".\\", "*.lol");
+
+            StartLocationAnalysis(".\\xi'ao.lol");
         }
 
 
@@ -80,19 +82,20 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             locationParameter = (LocationParameter)serializer.Deserialize(xmlReader);
             xmlReader.Close();
 
-            captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam1/AxisPic-Cam1.jpg", 5000);
-            //captureRetriever = new DiskCaptureRetriever(locationParameter.SourcePath, 0);
+            //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam1/AxisPic-Cam1.jpg", 5000);
+            captureRetriever = new DiskCaptureRetriever(locationParameter.SourcePath, 0);
 
-            var ass = Assembly.LoadFrom("Algorithms\\" + locationParameter.AlgorithmName + ".dll");
-            Type[] exportedTypes = ass.GetExportedTypes();
-            foreach (var t in exportedTypes)
-            {
-                if (typeof(ILane).IsAssignableFrom(t))
-                {
-                    lane = (ILane)Activator.CreateInstance(t, locationParameter.MaskFilePath);
-                    break;
-                }
-            }
+            lane = new Lane(locationParameter.MaskFilePath);
+            //var ass = Assembly.LoadFrom("Algorithms\\" + locationParameter.AlgorithmName + ".dll");
+            //Type[] exportedTypes = ass.GetExportedTypes();
+            //foreach (var t in exportedTypes)
+            //{
+            //    if (typeof(ILane).IsAssignableFrom(t))
+            //    {
+            //        lane = (ILane)Activator.CreateInstance(t, locationParameter.MaskFilePath);
+            //        break;
+            //    }
+            //}
 
             if (lane == null)
                 throw new FileNotFoundException("找不到Algorithms\\" + locationParameter.AlgorithmName + ".dll");
@@ -165,18 +168,18 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             }
 
 
-            //lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
-            //LabelMatch(lastMatch);
+            lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
+            LabelMatch(lastMatch);
 
-            //var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
+            var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
 
-            //averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
-            //leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
-            //enterToPic2Run.Text = carMove.EnterToPic2.ToString();
+            averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
+            leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
+            enterToPic2Run.Text = carMove.EnterToPic2.ToString();
 
-            //laneMonitor.AddHistory(carMove);
-            //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
-            //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+            laneMonitor.AddHistory(carMove);
+            volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+            volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
 
             ThreadPool.QueueUserWorkItem(o => PreloadImage());
         }
