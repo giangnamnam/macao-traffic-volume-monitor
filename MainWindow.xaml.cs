@@ -82,20 +82,29 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             locationParameter = (LocationParameter)serializer.Deserialize(xmlReader);
             xmlReader.Close();
 
-            //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam1/AxisPic-Cam1.jpg", 5000);
-            captureRetriever = new DiskCaptureRetriever(locationParameter.SourcePath, 0);
+            if (locationParameter.SourcePath.StartsWith("http"))
+            {
+                //captureRetriever = new RealtimeCaptureRetriever("http://www.dsat.gov.mo/cams/cam1/AxisPic-Cam1.jpg", 5000);
+                captureRetriever = new RealtimeCaptureRetriever(locationParameter.SourcePath, 5000);
+            }
+            else
+            {
+                captureRetriever = new DiskCaptureRetriever(locationParameter.SourcePath, 0);
+            }
 
-            lane = new Lane(locationParameter.MaskFilePath);
-            //var ass = Assembly.LoadFrom("Algorithms\\" + locationParameter.AlgorithmName + ".dll");
-            //Type[] exportedTypes = ass.GetExportedTypes();
-            //foreach (var t in exportedTypes)
-            //{
-            //    if (typeof(ILane).IsAssignableFrom(t))
-            //    {
-            //        lane = (ILane)Activator.CreateInstance(t, locationParameter.MaskFilePath);
-            //        break;
-            //    }
-            //}
+
+
+            //lane = new Lane(locationParameter.MaskFilePath);
+            var ass = Assembly.LoadFrom("Algorithms\\" + locationParameter.AlgorithmName + ".dll");
+            Type[] exportedTypes = ass.GetExportedTypes();
+            foreach (var t in exportedTypes)
+            {
+                if (typeof(ILane).IsAssignableFrom(t))
+                {
+                    lane = (ILane)Activator.CreateInstance(t, locationParameter.MaskFilePath);
+                    break;
+                }
+            }
 
             if (lane == null)
                 throw new FileNotFoundException("找不到Algorithms\\" + locationParameter.AlgorithmName + ".dll");
