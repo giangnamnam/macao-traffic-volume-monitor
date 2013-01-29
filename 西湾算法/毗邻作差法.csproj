@@ -34,12 +34,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Emgu.CV">
-      <HintPath>..\dependencies\Emgu.CV.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>C:\Program Files\emgucv-windows-x64-gpu 2.4.2.1777\bin\Emgu.CV.dll</HintPath>
     </Reference>
     <Reference Include="Emgu.Util">
-      <HintPath>..\dependencies\Emgu.Util.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>C:\Program Files\emgucv-windows-x64-gpu 2.4.2.1777\bin\Emgu.Util.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
