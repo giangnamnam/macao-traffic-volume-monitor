@@ -84,13 +84,13 @@
     <Compile Include="CarContourAdvisor.cs" />
     <Compile Include="CarMatch.cs" />
     <Compile Include="CarMatchParameter.cs" />
-    <Compile Include="D:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Drawing\ColorConversion.cs">
+    <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Drawing\ColorConversion.cs">
       <Link>ColorConversion.cs</Link>
     </Compile>
-    <Compile Include="D:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Drawing\RectangleOperations.cs">
+    <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Drawing\RectangleOperations.cs">
       <Link>RectangleOperations.cs</Link>
     </Compile>
-    <Compile Include="D:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Statistics\StatisticsOperations.cs">
+    <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Statistics\StatisticsOperations.cs">
       <Link>StatisticsOperations.cs</Link>
     </Compile>
     <Compile Include="DiskCaptureRetriever.cs" />
