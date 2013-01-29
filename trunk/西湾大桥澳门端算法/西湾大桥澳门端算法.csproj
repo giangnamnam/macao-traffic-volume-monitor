@@ -31,11 +31,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Emgu.CV">
-      <HintPath>..\dependencies\Emgu.CV.dll</HintPath>
+      <HintPath>C:\Program Files\emgucv-windows-x64-gpu 2.4.2.1777\bin\Emgu.CV.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Emgu.Util">
-      <HintPath>..\dependencies\Emgu.Util.dll</HintPath>
+      <HintPath>C:\Program Files\emgucv-windows-x64-gpu 2.4.2.1777\bin\Emgu.Util.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

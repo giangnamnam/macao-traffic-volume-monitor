@@ -63,10 +63,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
             CvInvoke.cvThreshold(observedImage, threshImage, 0, 255, THRESH.CV_THRESH_OTSU);
             //progressImages.Add(threshImage.Convert<Bgr, byte>());
-            progressImages.Add(threshImage.Canny(new Gray(50), new Gray(100)).Convert<Bgr, byte>());
+            progressImages.Add(threshImage.Canny(50,100).Convert<Bgr, byte>());
 
 
-            LineSegment2D[] lines = threshImage.HoughLines(new Gray(50), new Gray(100), 1, System.Math.PI / 180,
+            LineSegment2D[] lines = threshImage.HoughLines(50, 100, 1, System.Math.PI / 180,
                 threshold: 12, minLineWidth: 10, gapBetweenLines: 10)[0];
 
             //image1 = grayImage.Convert<Bgr, byte>();

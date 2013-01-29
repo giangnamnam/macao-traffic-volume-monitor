@@ -39,13 +39,11 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Emgu.CV, Version=2.4.0.1717, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>dependencies\Emgu.CV.dll</HintPath>
+    <Reference Include="Emgu.CV">
+      <HintPath>C:\Program Files\emgucv-windows-x64-gpu 2.4.2.1777\bin\Emgu.CV.dll</HintPath>
     </Reference>
-    <Reference Include="Emgu.Util, Version=2.4.0.1717, Culture=neutral, PublicKeyToken=7281126722ab4438, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>dependencies\Emgu.Util.dll</HintPath>
+    <Reference Include="Emgu.Util">
+      <HintPath>C:\Program Files\emgucv-windows-x64-gpu 2.4.2.1777\bin\Emgu.Util.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -114,7 +112,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dependencies\Emgu.CV.dll" />
     <None Include="xi%27ao.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
@@ -186,9 +183,6 @@
     <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\7.jpg" />
     <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\8.jpg" />
     <None Include="高伟乐街与荷兰园大马路交界\测试\测试图\9.jpg" />
-    <None Include="dependencies\Emgu.CV.xml" />
-    <None Include="dependencies\Emgu.Util.dll" />
-    <None Include="dependencies\Emgu.Util.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="模块\模块.csproj">
