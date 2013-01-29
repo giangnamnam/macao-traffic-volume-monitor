@@ -191,10 +191,6 @@
       <Project>{2977e2b0-0d52-4180-a3bd-15e006d5d7a7}</Project>
       <Name>模块</Name>
     </ProjectReference>
-    <ProjectReference Include="西湾大桥澳门端算法\西湾大桥澳门端算法.csproj">
-      <Project>{0C311A06-9C0A-4FBC-8965-D6473805EBED}</Project>
-      <Name>西湾大桥澳门端算法</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="gaohe.lol">

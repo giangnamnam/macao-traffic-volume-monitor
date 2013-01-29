@@ -7,5 +7,5 @@
     <AllowSamePosition>false</AllowSamePosition>
   </CarMatchParameter>
   <BufferImagesCount>6</BufferImagesCount>
-  <AlgorithmName>far-moving</AlgorithmName>
+  <AlgorithmName>xi'ao</AlgorithmName>
 </LocationParameter>
