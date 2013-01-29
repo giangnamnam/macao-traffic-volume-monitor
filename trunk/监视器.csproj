@@ -192,7 +192,7 @@
       <Name>模块</Name>
     </ProjectReference>
     <ProjectReference Include="西湾大桥澳门端算法\西湾大桥澳门端算法.csproj">
-      <Project>{0c311a06-9c0a-4fbc-8965-d6473805ebed}</Project>
+      <Project>{0C311A06-9C0A-4FBC-8965-D6473805EBED}</Project>
       <Name>西湾大桥澳门端算法</Name>
     </ProjectReference>
   </ItemGroup>
@@ -205,6 +205,52 @@
     <None Include="xiwan.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="西湾大桥澳门端\mask.bmp" />
+    <None Include="西湾大桥澳门端\图\0.jpg" />
+    <None Include="西湾大桥澳门端\图\1.jpg" />
+    <None Include="西湾大桥澳门端\图\10.jpg" />
+    <None Include="西湾大桥澳门端\图\11.jpg" />
+    <None Include="西湾大桥澳门端\图\12.jpg" />
+    <None Include="西湾大桥澳门端\图\13.jpg" />
+    <None Include="西湾大桥澳门端\图\14.jpg" />
+    <None Include="西湾大桥澳门端\图\15.jpg" />
+    <None Include="西湾大桥澳门端\图\16.jpg" />
+    <None Include="西湾大桥澳门端\图\17.jpg" />
+    <None Include="西湾大桥澳门端\图\18.jpg" />
+    <None Include="西湾大桥澳门端\图\19.jpg" />
+    <None Include="西湾大桥澳门端\图\2.jpg" />
+    <None Include="西湾大桥澳门端\图\20.jpg" />
+    <None Include="西湾大桥澳门端\图\21.jpg" />
+    <None Include="西湾大桥澳门端\图\22.jpg" />
+    <None Include="西湾大桥澳门端\图\23.jpg" />
+    <None Include="西湾大桥澳门端\图\24.jpg" />
+    <None Include="西湾大桥澳门端\图\25.jpg" />
+    <None Include="西湾大桥澳门端\图\26.jpg" />
+    <None Include="西湾大桥澳门端\图\27.jpg" />
+    <None Include="西湾大桥澳门端\图\28.jpg" />
+    <None Include="西湾大桥澳门端\图\29.jpg" />
+    <None Include="西湾大桥澳门端\图\3.jpg" />
+    <None Include="西湾大桥澳门端\图\30.jpg" />
+    <None Include="西湾大桥澳门端\图\31.jpg" />
+    <None Include="西湾大桥澳门端\图\32.jpg" />
+    <None Include="西湾大桥澳门端\图\33.jpg" />
+    <None Include="西湾大桥澳门端\图\34.jpg" />
+    <None Include="西湾大桥澳门端\图\35.jpg" />
+    <None Include="西湾大桥澳门端\图\36.jpg" />
+    <None Include="西湾大桥澳门端\图\37.jpg" />
+    <None Include="西湾大桥澳门端\图\38.jpg" />
+    <None Include="西湾大桥澳门端\图\39.jpg" />
+    <None Include="西湾大桥澳门端\图\4.jpg" />
+    <None Include="西湾大桥澳门端\图\40.jpg" />
+    <None Include="西湾大桥澳门端\图\41.jpg" />
+    <None Include="西湾大桥澳门端\图\42.jpg" />
+    <None Include="西湾大桥澳门端\图\5.jpg" />
+    <None Include="西湾大桥澳门端\图\6.jpg" />
+    <None Include="西湾大桥澳门端\图\7.jpg" />
+    <None Include="西湾大桥澳门端\图\8.jpg" />
+    <None Include="西湾大桥澳门端\图\9.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
