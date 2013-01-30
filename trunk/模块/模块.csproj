@@ -84,9 +84,6 @@
     <Compile Include="CarContourAdvisor.cs" />
     <Compile Include="CarMatch.cs" />
     <Compile Include="CarMatchParameter.cs" />
-    <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Drawing\ColorConversion.cs">
-      <Link>ColorConversion.cs</Link>
-    </Compile>
     <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Drawing\RectangleOperations.cs">
       <Link>RectangleOperations.cs</Link>
     </Compile>
