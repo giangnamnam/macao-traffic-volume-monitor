@@ -44,9 +44,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\WPFToolkitBinariesAndSource\Source\bin\Debug\System.Windows.Controls.DataVisualization.Toolkit.dll</HintPath>
+    <Reference Include="System.Windows.Controls.DataVisualization.Toolkit">
+      <HintPath>D:\MySourceCode\C#\类库\WPFToolkit\System.Windows.Controls.DataVisualization.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -59,9 +58,8 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="WPFToolkit, Version=3.5.40128.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\WPFToolkitBinariesAndSource\Source\bin\Debug\WPFToolkit.dll</HintPath>
+    <Reference Include="WPFToolkit">
+      <HintPath>D:\MySourceCode\C#\类库\WPFToolkit\WPFToolkit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -109,7 +109,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             if (lane == null)
                 throw new FileNotFoundException("找不到Algorithms\\" + locationParameter.AlgorithmName + ".dll");
 
-            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter);
+            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter,60);
 
             bufferImages = new Queue<Image<Bgr, byte>>(locationParameter.BufferImagesCount);
             for (int i = 0; i < locationParameter.BufferImagesCount; i++)

@@ -4,7 +4,6 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using System.Xml;
@@ -28,8 +27,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         private CarMatch[] lastMatch;
         private LocationParameter locationParameter;
         private DispatcherTimer realtimeLoadingTimer;
-        private LaneCapture laneCapture1;
-        private LaneCapture laneCapture2;
+        private LaneCapture lastLaneCapture;
 
         readonly System.Collections.ObjectModel.ObservableCollection<KeyValuePair<string, int>> chartData = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<string, int>>();
 
@@ -105,7 +103,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             if (lane == null)
                 throw new FileNotFoundException("找不到Algorithms\\" + locationParameter.AlgorithmName + ".dll");
 
-            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter);
+            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter, 60);
 
             bufferImages = new Queue<Image<Bgr, byte>>(locationParameter.BufferImagesCount);
             for (int i = 0; i < locationParameter.BufferImagesCount; i++)
@@ -142,54 +140,60 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             Image<Bgr, byte> orginialImage = bufferImages.ElementAt(index);
             ICollection<Image<Bgr, byte>> samples = bufferImages.ToArray();
-            laneCapture1 = lane.Analyze(orginialImage, samples);
+            LaneCapture laneCapture1 = lane.Analyze(orginialImage, samples);
 
             bufferImages.Dequeue();
             bufferImages.Enqueue(captureRetriever.GetCapture());
             Image<Bgr, byte> orginialImage1 = bufferImages.ElementAt(index);
             ICollection<Image<Bgr, byte>> samples1 = bufferImages.ToArray();
-            laneCapture2 = lane.Analyze(orginialImage1, samples1);
+            LaneCapture laneCapture2 = lastLaneCapture = lane.Analyze(orginialImage1, samples1);
 
+            var carMatches = laneMonitor.FindCarMatch(laneCapture1.Cars, laneCapture2.Cars);
+
+            var carMove = laneMonitor.GetCarMove(carMatches, laneCapture1.Cars, laneCapture2.Cars);
+
+            laneMonitor.AddHistory(carMove);
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                //captureViewers[0].View(laneCapture1);
-                //captureViewers[1].View(laneCapture2);
 
-                //picIdTextRun1.Text = PicId.ToString();
-                //picIdTextRun2.Text = (PicId + 1).ToString();
+                chartData.Add(new KeyValuePair<string, int>(PicId.ToString(), carMove.EnterToPic2));
+                //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+                //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
 
-                LoadCompleted();
+                //ThreadPool.QueueUserWorkItem(o => PreloadImage());
             }));
         }
 
-        private void LoadCompleted()
-        {
-            //if (captureRetriever.SuggestedInterval != 0 && realtimeLoadingTimer == null)
-            //{
-            //    realtimeLoadingTimer = new DispatcherTimer();
-            //    realtimeLoadingTimer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
-            //    realtimeLoadingTimer.Interval = TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
-            //    realtimeLoadingTimer.Start();
-            //}
+        //private void LoadCompleted()
+        //{
+        //    //if (captureRetriever.SuggestedInterval != 0 && realtimeLoadingTimer == null)
+        //    //{
+        //    //    realtimeLoadingTimer = new DispatcherTimer();
+        //    //    realtimeLoadingTimer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
+        //    //    realtimeLoadingTimer.Interval = TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
+        //    //    realtimeLoadingTimer.Start();
+        //    //}
 
 
-            lastMatch = laneMonitor.FindCarMatch(laneCapture1.Cars, laneCapture2.Cars);
-            //LabelMatch(lastMatch);
+        //    lastMatch = laneMonitor.FindCarMatch(laneCapture1.Cars, laneCapture2.Cars);
+        //    //LabelMatch(lastMatch);
 
-            var carMove = laneMonitor.GetCarMove(lastMatch, laneCapture1.Cars, laneCapture2.Cars);
+        //    var carMove = laneMonitor.GetCarMove(lastMatch, laneCapture1.Cars, laneCapture2.Cars);
 
-            //averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
-            //leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
-            //enterToPic2Run.Text = carMove.EnterToPic2.ToString();
+        //    //averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
+        //    //leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
+        //    //enterToPic2Run.Text = carMove.EnterToPic2.ToString();
 
-            laneMonitor.AddHistory(carMove);
+        //    laneMonitor.AddHistory(carMove);
 
-            chartData.Add(new KeyValuePair<string, int>(PicId.ToString(), carMove.EnterToPic2));
-            //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
-            //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
 
-            //ThreadPool.QueueUserWorkItem(o => PreloadImage());
-        }
+
+        //    chartData.Add(new KeyValuePair<string, int>(PicId.ToString(), carMove.EnterToPic2));
+        //    //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+        //    //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+
+        //    //ThreadPool.QueueUserWorkItem(o => PreloadImage());
+        //}
 
         /// <summary>
         /// PreloadImage方法极为耗时，不允许在Dispatcher线程上运行。
@@ -198,6 +202,11 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             Contract.Requires(Dispatcher.CheckAccess() == false, "PreloadImage方法极为耗时，不允许在Dispatcher线程上运行。");
 
+
+        }
+
+        private void nextButton_Click(object sender, RoutedEventArgs e)
+        {
             Image<Bgr, byte> orginialImage;
             ICollection<Image<Bgr, byte>> samples;
             lock (bufferImages)
@@ -207,13 +216,76 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                 orginialImage = bufferImages.ElementAt(locationParameter.BufferImagesCount / 2);
                 samples = bufferImages.ToArray();
             }
+
             var laneCapture = lane.Analyze(orginialImage, samples);
             System.Diagnostics.Debug.WriteLine("分析完成");
-            Dispatcher.BeginInvoke(new Action(() =>
-            {
-                //captureViewers[2].View(laneCapture);
-                System.Diagnostics.Debug.WriteLine("预加载" + (PicId + 2) + "完成");
-            }), DispatcherPriority.Background);
+
+            var carMatches = laneMonitor.FindCarMatch(lastLaneCapture.Cars, laneCapture.Cars);
+
+            var carMove = laneMonitor.GetCarMove(carMatches, lastLaneCapture.Cars, laneCapture.Cars);
+
+            laneMonitor.AddHistory(carMove);
+            PicId++;
+            chartData.Add(new KeyValuePair<string, int>(PicId.ToString(), carMove.EnterToPic2));
+
+
+
+
+            //var originalCursor = Mouse.OverrideCursor;
+            //Mouse.OverrideCursor = Cursors.Wait;
+
+            //System.Diagnostics.Debug.WriteLine("nextButton_Click");
+            ////if (captureViewers[2].CurrentPicId != PicId + 1)
+            ////    captureViewers[2].View(PicId + 1);
+            ////UpdateLayout();
+
+
+            ////picIdTextRun1.Text = PicId.ToString();
+            ////picIdTextRun2.Text = (PicId + 1).ToString();
+
+
+            //TranslateTransform translateTransform = new TranslateTransform();
+            ////captureViewers[0].RenderTransform = translateTransform;
+            ////captureViewers[1].RenderTransform = translateTransform;
+            ////captureViewers[2].RenderTransform = translateTransform;
+
+            //DoubleAnimation animation = new DoubleAnimation(-captureViewerList.RenderSize.Height / 2, new Duration(TimeSpan.FromMilliseconds(1000)));
+            //animation.FillBehavior = FillBehavior.Stop;
+            //animation.Completed += (a, b) =>
+            //{
+            //    //captureViewers.Move(0, captureViewers.Count - 1);
+            //    //if (captureRetriever.SuggestedInterval != 0 && realtimeLoadingTimer == null)
+            //    //{
+            //    //    realtimeLoadingTimer = new DispatcherTimer();
+            //    //    realtimeLoadingTimer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
+            //    //    realtimeLoadingTimer.Interval = TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
+            //    //    realtimeLoadingTimer.Start();
+            //    //}
+
+
+            //    lastMatch = laneMonitor.FindCarMatch(laneCapture1.Cars, laneCapture2.Cars);
+            //    //LabelMatch(lastMatch);
+
+            //    var carMove = laneMonitor.GetCarMove(lastMatch, laneCapture1.Cars, laneCapture2.Cars);
+
+            //    //averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
+            //    //leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
+            //    //enterToPic2Run.Text = carMove.EnterToPic2.ToString();
+
+            //    laneMonitor.AddHistory(carMove);
+
+
+
+            //    chartData.Add(new KeyValuePair<string, int>(PicId.ToString(), carMove.EnterToPic2));
+            //    //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+            //    //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+
+            //    //ThreadPool.QueueUserWorkItem(o => PreloadImage());
+            //};
+            //translateTransform.BeginAnimation(TranslateTransform.YProperty, animation);
+
+            ////Mouse.OverrideCursor = originalCursor;
         }
+
     }
 }

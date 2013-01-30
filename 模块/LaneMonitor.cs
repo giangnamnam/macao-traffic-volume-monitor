@@ -71,7 +71,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         readonly CarMatchParameter carMatchParameter;
 
-        LinkedList<int> volumeIn60secondsData = new LinkedList<int>();
+        readonly LinkedList<int> numbersOfNewCars = new LinkedList<int>();
 
         /// <summary>
         /// 获取在5秒内的平均车流量（冲过底线的车的数量/5）。
@@ -84,13 +84,14 @@ namespace Gqqnbig.TrafficVolumeMonitor
         public double VolumeIn60seconds { get; private set; }
 
 
-        public LaneMonitor(TrafficDirection trafficDirection, ILane lane, CarMatchParameter carMatchParameter)
+        public LaneMonitor(TrafficDirection trafficDirection, ILane lane, CarMatchParameter carMatchParameter, int maxHistorySize)
         {
             Lane = lane;
             TrafficDirection = trafficDirection;
 
 
             this.carMatchParameter = carMatchParameter;
+            MaxHistorySize = maxHistorySize;
             //carMatchParameter = new CarMatchParameter { SimilarityThreshold = 0.26 };
             //XmlSerializer serializer = new XmlSerializer(typeof(CarMatchParameter));
 
@@ -102,6 +103,11 @@ namespace Gqqnbig.TrafficVolumeMonitor
         public TrafficDirection TrafficDirection { get; private set; }
 
         public ILane Lane { get; private set; }
+
+        /// <summary>
+        /// 设置最多记录多少条历史。
+        /// </summary>
+        public int MaxHistorySize { get; private set; }
 
         public CarMatch[] FindCarMatch(Car[] cars1, Car[] cars2)
         {
@@ -173,10 +179,31 @@ namespace Gqqnbig.TrafficVolumeMonitor
         {
             VolumeIn5seconds = carMove.LeaveFromPic1 / 5.0;
 
-            if (volumeIn60secondsData.Count == 12)
-                volumeIn60secondsData.RemoveFirst();
-            volumeIn60secondsData.AddLast(carMove.LeaveFromPic1);
-            VolumeIn60seconds = volumeIn60secondsData.Sum() / 5.0 / volumeIn60secondsData.Count;
+            if (numbersOfNewCars.Count == MaxHistorySize)
+                numbersOfNewCars.RemoveFirst();
+            numbersOfNewCars.AddLast(carMove.EnterToPic2);
+            //VolumeIn60seconds = numbersOfNewCars.Sum() / 5.0 / numbersOfNewCars.Count;
+
+        }
+
+        /// <summary>
+        /// 获取在最近一段时间内，通过的车辆的数目。
+        /// </summary>
+        /// <param name="interval">从几条历史中求和</param>
+        /// <returns></returns>
+        public int GetNewCarSum(int interval)
+        {
+            if (interval < numbersOfNewCars.Count)
+                throw new ArgumentException(string.Format("目前只有{0}条记录，因此不能访问{1}条记录。", numbersOfNewCars.Count, interval));
+
+            var node = numbersOfNewCars.Last;
+            int sum = 0;
+            for (int i = 0; i < interval; i++)
+            {
+                sum += node.Value;
+                node = node.Previous;
+            }
+            return sum;
         }
     }
 
