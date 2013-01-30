@@ -17,6 +17,7 @@ using System.Xml.Serialization;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Gqqnbig.TrafficVolumeMonitor.Modules;
+using Gqqnbig.Windows.Media;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
 {

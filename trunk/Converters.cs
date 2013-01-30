@@ -5,6 +5,7 @@ using System.Windows.Data;
 using System.Linq;
 using System.Windows.Media.Imaging;
 using Emgu.CV;
+using Gqqnbig.Windows.Media;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
