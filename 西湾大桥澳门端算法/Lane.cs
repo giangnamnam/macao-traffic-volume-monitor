@@ -105,7 +105,8 @@ namespace Gqqnbig.TrafficVolumeMonitor
             gaussianImage.Dispose();
             afterThreshold.Dispose();
 
-            return new LaneCapture(new Image<Bgr, byte>[] { focusedImage, finalImage.Convert<Bgr, byte>()/*, orginialImage*/, backgroundImage.Convert<Bgr, byte>() },
+            return new LaneCapture(orginialImage,focusedImage,
+                new[] { finalImage.Convert<Bgr, byte>()/*, orginialImage*/, backgroundImage.Convert<Bgr, byte>() },
                 groups.ToArray());
         }
 
