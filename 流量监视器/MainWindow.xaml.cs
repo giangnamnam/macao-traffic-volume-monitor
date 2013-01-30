@@ -11,6 +11,7 @@ using System.Xml.Serialization;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Gqqnbig.TrafficVolumeMonitor.Modules;
+using Gqqnbig.Windows.Media;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
@@ -30,7 +31,6 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         private LaneCapture lastLaneCapture;
 
         readonly System.Collections.ObjectModel.ObservableCollection<KeyValuePair<string, int>> chartData = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<string, int>>();
-
 
         public MainWindow()
         {
@@ -155,12 +155,11 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             laneMonitor.AddHistory(carMove);
             Dispatcher.BeginInvoke(new Action(() =>
             {
+                int n = PicId / 12;
+                string independentValue = string.Format("{0}-{1}", n * 12, n*12 + 11);
+                chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
 
-                chartData.Add(new KeyValuePair<string, int>(PicId.ToString(), carMove.EnterToPic2));
-                //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
-                //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
-
-                //ThreadPool.QueueUserWorkItem(o => PreloadImage());
+                currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
             }));
         }
 
@@ -207,6 +206,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine(lineSeries.LegendItems.Count);
+
+
             Image<Bgr, byte> orginialImage;
             ICollection<Image<Bgr, byte>> samples;
             lock (bufferImages)
@@ -224,12 +226,27 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             var carMove = laneMonitor.GetCarMove(carMatches, lastLaneCapture.Cars, laneCapture.Cars);
 
+            lastLaneCapture = laneCapture;
             laneMonitor.AddHistory(carMove);
             PicId++;
-            chartData.Add(new KeyValuePair<string, int>(PicId.ToString(), carMove.EnterToPic2));
 
+            int n = PicId / 12;
+            string independentValue = string.Format("{0}-{1}", n * 12, n * 12 + 11);
 
+            int index = chartData.Count - 1;
+            var pair = chartData[index];
+            if (pair.Key == independentValue)
+            {
+                pair = new KeyValuePair<string, int>(pair.Key, pair.Value + carMove.EnterToPic2);
+                chartData[index] = pair;
+            }
+            else
+            {
+                chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
+            }
 
+            currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
+            imageIdTextBlock.Text = PicId.ToString();
 
             //var originalCursor = Mouse.OverrideCursor;
             //Mouse.OverrideCursor = Cursors.Wait;

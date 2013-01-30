@@ -3,11 +3,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         Title="MainWindow" Loaded="Window_Loaded">
-    <StackPanel>
-        <chartingToolkit:Chart  Name="lineChart" Title="车流量监控">
-            <chartingToolkit:LineSeries  DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" IsSelectionEnabled="True"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <chartingToolkit:Chart Name="lineChart" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Title="车流量监控">
+            <chartingToolkit:LineSeries Name="lineSeries" Title="" DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" IsSelectionEnabled="True"/>
         </chartingToolkit:Chart>
-        <Button Content="下一张" Click="nextButton_Click"/>
-        <Image Name="currentImage"/>
-    </StackPanel>
+
+        <Image Name="currentImage" Grid.Row="1" Grid.Column="0" MaxHeight="200"/>
+        <Button Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Content="下一张" Click="nextButton_Click"/>
+
+        <TextBlock Name="imageIdTextBlock"  Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center"/>
+    </Grid>
 </Window>
