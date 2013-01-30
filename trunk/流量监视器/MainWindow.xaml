@@ -7,6 +7,7 @@
         <chartingToolkit:Chart  Name="lineChart" Title="车流量监控">
             <chartingToolkit:LineSeries  DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" IsSelectionEnabled="True"/>
         </chartingToolkit:Chart>
+        <Button Content="下一张" Click="nextButton_Click"/>
         <Image Name="currentImage"/>
     </StackPanel>
 </Window>
