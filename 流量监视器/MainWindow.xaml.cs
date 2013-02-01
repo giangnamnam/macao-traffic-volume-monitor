@@ -161,6 +161,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
                 currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
             }));
+
+
+            if (captureRetriever.SuggestedInterval != 0 && realtimeLoadingTimer == null)
+            {
+                realtimeLoadingTimer = new DispatcherTimer();
+                realtimeLoadingTimer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
+                realtimeLoadingTimer.Interval = /*TimeSpan.FromSeconds(5);*/ TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
+                realtimeLoadingTimer.Start();
+            }
         }
 
         //private void LoadCompleted()
