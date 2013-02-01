@@ -20,6 +20,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// 将多少条记录聚合为统计图的一列。
+        /// </summary>
+        private const int accumulateLength = 6;
         Queue<Image<Bgr, byte>> bufferImages;
         ICaptureRetriever captureRetriever;
 
@@ -155,21 +159,21 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             laneMonitor.AddHistory(carMove);
             Dispatcher.BeginInvoke(new Action(() =>
             {
-                int n = PicId / 12;
-                string independentValue = string.Format("{0}-{1}", n * 12, n*12 + 11);
+                int n = PicId / accumulateLength;
+                string independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
                 chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
 
                 currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
             }));
 
 
-            if (captureRetriever.SuggestedInterval != 0 && realtimeLoadingTimer == null)
-            {
+            //if (captureRetriever.SuggestedInterval != 0 && realtimeLoadingTimer == null)
+            //{
                 realtimeLoadingTimer = new DispatcherTimer();
                 realtimeLoadingTimer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
-                realtimeLoadingTimer.Interval = /*TimeSpan.FromSeconds(5);*/ TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
+                realtimeLoadingTimer.Interval = TimeSpan.FromSeconds(5); //TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
                 realtimeLoadingTimer.Start();
-            }
+            //}
         }
 
         //private void LoadCompleted()
@@ -239,8 +243,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             laneMonitor.AddHistory(carMove);
             PicId++;
 
-            int n = PicId / 12;
-            string independentValue = string.Format("{0}-{1}", n * 12, n * 12 + 11);
+            int n = PicId / accumulateLength;
+            string independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
 
             int index = chartData.Count - 1;
             var pair = chartData[index];
