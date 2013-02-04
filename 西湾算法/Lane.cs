@@ -11,7 +11,7 @@ using Gqqnbig.Statistics;
 
 namespace Gqqnbig.TrafficVolumeMonitor
 {
-    public class Lane:ILane
+    public class Lane : ILane
     {
         readonly Image<Gray, byte> mask;
         readonly Rectangle regionOfInterest;
@@ -105,8 +105,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             gaussianImage.Dispose();
             afterThreshold.Dispose();
 
-            return new LaneCapture(new Image<Bgr, byte>[] { focusedImage, finalImage.Convert<Bgr, byte>()/*, orginialImage, backgroundImage.Convert<Bgr, byte>()*/ },
-                groups.ToArray());
+            return new LaneCapture(orginialImage, focusedImage, groups.ToArray());
         }
 
         private Image<Bgra, byte> GetBackground(Bgr roadColor, ICollection<Image<Bgr, byte>> samples)

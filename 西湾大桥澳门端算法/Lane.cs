@@ -106,8 +106,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             afterThreshold.Dispose();
 
             return new LaneCapture(orginialImage,focusedImage,
-                new[] { finalImage.Convert<Bgr, byte>()/*, orginialImage*/, backgroundImage.Convert<Bgr, byte>() },
-                groups.ToArray());
+                groups.ToArray(), new[] { finalImage.Convert<Bgr, byte>()/*, orginialImage*/, backgroundImage.Convert<Bgr, byte>() });
         }
 
         private Image<Bgra, byte> GetBackground(Bgr roadColor, ICollection<Image<Bgr, byte>> samples)
