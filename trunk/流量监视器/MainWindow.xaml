@@ -9,18 +9,35 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <chartingToolkit:Chart Name="lineChart" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Title="车流量监控">
+        <Menu Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2">
+            <MenuItem Name="locationsMenuItem" Header="地点">
+                <MenuItem.Resources>
+                    <RadioButton x:Key="RadioButtonResource" x:Shared="false" HorizontalAlignment="Center"
+                     GroupName="MenuItemRadio" IsHitTestVisible="False"/>
+                </MenuItem.Resources>
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Icon" Value="{DynamicResource RadioButtonResource}"/>
+                        <Setter Property="StaysOpenOnClick" Value="True"/>
+                        <EventSetter Event="Click" Handler="LocationRadioButton_Checked" />
+                    </Style>
+                </MenuItem.ItemContainerStyle>
+            </MenuItem>
+        </Menu>
+
+        <chartingToolkit:Chart Name="lineChart" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
             <chartingToolkit:LineSeries Name="lineSeries" Title="" DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" IsSelectionEnabled="True"/>
         </chartingToolkit:Chart>
 
-        <Image Name="currentImage" Grid.Row="1" Grid.Column="0" MaxHeight="200"/>
-        <Button Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" Content="下一张" Click="nextButton_Click"/>
+        <Image Name="currentImage" Grid.Row="2" Grid.Column="0" MaxHeight="200"/>
+        <Button Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Content="下一张" Click="nextButton_Click"/>
 
-        <TextBlock Name="imageIdTextBlock"  Grid.Row="2" Grid.Column="0" HorizontalAlignment="Center"/>
+        <TextBlock Name="imageIdTextBlock"  Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center"/>
     </Grid>
 </Window>

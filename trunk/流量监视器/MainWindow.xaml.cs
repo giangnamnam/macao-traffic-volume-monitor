@@ -4,7 +4,9 @@ using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
@@ -45,6 +47,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            locationsMenuItem.ItemsSource = Directory.GetFiles(".\\", "*.lol");
             lineChart.DataContext = chartData;
 
             StartLocationAnalysis(".\\xi'ao.lol");
@@ -157,6 +160,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             var carMove = laneMonitor.GetCarMove(carMatches, laneCapture1.Cars, laneCapture2.Cars);
 
             laneMonitor.AddHistory(carMove);
+            chartData.Clear();
+
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 int n = PicId / accumulateLength;
@@ -315,6 +320,25 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             //translateTransform.BeginAnimation(TranslateTransform.YProperty, animation);
 
             ////Mouse.OverrideCursor = originalCursor;
+        }
+
+        private void LocationRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            if (item != null)
+            {
+                RadioButton rb = item.Icon as RadioButton;
+                if (rb != null)
+                {
+                    rb.IsChecked = true;
+                }
+            }
+
+            //MenuItem item = (MenuItem)e.OriginalSource;
+
+            ////locationsMenuItem.Items
+
+            Task.Factory.StartNew(o => StartLocationAnalysis((string)o), item.Header);
         }
 
     }
