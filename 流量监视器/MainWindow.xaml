@@ -36,7 +36,7 @@
         </chartingToolkit:Chart>
 
         <Image Name="currentImage" Grid.Row="2" Grid.Column="0" MaxHeight="200"/>
-        <Button Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Content="下一张" Click="nextButton_Click"/>
+        <Button Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Content="{DynamicResource loc_Next}" Click="nextButton_Click"/>
 
         <TextBlock Name="imageIdTextBlock"  Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center"/>
     </Grid>
