@@ -31,7 +31,7 @@
             </MenuItem>
         </Menu>
 
-        <chartingToolkit:Chart Name="lineChart" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+        <chartingToolkit:Chart Name="lineChart" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="0">
             <chartingToolkit:LineSeries Name="lineSeries" Title="" DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" IsSelectionEnabled="True"/>
         </chartingToolkit:Chart>
 
