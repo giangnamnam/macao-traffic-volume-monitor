@@ -29,6 +29,11 @@ namespace Gqqnbig.TrafficVolumeMonitor
         private readonly WebClient client;
         DateTime lastReadTime;
 
+
+        private byte[] lastImageData;
+        int errorCount = 0;
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -51,6 +56,9 @@ namespace Gqqnbig.TrafficVolumeMonitor
 #endif
         public Image<Bgr, byte> GetCapture()
         {
+            if (errorCount > 0)
+                throw new WebException("获取图像多次失败。");
+            
             var timeSpan = DateTime.Now - lastReadTime;
             double diff = SuggestedInterval - timeSpan.TotalMilliseconds;
             if (diff > 0)
@@ -61,18 +69,32 @@ namespace Gqqnbig.TrafficVolumeMonitor
             lock (client)
             {
                 lastReadTime = DateTime.Now;
-                byte[] data = client.DownloadData(url);
+
+                try
+                {
+                    lastImageData = client.DownloadData(url);
+
+                    if (errorCount > 0)
+                        errorCount--;
+                }
+                catch (WebException)
+                {
+                    errorCount += 2;
+                }
+
+                if (lastImageData == null)
+                    throw new WebException("无法从指定的URL中获取图像，或获取的图像大小为0。");
 
 #if DEBUG
-                using (FileStream fs = new FileStream("B:\\新图像\\" + i++ + ".jpg", FileMode.CreateNew))
+                using (FileStream fs = new FileStream("D:\\新图像\\" + i++ + ".jpg", FileMode.CreateNew))
                 {
-                    fs.Write(data, 0, data.Length);
+                    fs.Write(lastImageData, 0, lastImageData.Length);
                 }
 #endif
 
-                using (MemoryStream stream = new MemoryStream(data.Length))
+                using (MemoryStream stream = new MemoryStream(lastImageData.Length))
                 {
-                    stream.Write(data, 0, data.Length);
+                    stream.Write(lastImageData, 0, lastImageData.Length);
                     return new Image<Bgr, byte>(new System.Drawing.Bitmap(stream));
                 }
             }
