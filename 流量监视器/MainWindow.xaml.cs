@@ -70,6 +70,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             cvs.SortDescriptions.Add(new SortDescription { PropertyName = "Name" });
 
             languagesMenuItem.ItemsSource = cvs.View;
+            languagesMenuItem.DataContext = System.Threading.Thread.CurrentThread.CurrentUICulture;
+
 
 
             lineChart.DataContext = chartData;
@@ -375,7 +377,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                 rb.IsChecked = true;
             }
 
-            languagesMenuItem.DataContext = item.DataContext;
+            CultureInfo culture=(CultureInfo) item.DataContext;
+            languagesMenuItem.DataContext = culture;
+            App.Localize(culture);
         }
     }
 }

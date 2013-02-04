@@ -9,54 +9,60 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     /// </summary>
     public partial class App : Application
     {
+        internal static readonly CultureInfo DefaultCulture = CultureInfo.GetCultureInfo("zh-CN");
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
-            LoadLanguage();
+            Localize(DefaultCulture);
         }
 
-        private void LoadLanguage()
+        internal static void Localize(CultureInfo culture)
         {
-            CultureInfo currentCultureInfo = CultureInfo.GetCultureInfo("en-US");
-
-            ResourceDictionary langRd = null;
-
-            try
+            var mergedDictionaries = Current.Resources.MergedDictionaries;
+            for (int i = 0; i < mergedDictionaries.Count; i++)
             {
+                Uri uri = mergedDictionaries[i].Source;
+                string uriString = uri.ToString();
 
-                langRd = FindLocalizationResource(currentCultureInfo);
-            }
-            catch
-            {
-            }
-
-            if (langRd != null)
-            {
-                //if (this.Resources.MergedDictionaries.Count > 0)
-                //{
-                //    this.Resources.MergedDictionaries.Clear();
-                //}
-                this.Resources.MergedDictionaries.Add(langRd);
+                if (uriString.StartsWith("Lang/" + DefaultCulture.Name, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                if (uriString.StartsWith("Lang/", StringComparison.OrdinalIgnoreCase))
+                    mergedDictionaries.RemoveAt(i--);
             }
 
 
+            if (culture.Equals(DefaultCulture) == false)
+            {
+                ResourceDictionary langRd = FindLocalizationResource(culture);
+                if (langRd != null)
+                    mergedDictionaries.Add(langRd);
+            }
         }
 
         /// <summary>
         /// 寻找存在的本地化文件。
         /// </summary>
         /// <param name="cultureInfo"></param>
-        /// <returns></returns>
+        /// <returns>如果找不到就返回null。</returns>
         private static ResourceDictionary FindLocalizationResource(CultureInfo cultureInfo)
         {
-            ResourceDictionary dic= Application.LoadComponent(new Uri(@"Lang\" + cultureInfo.Name + ".xaml", UriKind.Relative)) as ResourceDictionary;
-
-            if (dic == null && cultureInfo.Parent.IsNeutralCulture == false)//没有找到zh-CN的话，就会找zh-CHS。
-                return FindLocalizationResource(cultureInfo.Parent);
-            else
-                return dic;
+            try
+            {
+                ResourceDictionary rd = new ResourceDictionary();
+                rd.Source = new Uri("Lang/" + cultureInfo.Name + ".xaml", UriKind.Relative);
+                return rd;
+                //return LoadComponent(new Uri(@"Lang\" + cultureInfo.Name + ".xaml", UriKind.Relative)) as ResourceDictionary;
+            }
+            catch (Exception ex)
+            {
+                if (cultureInfo.Parent.IsNeutralCulture == false)//没有找到zh-CN的话，就会找zh-CHS。
+                    return FindLocalizationResource(cultureInfo.Parent);
+                else
+                    return null;
+            }
         }
 
 
