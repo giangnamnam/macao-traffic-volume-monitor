@@ -23,7 +23,7 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2">
-            <MenuItem Name="locationsMenuItem" Header="地点"><!--TODO:资源资料里没有的本地化字符串，用默认语言覆盖。-->
+            <MenuItem Name="locationsMenuItem" Header="{DynamicResource loc_site}"><!--TODO:资源资料里没有的本地化字符串，用默认语言覆盖。-->
                 <MenuItem.Resources>
                     <RadioButton x:Key="RadioButtonResource" x:Shared="false" HorizontalAlignment="Center"
                      GroupName="locationsRadio" IsHitTestVisible="False"/>
