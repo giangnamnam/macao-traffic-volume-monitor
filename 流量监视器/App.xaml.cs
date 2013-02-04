@@ -34,10 +34,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             if (langRd != null)
             {
-                if (this.Resources.MergedDictionaries.Count > 0)
-                {
-                    this.Resources.MergedDictionaries.Clear();
-                }
+                //if (this.Resources.MergedDictionaries.Count > 0)
+                //{
+                //    this.Resources.MergedDictionaries.Clear();
+                //}
                 this.Resources.MergedDictionaries.Add(langRd);
             }
 
