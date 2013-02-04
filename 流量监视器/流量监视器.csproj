@@ -79,7 +79,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="D:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Windows\Media\DrawingToWpfConverter.cs">
+    <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Windows\Media\DrawingToWpfConverter.cs">
       <Link>DrawingToWpfConverter.cs</Link>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
