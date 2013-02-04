@@ -18,7 +18,7 @@
         </Grid.RowDefinitions>
 
         <Menu Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3">
-            <MenuItem Name="locationsMenuItem" Header="地点" Checked="LocationRadioButton_Checked">
+            <MenuItem Name="locationsMenuItem" Header="地点">
                 <MenuItem.Resources>
                     <RadioButton x:Key="RadioButtonResource" x:Shared="false" HorizontalAlignment="Center"
                      GroupName="MenuItemRadio" IsHitTestVisible="False"/>
