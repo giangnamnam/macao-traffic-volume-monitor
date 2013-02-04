@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Threading;
 using System.Xml;
 using System.Xml.Serialization;
@@ -48,9 +51,30 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             locationsMenuItem.ItemsSource = Directory.GetFiles(".\\", "*.lol");
+
+
+            var specificCultres = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+
+            List<CultureInfo> list = new List<CultureInfo>();
+            foreach (var cultre in specificCultres)
+            {
+                //cultre.NativeName
+                if (cultre.Name == "zh-CN")
+                    list.Add(cultre);
+                else if (File.Exists("Lang\\" + cultre.Name + ".xaml"))
+                    list.Add(cultre);
+            }
+
+            CollectionViewSource cvs = new CollectionViewSource();
+            cvs.Source = list;
+            cvs.SortDescriptions.Add(new SortDescription { PropertyName = "Name" });
+
+            languagesMenuItem.ItemsSource = cvs.View;
+
+
             lineChart.DataContext = chartData;
 
-            StartLocationAnalysis(".\\xi'ao.lol");
+            //StartLocationAnalysis(".\\xi'ao.lol");
         }
 
         /// <summary>
@@ -174,10 +198,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             //if (captureRetriever.SuggestedInterval != 0 && realtimeLoadingTimer == null)
             //{
-                realtimeLoadingTimer = new DispatcherTimer();
-                realtimeLoadingTimer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
-                realtimeLoadingTimer.Interval = TimeSpan.FromSeconds(5); //TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
-                realtimeLoadingTimer.Start();
+            realtimeLoadingTimer = new DispatcherTimer();
+            realtimeLoadingTimer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
+            realtimeLoadingTimer.Interval = TimeSpan.FromSeconds(5); //TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
+            realtimeLoadingTimer.Start();
             //}
         }
 
@@ -341,5 +365,17 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             Task.Factory.StartNew(o => StartLocationAnalysis((string)o), item.Header);
         }
 
+        private void languageRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            MenuItem item = (MenuItem)sender;
+
+            RadioButton rb = item.Icon as RadioButton;
+            if (rb != null)
+            {
+                rb.IsChecked = true;
+            }
+
+            languagesMenuItem.DataContext = item.DataContext;
+        }
     }
 }

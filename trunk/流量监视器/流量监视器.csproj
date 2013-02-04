@@ -71,6 +71,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="StateFlagConverter.cs" />
+    <Resource Include="StateFlags\en-UK.png" />
+    <Resource Include="StateFlags\en-US.png" />
+    <Resource Include="StateFlags\zh-CN.png" />
+    <Resource Include="StateFlags\zh-TW.png" />
     <Page Include="Lang\zh-CN.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
