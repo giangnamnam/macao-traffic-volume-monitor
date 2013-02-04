@@ -9,7 +9,7 @@
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Gqqnbig.TrafficVolumeMonitor.UI</RootNamespace>
-    <AssemblyName>流量监视器</AssemblyName>
+    <AssemblyName>VolumnMonitor</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -76,6 +76,10 @@
     <Resource Include="StateFlags\en-US.png" />
     <Resource Include="StateFlags\zh-CN.png" />
     <Resource Include="StateFlags\zh-TW.png" />
+    <Page Include="MainDictionary.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Lang\zh-CN.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
