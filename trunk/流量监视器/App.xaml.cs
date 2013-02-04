@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
@@ -12,7 +13,52 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             base.OnStartup(e);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
+
+            LoadLanguage();
         }
+
+        private void LoadLanguage()
+        {
+            CultureInfo currentCultureInfo = CultureInfo.GetCultureInfo("en-US");
+
+            ResourceDictionary langRd = null;
+
+            try
+            {
+
+                langRd = FindLocalizationResource(currentCultureInfo);
+            }
+            catch
+            {
+            }
+
+            if (langRd != null)
+            {
+                if (this.Resources.MergedDictionaries.Count > 0)
+                {
+                    this.Resources.MergedDictionaries.Clear();
+                }
+                this.Resources.MergedDictionaries.Add(langRd);
+            }
+
+
+        }
+
+        /// <summary>
+        /// 寻找存在的本地化文件。
+        /// </summary>
+        /// <param name="cultureInfo"></param>
+        /// <returns></returns>
+        private static ResourceDictionary FindLocalizationResource(CultureInfo cultureInfo)
+        {
+            ResourceDictionary dic= Application.LoadComponent(new Uri(@"Lang\" + cultureInfo.Name + ".xaml", UriKind.Relative)) as ResourceDictionary;
+
+            if (dic == null && cultureInfo.Parent.IsNeutralCulture == false)//没有找到zh-CN的话，就会找zh-CHS。
+                return FindLocalizationResource(cultureInfo.Parent);
+            else
+                return dic;
+        }
+
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
