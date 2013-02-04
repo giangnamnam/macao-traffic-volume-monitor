@@ -16,7 +16,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             base.OnStartup(e);
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(CurrentDomain_UnhandledException);
 
-            Localize(DefaultCulture);
+            Localize(System.Threading.Thread.CurrentThread.CurrentUICulture);
         }
 
         internal static void Localize(CultureInfo culture)
