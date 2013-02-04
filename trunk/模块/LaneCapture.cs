@@ -12,24 +12,15 @@ namespace Gqqnbig.TrafficVolumeMonitor
     /// </summary>
     public class LaneCapture
     {
-        public LaneCapture(Image<Bgr, byte> originalImage, Image<Bgr, byte> focusedImage, Image<Bgra, byte> backgroundImage, Image<Gray, byte> objectImage, Car[] cars)
-        {
-            Cars = cars;
-            ObjectImage = objectImage;
-            BackgroundImage = backgroundImage;
-            FocusedImage = focusedImage;
-            OriginalImage = originalImage;
-        }
-
         public LaneCapture(IEnumerable<Image<Bgr, byte>> progrssImages, Car[] cars)
         {
-            ProgrssImages = progrssImages.Select(i=>i.ToBitmap()).ToArray();
+            ProgrssImages = progrssImages.Select(i => i.ToBitmap()).ToArray();
             Cars = cars;
         }
 
-        public LaneCapture(Image<Bgr, byte> originalImage, Image<Bgr, byte> focusedImage, IEnumerable<Image<Bgr, byte>> progrssImages, Car[] cars)
+        public LaneCapture(Image<Bgr, byte> originalImage, Image<Bgr, byte> focusedImage, Car[] cars, IEnumerable<Image<Bgr, byte>> progrssImages = null)
         {
-            ProgrssImages = progrssImages.Select(i => i.ToBitmap()).ToArray();
+            ProgrssImages = progrssImages != null ? progrssImages.Select(i => i.ToBitmap()).ToArray() : new Bitmap[0];
             OriginalImage = originalImage;
             FocusedImage = focusedImage;
             Cars = cars;
