@@ -41,8 +41,32 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         readonly System.Collections.ObjectModel.ObservableCollection<KeyValuePair<string, int>> chartData = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<string, int>>();
 
+
+
+
+        public TimeSpan[] Intervals
+        {
+            get { return (TimeSpan[])GetValue(IntervalsProperty); }
+            set { SetValue(IntervalsProperty, value); }
+        }
+
+        public static readonly DependencyProperty IntervalsProperty =
+            DependencyProperty.Register("Intervals", typeof(TimeSpan[]), typeof(MainWindow), new FrameworkPropertyMetadata(null));
+
+
+
+
         public MainWindow()
         {
+            List<TimeSpan> intervals = new List<TimeSpan>();
+            intervals.Add(TimeSpan.FromSeconds(30));
+            intervals.Add(TimeSpan.FromMinutes(1));
+            intervals.Add(TimeSpan.FromMinutes(2));
+            intervals.Add(TimeSpan.FromMinutes(10));
+            Intervals = intervals.ToArray();
+
+
+
             InitializeComponent();
         }
 
@@ -85,6 +109,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         /// <param name="locationSpecPath">位置设定文件的路径</param>
         private void StartLocationAnalysis(string locationSpecPath)
         {
+            PicId = 0;
             realtimeLoadingTimer = null;
 
             XmlSerializer serializer = new XmlSerializer(typeof(LocationParameter));
@@ -191,7 +216,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 int n = PicId / accumulateLength;
-                string independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
+                string independentValue;
+                //if(captureRetriever is RealtimeCaptureRetriever)
+                //    independentValue=string.Format
+                independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
                 chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
 
                 currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
@@ -265,9 +293,11 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                     samples = bufferImages.ToArray();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                realtimeLoadingTimer.Stop();
+                if (MessageBox.Show(ex.Message + "\r\n是否继续？", string.Empty, MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    realtimeLoadingTimer.Start();
                 return;
             }
 
@@ -385,7 +415,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                 rb.IsChecked = true;
             }
 
-            CultureInfo culture=(CultureInfo) item.DataContext;
+            CultureInfo culture = (CultureInfo)item.DataContext;
             System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
             System.Threading.Thread.CurrentThread.CurrentCulture = culture;
             languagesMenuItem.DataContext = culture;
