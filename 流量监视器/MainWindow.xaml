@@ -9,11 +9,12 @@
         </Style>
 
     </Window.Resources>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -22,8 +23,9 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="2">
-            <MenuItem Name="locationsMenuItem" Header="{DynamicResource loc_site}"><!--TODO:资源资料里没有的本地化字符串，用默认语言覆盖。-->
+        <Menu Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3">
+            <MenuItem Name="locationsMenuItem" Header="{DynamicResource loc_site}">
+                <!--TODO:资源资料里没有的本地化字符串，用默认语言覆盖。-->
                 <MenuItem.Resources>
                     <RadioButton x:Key="RadioButtonResource" x:Shared="false" HorizontalAlignment="Center"
                      GroupName="locationsRadio" IsHitTestVisible="False"/>
@@ -60,13 +62,21 @@
             </MenuItem>
         </Menu>
 
-        <chartingToolkit:Chart Name="lineChart" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" BorderThickness="0">
+        <chartingToolkit:Chart Name="lineChart" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0">
             <chartingToolkit:LineSeries Name="lineSeries" Title="" DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" IsSelectionEnabled="True"/>
         </chartingToolkit:Chart>
 
-        <Image Name="currentImage" Grid.Row="2" Grid.Column="0" MaxHeight="200"/>
-        <Button Grid.Row="2" Grid.RowSpan="2" Grid.Column="1" Content="{DynamicResource loc_Next}" Click="nextButton_Click"/>
+        <StackPanel Grid.Row="2" Grid.Column="0">
+            <Image Name="currentImage"/>
+            <TextBlock Name="imageIdTextBlock" HorizontalAlignment="Center"/>
+        </StackPanel>
+        
+        <StackPanel Grid.Row="2" Grid.Column="1">
+            <ComboBox Name="intervalComboBox" HorizontalAlignment="Left" ItemsSource="{Binding Intervals, RelativeSource={RelativeSource AncestorType={x:Type UI:MainWindow}}}"/>
+        </StackPanel>
+        
+        <Button Grid.Row="2" Grid.Column="2" Content="{DynamicResource loc_Next}" Click="nextButton_Click"/>
 
-        <TextBlock Name="imageIdTextBlock"  Grid.Row="3" Grid.Column="0" HorizontalAlignment="Center"/>
+
     </Grid>
 </Window>
