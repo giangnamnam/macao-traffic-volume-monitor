@@ -255,12 +255,20 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             Image<Bgr, byte> orginialImage;
             ICollection<Image<Bgr, byte>> samples;
-            lock (bufferImages)
+            try
             {
-                bufferImages.Dequeue();
-                bufferImages.Enqueue(captureRetriever.GetCapture());
-                orginialImage = bufferImages.ElementAt(locationParameter.BufferImagesCount / 2);
-                samples = bufferImages.ToArray();
+                lock (bufferImages)
+                {
+                    bufferImages.Dequeue();
+                    bufferImages.Enqueue(captureRetriever.GetCapture());
+                    orginialImage = bufferImages.ElementAt(locationParameter.BufferImagesCount / 2);
+                    samples = bufferImages.ToArray();
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
             }
 
             var laneCapture = lane.Analyze(orginialImage, samples);
@@ -378,6 +386,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             }
 
             CultureInfo culture=(CultureInfo) item.DataContext;
+            System.Threading.Thread.CurrentThread.CurrentUICulture = culture;
+            System.Threading.Thread.CurrentThread.CurrentCulture = culture;
             languagesMenuItem.DataContext = culture;
             App.Localize(culture);
         }
