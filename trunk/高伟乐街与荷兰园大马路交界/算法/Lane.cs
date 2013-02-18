@@ -52,7 +52,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             var focusedImage = GetFocusArea(orginialImage);
             Width = focusedImage.Width;
             Height = focusedImage.Height;
-            progressImages.Add(focusedImage);
+            //progressImages.Add(focusedImage);
 
             var objectImage = Utility.FindSobelEdge(focusedImage.Convert<Gray, byte>());
 
@@ -63,7 +63,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
             CvInvoke.cvThreshold(observedImage, threshImage, 0, 255, THRESH.CV_THRESH_OTSU);
             //progressImages.Add(threshImage.Convert<Bgr, byte>());
-            progressImages.Add(threshImage.Canny(50,100).Convert<Bgr, byte>());
+            progressImages.Add(threshImage.Canny(50, 100).Convert<Bgr, byte>());
 
 
             LineSegment2D[] lines = threshImage.HoughLines(50, 100, 1, System.Math.PI / 180,
@@ -91,10 +91,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
                                 new TolerantValue { Value = 86, Tolerance = 5 }))
             {
                 Debug.WriteLine("有箭头");
-                return new LaneCapture(progressImages.ToArray(), new Car[0]);
+                return new LaneCapture(orginialImage, focusedImage, new Car[0], progressImages.ToArray());
             }
             else
-                return new LaneCapture(progressImages.ToArray(), new[] { Car.CreateCar(new Rectangle(20, 190, 55, 85), focusedImage, objectImage) });
+                return new LaneCapture(orginialImage, focusedImage, new[] { Car.CreateCar(new Rectangle(20, 190, 55, 85), focusedImage, objectImage) }, progressImages.ToArray());
 
 
         }
