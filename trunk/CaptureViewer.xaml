@@ -101,7 +101,7 @@
             </ItemsControl.ItemContainerStyle>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Image Stretch="None" Source="{Binding Converter={StaticResource bitmapConverter}}">
+                    <Image Stretch="None" Source="{Binding}">
                         <Image.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="保存图片..." Click="saveMenuItem_Click" />
