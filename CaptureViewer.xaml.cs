@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Gqqnbig.Windows.Media;
 
 namespace Gqqnbig.TrafficVolumeMonitor.UI
 {
@@ -37,7 +38,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             //objectImageBox.Source = laneCapture.ObjectImage.ToBitmap().ToBitmapImage();
             //imageBox.Source = laneCapture.FocusedImage.ToBitmap().ToBitmapImage();
             listView.ItemsSource = Cars;
-            progressImagesControl.ItemsSource = laneCapture.ProgrssImages;
+            progressImagesControl.Items.Clear();
+            progressImagesControl.Items.Add(laneCapture.FocusedImage.ToBitmap().ToBitmapImage());
+            foreach (var image in laneCapture.ProgrssImages)
+            {
+                progressImagesControl.Items.Add(image.ToBitmapImage());
+            }
+            
+            
+            ;
 
             totalCarNumberTextRun.Text = Cars.Length.ToString();
 
