@@ -122,6 +122,9 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="yinnan.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\0.jpg" />
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\1.jpg" />
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\10.jpg" />
@@ -247,6 +250,50 @@
     <None Include="西湾大桥澳门端\图\7.jpg" />
     <None Include="西湾大桥澳门端\图\8.jpg" />
     <None Include="西湾大桥澳门端\图\9.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\0.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\1.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\10.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\11.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\12.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\13.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\14.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\15.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\16.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\17.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\18.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\19.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\2.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\20.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\21.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\22.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\23.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\24.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\25.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\26.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\27.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\28.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\29.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\3.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\30.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\31.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\32.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\33.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\34.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\35.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\36.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\37.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\38.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\39.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\4.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\40.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\41.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\5.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\6.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\7.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\8.jpg" />
+    <Resource Include="殷皇子大马路与南湾大马路交界路口\9.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
