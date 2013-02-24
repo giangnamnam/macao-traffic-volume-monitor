@@ -7,5 +7,5 @@
     <AllowSamePosition>true</AllowSamePosition>
   </CarMatchParameter>
   <BufferImagesCount>1</BufferImagesCount>
-  <AlgorithmName>near-single</AlgorithmName>
+  <AlgorithmName>yinnan</AlgorithmName>
 </LocationParameter>
