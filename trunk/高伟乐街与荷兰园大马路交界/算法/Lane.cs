@@ -52,17 +52,15 @@ namespace Gqqnbig.TrafficVolumeMonitor
             var focusedImage = GetFocusArea(orginialImage);
             Width = focusedImage.Width;
             Height = focusedImage.Height;
-            //progressImages.Add(focusedImage);
-
-            var objectImage = Utility.FindSobelEdge(focusedImage.Convert<Gray, byte>());
 
             //Image<Gray, Byte> modelImage = new Image<Gray, byte>(@"..\..\高伟乐街与荷兰园大马路交界\算法\arrow.bmp");
-            Image<Gray, Byte> observedImage = focusedImage.Copy(new Rectangle(20, 190, 55, 85)).Convert<Gray, byte>();
+            var arrowRectangle = new Rectangle(20, 170, 55, 85);
+            Image<Gray, Byte> observedImage = focusedImage.Copy(arrowRectangle).Convert<Gray, byte>();
 
             Image<Gray, byte> threshImage = new Image<Gray, byte>(observedImage.Width, observedImage.Height);
 
             CvInvoke.cvThreshold(observedImage, threshImage, 0, 255, THRESH.CV_THRESH_OTSU);
-            //progressImages.Add(threshImage.Convert<Bgr, byte>());
+            progressImages.Add(observedImage.Convert<Bgr, byte>());
             progressImages.Add(threshImage.Canny(50, 100).Convert<Bgr, byte>());
 
 
@@ -76,7 +74,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             for (int i = 0; i < lines.Length; i++)
             {
                 LineSegment2D m = lines[i];
-                tmpImage.Draw(m, new Bgr(0, 255, 0), 1);
+                tmpImage.Draw(m, new Bgr(0, 0, 255), 1);
             }
             progressImages.Add(tmpImage.Copy());
 
@@ -94,7 +92,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
                 return new LaneCapture(orginialImage, focusedImage, new Car[0], progressImages.ToArray());
             }
             else
-                return new LaneCapture(orginialImage, focusedImage, new[] { Car.CreateCar(new Rectangle(20, 190, 55, 85), focusedImage, objectImage) }, progressImages.ToArray());
+            {
+                var objectImage = Utility.FindSobelEdge(focusedImage.Convert<Gray, byte>());
+                return new LaneCapture(orginialImage, focusedImage, new[] { Car.CreateCar(arrowRectangle, focusedImage, objectImage) }, progressImages.ToArray());
+            }
 
 
         }
