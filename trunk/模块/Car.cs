@@ -70,24 +70,24 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
             this.CarRectangle = carRectangle;
             
-            HistR = new DenseHistogram(256, new RangeF(0, 256));
+            HistR = new DenseHistogram(256/5, new RangeF(0, 256));
             HistR.Calculate(new[] { Image[0] }, false, null);
             HistR.MatND.ManagedArray.SetValue(0, 0);         
             HistR.Normalize(1);
 
 
-            HistG = new DenseHistogram(256, new RangeF(0, 256));
+            HistG = new DenseHistogram(256/5, new RangeF(0, 256));
             HistG.Calculate(new[] { image[1] }, false, null);
             HistG.MatND.ManagedArray.SetValue(0, 0);
             HistG.Normalize(1);
 
-            HistB = new DenseHistogram(256, new RangeF(0, 256));
+            HistB = new DenseHistogram(256/5, new RangeF(0, 256));
             HistB.Calculate(new[] { image[2] }, false, null);
             HistB.MatND.ManagedArray.SetValue(0, 0);
             HistB.Normalize(1);
 
             var hsvImage = image.Convert<Hsv, byte>();
-            HistHue = new DenseHistogram(180, new RangeF(0, 180));
+            HistHue = new DenseHistogram(180/5, new RangeF(0, 180));
             HistHue.Calculate(new[] { hsvImage[0] }, false, null);
             HistHue.MatND.ManagedArray.SetValue(0, 0);
             HistHue.Normalize(1);
