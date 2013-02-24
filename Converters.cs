@@ -35,14 +35,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             float[] arr = new float[hist.BinDimension[0].Size];
             hist.MatND.ManagedArray.CopyTo(arr, 0);
             float maxValue = arr.Max();
-            double factor = maxHeight / maxValue;
             double[] enlargedHist = new double[arr.Length];
-
-            for (int i = 0; i < arr.Length; i++)
+            if (maxValue > 0)
             {
-                enlargedHist[i] = arr[i] * factor;
+                double factor = maxHeight / maxValue;
+                for (int i = 0; i < arr.Length; i++)
+                {
+                    enlargedHist[i] = arr[i] * factor;
+                }
             }
-
             return enlargedHist;
         }
 
