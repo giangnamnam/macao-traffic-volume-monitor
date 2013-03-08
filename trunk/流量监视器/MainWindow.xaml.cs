@@ -29,17 +29,18 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         /// 将多少条记录聚合为统计图的一列。
         /// </summary>
         private const int accumulateLength = 6;
+
+        private const int rawDataCapacity = 30;// 17280;
         Queue<Image<Bgr, byte>> bufferImages;
         ICaptureRetriever captureRetriever;
 
         ILane lane;
         LaneMonitor laneMonitor;
-        private CarMatch[] lastMatch;
         private LocationParameter locationParameter;
         private DispatcherTimer realtimeLoadingTimer;
         private LaneCapture lastLaneCapture;
 
-        readonly Queue<DataPoint> rawCharData = new Queue<DataPoint>(17280);//一天的数据量
+        readonly Queue<DataPoint> rawCharData = new Queue<DataPoint>(rawDataCapacity);//一天的数据量
 
 
 
@@ -314,6 +315,18 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             string independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
 
             rawCharData.Enqueue(new DataPoint(DateTime.Now, carMove.EnterToPic2));
+            int aggregation = Convert.ToInt32(((TimeSpan)intervalComboBox.SelectedItem).TotalSeconds) / 5;
+
+            if (rawCharData.Count == rawDataCapacity)
+            {
+                while (rawCharData.Count + aggregation >= rawDataCapacity)
+                {
+                    rawCharData.Dequeue();
+                }
+            }
+
+            FillToChart(rawCharData.ToArray(), aggregation);
+
 
             //int index = chartData.Count - 1;
             //var pair = chartData[index];
@@ -327,17 +340,17 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             //    //chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
             //}
 
+
+
+
+
             currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
             imageIdTextBlock.Text = PicId.ToString();
-
-
-            FillToChart(rawCharData.ToArray());
         }
 
-        private void FillToChart(DataPoint[] rawCharData)
+        private void FillToChart(DataPoint[] rawCharData, int aggregation)
         {
             //多少个原始数据聚合为一个图表点
-            int aggregation = Convert.ToInt32(((TimeSpan)intervalComboBox.SelectedItem).TotalSeconds) / 5;
 
             KeyValuePair<string, int>[] chartData = new KeyValuePair<string, int>[(int)Math.Ceiling((double)rawCharData.Length / aggregation)];
 
@@ -352,7 +365,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                 }
             }
 
-            lineSeries.ItemsSource=chartData;
+            lineSeries.ItemsSource = chartData;
         }
 
         private void LocationRadioButton_Checked(object sender, RoutedEventArgs e)
