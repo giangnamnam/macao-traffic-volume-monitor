@@ -63,7 +63,7 @@
         </Menu>
 
         <chartingToolkit:Chart Name="lineChart" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0">
-            <chartingToolkit:LineSeries Name="lineSeries" Title="" DependentValuePath="Value" IndependentValuePath="Key" ItemsSource="{Binding}" IsSelectionEnabled="True"/>
+            <chartingToolkit:LineSeries Name="lineSeries" Title="" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"/>
         </chartingToolkit:Chart>
 
         <StackPanel Grid.Row="2" Grid.Column="0">
@@ -72,7 +72,7 @@
         </StackPanel>
         
         <StackPanel Grid.Row="2" Grid.Column="1">
-            <ComboBox Name="intervalComboBox" HorizontalAlignment="Left" ItemsSource="{Binding Intervals, RelativeSource={RelativeSource AncestorType={x:Type UI:MainWindow}}}"/>
+            <ComboBox Name="intervalComboBox" HorizontalAlignment="Left" SelectedIndex="0" ItemsSource="{Binding Intervals, RelativeSource={RelativeSource AncestorType={x:Type UI:MainWindow}}}"/>
         </StackPanel>
         
         <Button Grid.Row="2" Grid.Column="2" Content="{DynamicResource loc_Next}" Click="nextButton_Click"/>

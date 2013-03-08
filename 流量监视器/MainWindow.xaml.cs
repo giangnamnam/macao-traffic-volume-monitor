@@ -39,8 +39,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         private DispatcherTimer realtimeLoadingTimer;
         private LaneCapture lastLaneCapture;
 
-        readonly System.Collections.ObjectModel.ObservableCollection<KeyValuePair<string, int>> chartData = new System.Collections.ObjectModel.ObservableCollection<KeyValuePair<string, int>>();
-
+        readonly Queue<DataPoint> rawCharData = new Queue<DataPoint>(17280);//一天的数据量
 
 
 
@@ -98,7 +97,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
 
 
-            lineChart.DataContext = chartData;
+            //lineChart.DataContext = chartData;
 
             //StartLocationAnalysis(".\\xi'ao.lol");
         }
@@ -211,16 +210,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             var carMove = laneMonitor.GetCarMove(carMatches, laneCapture1.Cars, laneCapture2.Cars);
 
             laneMonitor.AddHistory(carMove);
-            chartData.Clear();
+            rawCharData.Clear();
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 int n = PicId / accumulateLength;
-                string independentValue;
-                //if(captureRetriever is RealtimeCaptureRetriever)
-                //    independentValue=string.Format
-                independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
-                chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
+                DateTime time = DateTime.Now;
+                string independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
+                rawCharData.Enqueue(new DataPoint(time, carMove.EnterToPic2));
+                //chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
 
                 currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
             }));
@@ -315,75 +313,46 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             int n = PicId / accumulateLength;
             string independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
 
-            int index = chartData.Count - 1;
-            var pair = chartData[index];
-            if (pair.Key == independentValue)
-            {
-                pair = new KeyValuePair<string, int>(pair.Key, pair.Value + carMove.EnterToPic2);
-                chartData[index] = pair;
-            }
-            else
-            {
-                chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
-            }
+            rawCharData.Enqueue(new DataPoint(DateTime.Now, carMove.EnterToPic2));
+
+            //int index = chartData.Count - 1;
+            //var pair = chartData[index];
+            //if (pair.Key == independentValue)
+            //{
+            //    //pair = new KeyValuePair<string, int>(pair.Key, pair.Value + carMove.EnterToPic2);
+            //    //chartData[index] = pair;
+            //}
+            //else
+            //{
+            //    //chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
+            //}
 
             currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
             imageIdTextBlock.Text = PicId.ToString();
 
-            //var originalCursor = Mouse.OverrideCursor;
-            //Mouse.OverrideCursor = Cursors.Wait;
 
-            //System.Diagnostics.Debug.WriteLine("nextButton_Click");
-            ////if (captureViewers[2].CurrentPicId != PicId + 1)
-            ////    captureViewers[2].View(PicId + 1);
-            ////UpdateLayout();
+            FillToChart(rawCharData.ToArray());
+        }
 
+        private void FillToChart(DataPoint[] rawCharData)
+        {
+            //多少个原始数据聚合为一个图表点
+            int aggregation = Convert.ToInt32(((TimeSpan)intervalComboBox.SelectedItem).TotalSeconds) / 5;
 
-            ////picIdTextRun1.Text = PicId.ToString();
-            ////picIdTextRun2.Text = (PicId + 1).ToString();
+            KeyValuePair<string, int>[] chartData = new KeyValuePair<string, int>[(int)Math.Ceiling((double)rawCharData.Length / aggregation)];
 
+            for (int i = 0; i < rawCharData.Length; i++)
+            {
+                int index = i / aggregation;
+                if ((double)i / aggregation == index)
+                    chartData[index] = new KeyValuePair<string, int>(rawCharData[i].Time.ToString("H:m:s"), rawCharData[i].Value);
+                else
+                {
+                    chartData[index] = new KeyValuePair<string, int>(chartData[index].Key, chartData[index].Value + rawCharData[i].Value);
+                }
+            }
 
-            //TranslateTransform translateTransform = new TranslateTransform();
-            ////captureViewers[0].RenderTransform = translateTransform;
-            ////captureViewers[1].RenderTransform = translateTransform;
-            ////captureViewers[2].RenderTransform = translateTransform;
-
-            //DoubleAnimation animation = new DoubleAnimation(-captureViewerList.RenderSize.Height / 2, new Duration(TimeSpan.FromMilliseconds(1000)));
-            //animation.FillBehavior = FillBehavior.Stop;
-            //animation.Completed += (a, b) =>
-            //{
-            //    //captureViewers.Move(0, captureViewers.Count - 1);
-            //    //if (captureRetriever.SuggestedInterval != 0 && realtimeLoadingTimer == null)
-            //    //{
-            //    //    realtimeLoadingTimer = new DispatcherTimer();
-            //    //    realtimeLoadingTimer.Tick += (a, b) => nextButton_Click(null, new RoutedEventArgs());
-            //    //    realtimeLoadingTimer.Interval = TimeSpan.FromMilliseconds(captureRetriever.SuggestedInterval);
-            //    //    realtimeLoadingTimer.Start();
-            //    //}
-
-
-            //    lastMatch = laneMonitor.FindCarMatch(laneCapture1.Cars, laneCapture2.Cars);
-            //    //LabelMatch(lastMatch);
-
-            //    var carMove = laneMonitor.GetCarMove(lastMatch, laneCapture1.Cars, laneCapture2.Cars);
-
-            //    //averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
-            //    //leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
-            //    //enterToPic2Run.Text = carMove.EnterToPic2.ToString();
-
-            //    laneMonitor.AddHistory(carMove);
-
-
-
-            //    chartData.Add(new KeyValuePair<string, int>(PicId.ToString(), carMove.EnterToPic2));
-            //    //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
-            //    //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
-
-            //    //ThreadPool.QueueUserWorkItem(o => PreloadImage());
-            //};
-            //translateTransform.BeginAnimation(TranslateTransform.YProperty, animation);
-
-            ////Mouse.OverrideCursor = originalCursor;
+            lineSeries.ItemsSource=chartData;
         }
 
         private void LocationRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -421,5 +390,19 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             languagesMenuItem.DataContext = culture;
             App.Localize(culture);
         }
+    }
+
+    struct DataPoint
+    {
+        public DataPoint(DateTime time, int value)
+            : this()
+        {
+            Value = value;
+            Time = time;
+        }
+
+        public DateTime Time { get; private set; }
+
+        public int Value { get; private set; }
     }
 }
