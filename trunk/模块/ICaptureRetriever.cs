@@ -56,7 +56,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
 #endif
         public Image<Bgr, byte> GetCapture()
         {
-            if (errorCount > 0)
+            if (errorCount > 10)
                 throw new WebException("获取图像多次失败。");
             
             var timeSpan = DateTime.Now - lastReadTime;
