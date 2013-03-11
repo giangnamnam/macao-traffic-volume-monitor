@@ -30,7 +30,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         /// </summary>
         private const int accumulateLength = 6;
 
-        private const int rawDataCapacity = 30;// 17280;
+        private const int rawDataCapacity = 17280;
         Queue<Image<Bgr, byte>> bufferImages;
         ICaptureRetriever captureRetriever;
 
@@ -63,6 +63,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             intervals.Add(TimeSpan.FromMinutes(1));
             intervals.Add(TimeSpan.FromMinutes(2));
             intervals.Add(TimeSpan.FromMinutes(10));
+            intervals.Add(TimeSpan.FromHours(1));
+
             Intervals = intervals.ToArray();
 
 
