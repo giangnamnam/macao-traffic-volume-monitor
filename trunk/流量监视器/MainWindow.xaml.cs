@@ -307,6 +307,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             var carMatches = laneMonitor.FindCarMatch(lastLaneCapture.Cars, laneCapture.Cars);
 
+            DetermineTrafficJam(laneCapture.Cars);
+
             var carMove = laneMonitor.GetCarMove(carMatches, lastLaneCapture.Cars, laneCapture.Cars);
 
             lastLaneCapture = laneCapture;
@@ -348,6 +350,22 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
             imageIdTextBlock.Text = PicId.ToString();
+        }
+
+        private void DetermineTrafficJam(Car[] cars)
+        {
+            int n = cars.Length;
+
+            int level1 = (int)Math.Ceiling(locationParameter.JamCars / 3.0);
+            int level2 = (int)Math.Ceiling(locationParameter.JamCars / 3.0 * 2);
+
+            if (n <= level1)
+                trafficJamTextBlock.DataContext = TrafficJamLevel.L1;
+            else if (n <= level2)
+                trafficJamTextBlock.DataContext = TrafficJamLevel.L2;
+            else
+                trafficJamTextBlock.DataContext = TrafficJamLevel.L3;
+
         }
 
         private void FillToChart(DataPoint[] rawCharData, int aggregation)
