@@ -3,7 +3,7 @@
   <SourcePath>http://www.dsat.gov.mo/cams/cam31/AxisPic-Cam31.jpg</SourcePath>
   <MaskFilePath>..\..\高伟乐街与荷兰园大马路交界\算法\mask1.bmp</MaskFilePath>
   <CarMatchParameter>
-    <SimilarityThreshold>0.26</SimilarityThreshold>
+    <SimilarityThreshold>0.50</SimilarityThreshold>
     <AllowSamePosition>true</AllowSamePosition>
   </CarMatchParameter>
   <BufferImagesCount>1</BufferImagesCount>
