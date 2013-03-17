@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:chartingToolkit="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
-        xmlns:UI="clr-namespace:Gqqnbig.TrafficVolumeMonitor.UI" Title="MainWindow" Loaded="Window_Loaded">
+        xmlns:UI="clr-namespace:Gqqnbig.TrafficVolumeMonitor.UI"
+        xmlns:Modules="clr-namespace:Gqqnbig.TrafficVolumeMonitor.Modules;assembly=modules" Title="MainWindow" Loaded="Window_Loaded">
     <Window.Resources>
         <Style x:Key="radioMenuItemStyle" TargetType="MenuItem">
             <Setter Property="Icon" Value="{DynamicResource RadioButtonResource}"/>
@@ -73,6 +74,33 @@
         
         <StackPanel Grid.Row="2" Grid.Column="1">
             <ComboBox Name="intervalComboBox" HorizontalAlignment="Left" SelectedIndex="0" ItemsSource="{Binding Intervals, RelativeSource={RelativeSource AncestorType={x:Type UI:MainWindow}}}"/>
+            <TextBlock Name="trafficJamTextBlock" HorizontalAlignment="Left" Padding="3,2">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Style.Triggers>
+                            <Trigger Property="DataContext">
+                                <Trigger.Value><Modules:TrafficJamLevel>L1</Modules:TrafficJamLevel></Trigger.Value>
+                                <Setter Property="Background" Value="lime"/>
+                                <Setter Property="Text" Value="交通状况：良好"/>
+                            </Trigger>
+                            <Trigger Property="DataContext">
+                                <Trigger.Value>
+                                    <Modules:TrafficJamLevel>L2</Modules:TrafficJamLevel>
+                                </Trigger.Value>
+                                <Setter Property="Background" Value="Orange"/>
+                                <Setter Property="Text" Value="交通状况：中等"/>
+                            </Trigger>
+                            <Trigger Property="DataContext">
+                                <Trigger.Value>
+                                    <Modules:TrafficJamLevel>L3</Modules:TrafficJamLevel>
+                                </Trigger.Value>
+                                <Setter Property="Background" Value="Red"/>
+                                <Setter Property="Text" Value="交通状况：拥堵"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
         </StackPanel>
         
         <Button Grid.Row="2" Grid.Column="2" Content="{DynamicResource loc_Next}" Click="nextButton_Click"/>

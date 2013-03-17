@@ -102,6 +102,7 @@
     <Compile Include="SkewTransformModule.cs" />
     <Compile Include="StatisticsOperations_访问性.cs" />
     <Compile Include="TrafficDirection.cs" />
+    <Compile Include="TrafficJamLevel.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
