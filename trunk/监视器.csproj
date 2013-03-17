@@ -125,6 +125,15 @@
     <None Include="yinnan.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="gaohe-online.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="xidang-online.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="yinnan-online.lol">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\0.jpg" />
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\1.jpg" />
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\10.jpg" />
@@ -201,7 +210,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="xiwan.lol">
+    <None Include="xidang.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
