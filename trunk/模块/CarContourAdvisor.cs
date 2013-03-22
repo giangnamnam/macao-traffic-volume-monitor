@@ -49,7 +49,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             var erodedContours = ErodeContour(contour, 1);
 
 
-            Contract.Assert(erodedContours.Length >= 1);
+            //Contract.Assert(erodedContours.Length >= 1);
             if (erodedContours.Length >= 1) //从一个连通域里生出了多个连通域
             {
                 foreach (var c in erodedContours)
