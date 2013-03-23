@@ -356,8 +356,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             int n = cars.Length;
 
-            int level1 = (int)Math.Ceiling(locationParameter.JamCars / 3.0);
-            int level2 = (int)Math.Ceiling(locationParameter.JamCars / 3.0 * 2);
+            double level1 = Math.Ceiling(locationParameter.JamTime / 3.0);
+            double level2 = Math.Ceiling(locationParameter.JamTime / 3.0 * 2);
 
             if (n <= level1)
                 trafficJamTextBlock.DataContext = TrafficJamLevel.L1;
