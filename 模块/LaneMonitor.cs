@@ -116,7 +116,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             bool allowSamePosition = carMatchParameter.AllowSamePosition;
             // ReSharper restore ConvertToConstant.Local
 
-            List<CarMatch> list = new List<CarMatch>();
+            List<CarMatch> possibleMatches = new List<CarMatch>();
             if (TrafficDirection == TrafficDirection.GoUp)
             {
                 foreach (var c2 in cars2)
@@ -135,18 +135,29 @@ namespace Gqqnbig.TrafficVolumeMonitor
                         CarMatch cm = new CarMatch(c1, c2);
 
                         if (cm.RS > similarityThreshold && cm.GS > similarityThreshold && cm.BS > similarityThreshold)
-                            list.Add(cm);
+                        {
+                            possibleMatches.Add(cm);
+                        }
                     }
                 }
             }
 
-            list = FindOneToOneBestMatch(list);
-            if (list.Count > 2)
+            possibleMatches = FindOneToOneBestMatch(possibleMatches);
+            CarMatch[] bestMatches;
+            if (possibleMatches.Count > 2)
             {
-                return RemoveDeviation(list).ToArray();
+                bestMatches = RemoveDeviation(possibleMatches).ToArray();
+
             }
             else
-                return list.ToArray();
+                bestMatches= possibleMatches.ToArray();
+
+            foreach (var m in bestMatches)
+            {
+                m.Car2.Id = m.Car1.Id;
+            }
+
+            return bestMatches;
         }
 
         public CarMove GetCarMove(CarMatch[] matches, Car[] cars1, Car[] cars2)
