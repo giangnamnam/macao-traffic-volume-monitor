@@ -16,8 +16,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.Modules
         public string AlgorithmName { get; set; }
 
         /// <summary>
-        /// 获取或设置堵车时路面上的车的数量。
+        /// 获取或设置堵车时路面上的车的持续出现时长。单位秒。
         /// </summary>
-        public int JamCars { get; set; }
+        public int JamTime { get; set; }
     }
 }

@@ -218,11 +218,23 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                 carOccurListBox.Items.Add(string.Format("车{0}出现{1}秒", car.Id, occur * 5));
             }
 
+            double median = 0;
             if (occurs.Count > 0)
             {
                 occurs.Sort();
-                carOccurListBox.Items.Add(string.Format("中位数：{0:f1}", Gqqnbig.Statistics.Linq.Median(occurs) * 5));
+                median = Gqqnbig.Statistics.Linq.Median(occurs) * 5;
+                carOccurListBox.Items.Add(string.Format("中位数：{0:f1}", median));
             }
+
+            double level1 = Math.Ceiling(locationParameter.JamTime / 3.0);
+            double level2 = Math.Ceiling(locationParameter.JamTime / 3.0 * 2);
+
+            if (median <= level1)
+                carOccurListBox.Items.Add("交通状况良好");
+            else if (median <= level2)
+                carOccurListBox.Items.Add("交通状况中等");
+            else
+                carOccurListBox.Items.Add("交通状况拥堵");
 
 
             ThreadPool.QueueUserWorkItem(o => PreloadImage());

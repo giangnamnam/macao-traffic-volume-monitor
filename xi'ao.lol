@@ -8,5 +8,5 @@
   </CarMatchParameter>
   <BufferImagesCount>6</BufferImagesCount>
   <AlgorithmName>xi'ao</AlgorithmName>
-  <JamCars>10</JamCars>
+  <JamTime>15</JamTime>
 </LocationParameter>
