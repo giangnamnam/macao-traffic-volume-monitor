@@ -63,8 +63,13 @@
             </MenuItem>
         </Menu>
 
-        <chartingToolkit:Chart Name="lineChart" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" BorderThickness="0">
+        <chartingToolkit:Chart Name="lineChart" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" 
+                               Title="{DynamicResource loc_chartTitle}" BorderThickness="0">
             <chartingToolkit:LineSeries Name="lineSeries" Title="" DependentValuePath="Value" IndependentValuePath="Key" IsSelectionEnabled="True"/>
+            <chartingToolkit:Chart.Axes>
+                <chartingToolkit:LinearAxis Orientation="Y" Title="{DynamicResource loc_yAsix}" ShowGridLines="True"/>
+                <chartingToolkit:CategoryAxis Orientation="X" Title="{DynamicResource loc_xAsix}"/>
+            </chartingToolkit:Chart.Axes>
         </chartingToolkit:Chart>
 
         <StackPanel Grid.Row="2" Grid.Column="0">
