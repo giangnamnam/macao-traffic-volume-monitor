@@ -436,6 +436,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         {
             MenuItem item = (MenuItem)sender;
 
+            languagesMenuItem.IsSubmenuOpen = false;
+            Focus();
+
             RadioButton rb = item.Icon as RadioButton;
             if (rb != null)
             {
