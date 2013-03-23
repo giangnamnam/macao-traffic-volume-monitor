@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.IO;
@@ -212,15 +213,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             var carMove = laneMonitor.GetCarMove(carMatches, laneCapture1.Cars, laneCapture2.Cars);
 
-            laneMonitor.AddHistory(carMove);
+            //laneMonitor.AddHistory(carMove);
             rawCharData.Clear();
 
             Dispatcher.BeginInvoke(new Action(() =>
             {
                 int n = PicId / accumulateLength;
                 DateTime time = DateTime.Now;
-                string independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
-                rawCharData.Enqueue(new DataPoint(time, carMove.EnterToPic2));
+                //string independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
+                rawCharData.Enqueue(new DataPoint(time, carMove));
                 //chartData.Add(new KeyValuePair<string, int>(independentValue, carMove.EnterToPic2));
 
                 currentImage.Source = lastLaneCapture.OriginalImage.ToBitmap().ToBitmapImage();
@@ -267,15 +268,15 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         //    //ThreadPool.QueueUserWorkItem(o => PreloadImage());
         //}
 
-        /// <summary>
-        /// PreloadImage方法极为耗时，不允许在Dispatcher线程上运行。
-        /// </summary>
-        void PreloadImage()
-        {
-            Contract.Requires(Dispatcher.CheckAccess() == false, "PreloadImage方法极为耗时，不允许在Dispatcher线程上运行。");
+        ///// <summary>
+        ///// PreloadImage方法极为耗时，不允许在Dispatcher线程上运行。
+        ///// </summary>
+        //void PreloadImage()
+        //{
+        //    Contract.Requires(Dispatcher.CheckAccess() == false, "PreloadImage方法极为耗时，不允许在Dispatcher线程上运行。");
 
 
-        }
+        //}
 
         private void nextButton_Click(object sender, RoutedEventArgs e)
         {
@@ -306,9 +307,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             System.Diagnostics.Debug.WriteLine("分析完成");
 
             var carMatches = laneMonitor.FindCarMatch(lastLaneCapture.Cars, laneCapture.Cars);
-
-            DetermineTrafficJam(laneCapture.Cars);
-
+        
             var carMove = laneMonitor.GetCarMove(carMatches, lastLaneCapture.Cars, laneCapture.Cars);
 
             lastLaneCapture = laneCapture;
@@ -318,7 +317,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             int n = PicId / accumulateLength;
             string independentValue = string.Format("{0}-{1}", n * accumulateLength, n * accumulateLength + accumulateLength - 1);
 
-            rawCharData.Enqueue(new DataPoint(DateTime.Now, carMove.EnterToPic2));
+            rawCharData.Enqueue(new DataPoint(DateTime.Now, carMove));
             int aggregation = Convert.ToInt32(((TimeSpan)intervalComboBox.SelectedItem).TotalSeconds) / 5;
 
             if (rawCharData.Count == rawDataCapacity)
@@ -328,6 +327,8 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                     rawCharData.Dequeue();
                 }
             }
+
+            DetermineTrafficJam(laneCapture.Cars);
 
             FillToChart(rawCharData.ToArray(), aggregation);
 
@@ -354,14 +355,38 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         private void DetermineTrafficJam(Car[] cars)
         {
-            int n = cars.Length;
+            DataPoint[] data = rawCharData.ToArray();
+
+            List<double> occurs = new List<double>(cars.Length);
+            foreach (Car car in cars)
+            {
+                int occur = 0;
+                for (int i = data.Length - 1; i >= 0; i--)
+                {
+                    if (data[i].CarMove.Cars.FirstOrDefault(c => c.Id == car.Id) == null)
+                        break;
+                    occur++;
+                }
+
+                occurs.Add(occur);
+                Debug.WriteLine("车{0}出现{1}秒", car.Id, occur * 5);
+            }
+
+            double median = 0;
+            if (occurs.Count > 0)
+            {
+                occurs.Sort();
+                median = Gqqnbig.Statistics.Linq.Median(occurs) * 5;
+                Debug.WriteLine("中位数：{0:f1}", median);
+            }
+
 
             double level1 = Math.Ceiling(locationParameter.JamTime / 3.0);
             double level2 = Math.Ceiling(locationParameter.JamTime / 3.0 * 2);
 
-            if (n <= level1)
+            if (median <= level1)
                 trafficJamTextBlock.DataContext = TrafficJamLevel.L1;
-            else if (n <= level2)
+            else if (median <= level2)
                 trafficJamTextBlock.DataContext = TrafficJamLevel.L2;
             else
                 trafficJamTextBlock.DataContext = TrafficJamLevel.L3;
@@ -378,10 +403,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             {
                 int index = i / aggregation;
                 if ((double)i / aggregation == index)
-                    chartData[index] = new KeyValuePair<string, int>(rawCharData[i].Time.ToString("H:m:s"), rawCharData[i].Value);
+                    chartData[index] = new KeyValuePair<string, int>(rawCharData[i].Time.ToString("H:m:s"), rawCharData[i].CarMove.EnterToPic2);
                 else
                 {
-                    chartData[index] = new KeyValuePair<string, int>(chartData[index].Key, chartData[index].Value + rawCharData[i].Value);
+                    chartData[index] = new KeyValuePair<string, int>(chartData[index].Key, chartData[index].Value + rawCharData[i].CarMove.EnterToPic2);
                 }
             }
 
@@ -425,17 +450,17 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
         }
     }
 
-    struct DataPoint
+    class DataPoint
     {
-        public DataPoint(DateTime time, int value)
-            : this()
+        public DataPoint(DateTime time, CarMove carMove)
+            //: this()
         {
-            Value = value;
+            CarMove = carMove;
             Time = time;
         }
 
         public DateTime Time { get; private set; }
 
-        public int Value { get; private set; }
+        public CarMove CarMove { get; private set; }
     }
 }
