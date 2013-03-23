@@ -31,6 +31,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
         readonly System.Collections.ObjectModel.ObservableCollection<CaptureViewer> captureViewers = new System.Collections.ObjectModel.ObservableCollection<CaptureViewer>();
 
+
+        private const int rawDataCapacity = 17280;
+        readonly Queue<DataPoint> rawCharData = new Queue<DataPoint>(rawDataCapacity);//一天的数据量
+
         ILane lane;
         LaneMonitor laneMonitor;
         private CarMatch[] lastMatch;
@@ -110,7 +114,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             if (lane == null)
                 throw new FileNotFoundException("找不到Algorithms\\" + locationParameter.AlgorithmName + ".dll");
 
-            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter,60);
+            laneMonitor = new LaneMonitor(TrafficDirection.GoUp, lane, locationParameter.CarMatchParameter, 60);
 
             bufferImages = new Queue<Image<Bgr, byte>>(locationParameter.BufferImagesCount);
             for (int i = 0; i < locationParameter.BufferImagesCount; i++)
@@ -181,15 +185,45 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             lastMatch = laneMonitor.FindCarMatch(captureViewers[0].Cars, captureViewers[1].Cars);
             LabelMatch(lastMatch);
 
+
             var carMove = laneMonitor.GetCarMove(lastMatch, captureViewers[0].Cars, captureViewers[1].Cars);
 
             averageRunLengthRun.Text = carMove.AverageMove.ToString("f1");
             leaveFromPic1Run.Text = carMove.LeaveFromPic1.ToString();
             enterToPic2Run.Text = carMove.EnterToPic2.ToString();
 
-            laneMonitor.AddHistory(carMove);
-            volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
-            volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+            rawCharData.Enqueue(new DataPoint(DateTime.Now, carMove));
+
+
+            //laneMonitor.AddHistory(carMove);
+            //volume5Run.Text = laneMonitor.VolumeIn5seconds.ToString("f1");
+            //volume60Run.Text = laneMonitor.VolumeIn60seconds.ToString("f1");
+
+            //获取当前车辆的平均出现时长
+            DataPoint[] data = rawCharData.ToArray();
+
+            carOccurListBox.Items.Clear();
+            List<double> occurs = new List<double>(captureViewers[1].Cars.Length);
+            foreach (Car car in captureViewers[1].Cars)
+            {
+                int occur = 0;
+                for (int i = data.Length - 1; i >= 0; i--)
+                {
+                    if (data[i].CarMove.Cars.FirstOrDefault(c => c.Id == car.Id) == null)
+                        break;
+                    occur++;
+                }
+
+                occurs.Add(occur);
+                carOccurListBox.Items.Add(string.Format("车{0}出现{1}秒", car.Id, occur * 5));
+            }
+
+            if (occurs.Count > 0)
+            {
+                occurs.Sort();
+                carOccurListBox.Items.Add(string.Format("中位数：{0:f1}", Gqqnbig.Statistics.Linq.Median(occurs) * 5));
+            }
+
 
             ThreadPool.QueueUserWorkItem(o => PreloadImage());
         }
@@ -329,5 +363,19 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             Task.Factory.StartNew(o => StartLocationAnalysis((string)o), item.Header);
         }
+    }
+
+    class DataPoint
+    {
+        public DataPoint(DateTime time, CarMove value)
+        //: this()
+        {
+            CarMove = value;
+            Time = time;
+        }
+
+        public DateTime Time { get; private set; }
+
+        public CarMove CarMove { get; private set; }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "监视器", "监视器.csproj", "{32D9FB93-F461-48CD-B35B-BD836EB8F389}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "调试器", "调试器.csproj", "{32D9FB93-F461-48CD-B35B-BD836EB8F389}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "西湾测试", "西湾测试\西湾测试.csproj", "{BE53027A-8FA7-469C-BB5C-FFF28D8A92E9}"
 EndProject
