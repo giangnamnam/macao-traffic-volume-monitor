@@ -126,6 +126,7 @@
             <ListView.View>
                 <GridView>
                     <GridViewColumn CellTemplate="{StaticResource checkBoxTemplate}" />
+                    <GridViewColumn Header="ID" Width="30"  DisplayMemberBinding="{Binding Id}" />
                     <GridViewColumn Header="图片" CellTemplate="{StaticResource picTemplate}" />
                     <!--<GridViewColumn Header="R" CellTemplate="{StaticResource histRTemplate}" />
                     <GridViewColumn Header="G" CellTemplate="{StaticResource histGTemplate}" />

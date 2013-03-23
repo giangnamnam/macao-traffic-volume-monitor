@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Media;
@@ -8,9 +9,10 @@ using Emgu.CV.Structure;
 
 namespace Gqqnbig.TrafficVolumeMonitor
 {
-    public class Car
+    public class Car : INotifyPropertyChanged 
     {
-
+        private static int currentId = 0;
+        private int id;
 
         /// <summary>
         /// 创造Car的实例
@@ -61,6 +63,19 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
         public DenseHistogram HistHue { get; private set; }
 
+        public int Id
+        {
+            get { return id; }
+            internal set
+            {
+                if(id!=value)
+                {
+                    id = value;
+                    OnPropertyChanged("Id");
+                }
+            }
+        }
+
         private Car(Rectangle carRectangle, Image<Bgr, byte> image)
         {
             this.Image = image;
@@ -92,6 +107,8 @@ namespace Gqqnbig.TrafficVolumeMonitor
             HistHue.MatND.ManagedArray.SetValue(0, 0);
             HistHue.Normalize(1);
             //ValidateHistogram(HistHue);
+
+            Id = currentId++;
         }
 
         public static BitmapImage ToBitmapImage(Bitmap bitmap)
@@ -114,6 +131,14 @@ namespace Gqqnbig.TrafficVolumeMonitor
         //    if ((float)histogram.MatND.ManagedArray.GetValue(0) > 0.6)
         //        throw new NotProperCarException();
         //}
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+                handler(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
     [Serializable]
