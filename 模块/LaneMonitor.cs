@@ -150,7 +150,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
             }
             else
-                bestMatches= possibleMatches.ToArray();
+                bestMatches = possibleMatches.ToArray();
 
             foreach (var m in bestMatches)
             {
@@ -183,7 +183,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
                 if (bottom < averageMove)//这辆在第二幅图中的车是新进来的，在第一幅图中没有。
                     enterInPic2++;
             }
-            return new CarMove(leaveInPic1, enterInPic2, averageMove);
+            return new CarMove(leaveInPic1, enterInPic2, averageMove, cars2);
         }
 
         public void AddHistory(CarMove carMove)
@@ -220,13 +220,15 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
     public class CarMove
     {
-        public CarMove(int leaveFromPic1, int enterToPic2, double averageMove)
+        public CarMove(int leaveFromPic1, int enterToPic2, double averageMove, Car[] cars)
         {
             Contract.Requires(averageMove >= 0, "车辆平均移动距离不能是负值。");
 
             AverageMove = averageMove;
             EnterToPic2 = enterToPic2;
             LeaveFromPic1 = leaveFromPic1;
+
+            Cars = cars;
         }
 
         public int LeaveFromPic1 { get; private set; }
@@ -234,5 +236,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
         public int EnterToPic2 { get; private set; }
 
         public double AverageMove { get; private set; }
+
+        /// <summary>
+        /// 获取当前截图的车辆
+        /// </summary>
+        public Car[] Cars { get; private set; }
     }
 }

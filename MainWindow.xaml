@@ -7,8 +7,9 @@
         Title="MainWindow" Loaded="Window_Loaded" Height="700" WindowStartupLocation="CenterScreen" >
     <Grid>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition />
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
@@ -17,7 +18,7 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <Menu Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="3">
+        <Menu Grid.Row="0" Grid.Column="0"  Grid.ColumnSpan="4">
             <MenuItem Name="locationsMenuItem" Header="地点">
                 <MenuItem.Resources>
                     <RadioButton x:Key="RadioButtonResource" x:Shared="false" HorizontalAlignment="Center"
@@ -33,7 +34,7 @@
             </MenuItem>
         </Menu>
 
-        <ItemsControl Name="captureViewerList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Stretch" SizeChanged="captureViewerList_SizeChanged"/>
+        <ItemsControl Name="captureViewerList" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" VerticalAlignment="Stretch" SizeChanged="captureViewerList_SizeChanged"/>
 
         <StackPanel Grid.Row="2" Grid.RowSpan="2" Grid.Column="0">
             <TextBlock>
@@ -62,7 +63,7 @@
                     <Run Name="enterToPic2Run"/>
                 </TextBlock.Inlines>
             </TextBlock>
-            <TextBlock>
+            <!--<TextBlock>
                 <TextBlock.Inlines>
                     <Run Text="5秒车流量："/>
                     <Run Name="volume5Run"/>
@@ -73,13 +74,15 @@
                     <Run Text="60秒车流量："/>
                     <Run Name="volume60Run"/>
                 </TextBlock.Inlines>
-            </TextBlock>
+            </TextBlock>-->
         </StackPanel>
+        
+        <ListBox Name="carOccurListBox" Grid.Row="2" Grid.Column="1"/>
 
-        <Button Grid.Row="2" Grid.RowSpan="2" Grid.Column="1"  Content="下一张" FontSize="20" Padding="30,10" HorizontalAlignment="Center" VerticalAlignment="Center"
+        <Button Grid.Row="2" Grid.RowSpan="2" Grid.Column="2"  Content="下一张" FontSize="20" Padding="30,10" HorizontalAlignment="Center" VerticalAlignment="Center"
                     Click="nextButton_Click"/>
 
-        <StackPanel Grid.Row="2" Grid.Column="2">
+        <StackPanel Grid.Row="2" Grid.Column="3">
             <Button Content="计算直方图相似度" 
                     VerticalAlignment="Center" HorizontalAlignment="Right"  Click="calculateSimilarityButton_Click" />
             <TextBox Name="histSimilarityTextBox" AcceptsReturn="True" IsReadOnly="True" MinWidth="100"

@@ -312,7 +312,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             var carMove = laneMonitor.GetCarMove(carMatches, lastLaneCapture.Cars, laneCapture.Cars);
 
             lastLaneCapture = laneCapture;
-            laneMonitor.AddHistory(carMove);
+            //laneMonitor.AddHistory(carMove);
             PicId++;
 
             int n = PicId / accumulateLength;
