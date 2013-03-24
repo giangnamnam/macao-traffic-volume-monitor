@@ -68,7 +68,7 @@
     <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Windows\Media\DrawingToWpfConverter.cs">
       <Link>DrawingToWpfConverter.cs</Link>
     </Compile>
-    <Compile Include="D:\MySourceCode\C#\类库\Single File Code\Gqqnbig\Statistics\StatisticsOperations.cs">
+    <Compile Include="$(SourceCodeLibrary)\Gqqnbig\Statistics\StatisticsOperations.cs">
       <Link>StatisticsOperations.cs</Link>
     </Compile>
     <Compile Include="OutBoxAdorner.cs" />
