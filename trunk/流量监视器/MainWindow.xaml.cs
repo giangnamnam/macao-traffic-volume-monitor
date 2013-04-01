@@ -307,7 +307,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             System.Diagnostics.Debug.WriteLine("分析完成");
 
             var carMatches = laneMonitor.FindCarMatch(lastLaneCapture.Cars, laneCapture.Cars);
-        
+
             var carMove = laneMonitor.GetCarMove(carMatches, lastLaneCapture.Cars, laneCapture.Cars);
 
             lastLaneCapture = laneCapture;
@@ -389,7 +389,10 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             else if (median <= level2)
                 trafficJamTextBlock.DataContext = TrafficJamLevel.L2;
             else
+            {
                 trafficJamTextBlock.DataContext = TrafficJamLevel.L3;
+                trafficJamList.Items.Add(DateTime.Now.ToString(System.Threading.Thread.CurrentThread.CurrentUICulture));
+            }
 
         }
 
@@ -456,7 +459,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
     class DataPoint
     {
         public DataPoint(DateTime time, CarMove carMove)
-            //: this()
+        //: this()
         {
             CarMove = carMove;
             Time = time;

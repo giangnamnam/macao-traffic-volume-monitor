@@ -113,6 +113,10 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
+            <Label Content="拥堵的时间：" Margin="0,5,0,0"/>
+            <ListBox Name="trafficJamList">
+                
+            </ListBox>
         </StackPanel>
         
         <Button Grid.Row="2" Grid.Column="2" Content="{DynamicResource loc_Next}" Click="nextButton_Click"/>
