@@ -8,4 +8,5 @@
   </CarMatchParameter>
   <BufferImagesCount>6</BufferImagesCount>
   <AlgorithmName>far-moving</AlgorithmName>
+  <JamTime>15</JamTime>
 </LocationParameter>
