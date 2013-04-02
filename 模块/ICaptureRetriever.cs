@@ -29,6 +29,8 @@ namespace Gqqnbig.TrafficVolumeMonitor
         private readonly WebClient client;
         DateTime lastReadTime;
 
+        readonly string startTime;
+
 
         private byte[] lastImageData;
         int errorCount = 0;
@@ -46,6 +48,10 @@ namespace Gqqnbig.TrafficVolumeMonitor
             client = new WebClient();
 
             lastReadTime = DateTime.Now.AddMilliseconds(-interval);
+
+            startTime = DateTime.Now.ToString("yyyy-MM-dd HH-mm-ss");
+
+            Directory.CreateDirectory("D:\\newimages\\"+startTime+"\\");
         }
 
 
@@ -86,7 +92,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
                     throw new WebException("无法从指定的URL中获取图像，或获取的图像大小为0。");
 
 #if DEBUG
-                using (FileStream fs = new FileStream("D:\\新图像\\" + i++ + ".jpg", FileMode.CreateNew))
+                using (FileStream fs = new FileStream("D:\\newimages\\" + startTime + "\\" + i++ + ".jpg", FileMode.CreateNew))
                 {
                     fs.Write(lastImageData, 0, lastImageData.Length);
                 }
