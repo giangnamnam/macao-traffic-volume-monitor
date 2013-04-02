@@ -394,6 +394,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                 trafficJamList.Items.Add(DateTime.Now.ToString(System.Threading.Thread.CurrentThread.CurrentUICulture));
             }
 
+
         }
 
         private void FillToChart(DataPoint[] rawCharData, int aggregation)
@@ -432,7 +433,17 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
 
             ////locationsMenuItem.Items
 
-            Task.Factory.StartNew(o => StartLocationAnalysis((string)o), item.Header);
+            Task.Factory.StartNew(o =>
+                                      {
+                                          try
+                                          {
+                                              StartLocationAnalysis((string)o);
+                                          }
+                                          catch(Exception ex)
+                                          {
+                                              MessageBox.Show(ex.Message);
+                                          }
+                                      }, item.Header);
         }
 
         private void languageRadioButton_Checked(object sender, RoutedEventArgs e)
