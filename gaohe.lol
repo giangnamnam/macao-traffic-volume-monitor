@@ -8,4 +8,5 @@
   </CarMatchParameter>
   <BufferImagesCount>1</BufferImagesCount>
   <AlgorithmName>near-single</AlgorithmName>
+  <JamTime>180</JamTime>
 </LocationParameter>
