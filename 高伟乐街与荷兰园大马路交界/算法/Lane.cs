@@ -93,8 +93,9 @@ namespace Gqqnbig.TrafficVolumeMonitor
             }
             else
             {
-                var objectImage = Utility.FindSobelEdge(focusedImage.Convert<Gray, byte>());
-                return new LaneCapture(orginialImage, focusedImage, new[] { Car.CreateCar(arrowRectangle, focusedImage, objectImage) }, progressImages.ToArray());
+                var objectImage = Utility.FindSobelEdge(focusedImage.Convert<Gray, byte>()).Copy(arrowRectangle);
+
+                return new LaneCapture(orginialImage, focusedImage, new[] { new Car(arrowRectangle, focusedImage.Copy(arrowRectangle).Copy(objectImage)) }, progressImages.ToArray());
             }
 
 

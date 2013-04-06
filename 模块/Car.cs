@@ -9,7 +9,7 @@ using Emgu.CV.Structure;
 
 namespace Gqqnbig.TrafficVolumeMonitor
 {
-    public class Car : INotifyPropertyChanged 
+    public class Car : INotifyPropertyChanged
     {
         private static int currentId = 0;
         private int id;
@@ -21,6 +21,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
         /// <param name="sourceImage">包含此车的原始图像</param>
         /// <param name="objectImage">包含此车的黑白图像</param>
         /// <returns></returns>
+        /// <exception cref="NotProperCarException">当objectImage在carRectangle限定范围内的图像都是黑的</exception>
         public static Car CreateCar(Rectangle carRectangle, Image<Bgr, byte> sourceImage, Image<Gray, byte> objectImage)
         {
             var s = sourceImage.Copy(carRectangle);
@@ -68,7 +69,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
             get { return id; }
             internal set
             {
-                if(id!=value)
+                if (id != value)
                 {
                     id = value;
                     OnPropertyChanged("Id");
@@ -76,33 +77,38 @@ namespace Gqqnbig.TrafficVolumeMonitor
             }
         }
 
-        private Car(Rectangle carRectangle, Image<Bgr, byte> image)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="carRectangle"></param>
+        /// <param name="image">包含车的最小图像</param>
+        public Car(Rectangle carRectangle, Image<Bgr, byte> image)
         {
             this.Image = image;
             //image.Save(@"D:\img.bmp");
-            CarImage =ToBitmapImage( Image.ToBitmap());
+            CarImage = ToBitmapImage(Image.ToBitmap());
             CarImage.Freeze();
 
             this.CarRectangle = carRectangle;
-            
-            HistR = new DenseHistogram(256/5, new RangeF(0, 256));
+
+            HistR = new DenseHistogram(256 / 5, new RangeF(0, 256));
             HistR.Calculate(new[] { Image[0] }, false, null);
-            HistR.MatND.ManagedArray.SetValue(0, 0);         
+            HistR.MatND.ManagedArray.SetValue(0, 0);
             HistR.Normalize(1);
 
 
-            HistG = new DenseHistogram(256/5, new RangeF(0, 256));
+            HistG = new DenseHistogram(256 / 5, new RangeF(0, 256));
             HistG.Calculate(new[] { image[1] }, false, null);
             HistG.MatND.ManagedArray.SetValue(0, 0);
             HistG.Normalize(1);
 
-            HistB = new DenseHistogram(256/5, new RangeF(0, 256));
+            HistB = new DenseHistogram(256 / 5, new RangeF(0, 256));
             HistB.Calculate(new[] { image[2] }, false, null);
             HistB.MatND.ManagedArray.SetValue(0, 0);
             HistB.Normalize(1);
 
             var hsvImage = image.Convert<Hsv, byte>();
-            HistHue = new DenseHistogram(180/5, new RangeF(0, 180));
+            HistHue = new DenseHistogram(180 / 5, new RangeF(0, 180));
             HistHue.Calculate(new[] { hsvImage[0] }, false, null);
             HistHue.MatND.ManagedArray.SetValue(0, 0);
             HistHue.Normalize(1);
