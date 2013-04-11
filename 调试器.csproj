@@ -127,15 +127,18 @@
     </None>
     <None Include="yinnan.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="gaohe-online.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="xidang-online.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="yinnan-online.lol">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\0.jpg" />
     <None Include="高伟乐街与荷兰园大马路交界\测试\2\1.jpg" />
@@ -309,6 +312,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="殷皇子大马路与南湾大马路交界路口\mask.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="西湾大桥氹仔端\mask2.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
