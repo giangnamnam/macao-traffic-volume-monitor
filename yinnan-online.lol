@@ -8,4 +8,5 @@
   </CarMatchParameter>
   <BufferImagesCount>1</BufferImagesCount>
   <AlgorithmName>yinnan</AlgorithmName>
+  <JamTime>180</JamTime>
 </LocationParameter>
