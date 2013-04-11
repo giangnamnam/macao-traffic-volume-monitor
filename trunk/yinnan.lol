@@ -3,7 +3,7 @@
   <SourcePath>..\..\殷皇子大马路与南湾大马路交界路口\图\{0}.jpg</SourcePath>
   <MaskFilePath>..\..\殷皇子大马路与南湾大马路交界路口\mask.bmp</MaskFilePath>
   <CarMatchParameter>
-    <SimilarityThreshold>0.26</SimilarityThreshold>
+    <SimilarityThreshold>0.4</SimilarityThreshold>
     <AllowSamePosition>true</AllowSamePosition>
   </CarMatchParameter>
   <BufferImagesCount>1</BufferImagesCount>
