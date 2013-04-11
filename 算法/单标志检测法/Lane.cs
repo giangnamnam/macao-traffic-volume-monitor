@@ -116,7 +116,7 @@ namespace Gqqnbig.TrafficVolumeMonitor
 
             image = PerspectiveTransform(image);
 
-            image = Utility.AutoCrop(image);
+            image = Modules.Utility.AutoCrop(image);
 
             return image;
         }
