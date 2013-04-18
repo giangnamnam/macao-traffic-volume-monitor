@@ -93,29 +93,33 @@
                             <Trigger Property="DataContext">
                                 <Trigger.Value><Modules:TrafficJamLevel>L1</Modules:TrafficJamLevel></Trigger.Value>
                                 <Setter Property="Background" Value="lime"/>
-                                <Setter Property="Text" Value="交通状况：良好"/>
+                                <Setter Property="Text" Value="{DynamicResource loc_trafficStatusLow}"/>
                             </Trigger>
                             <Trigger Property="DataContext">
                                 <Trigger.Value>
                                     <Modules:TrafficJamLevel>L2</Modules:TrafficJamLevel>
                                 </Trigger.Value>
                                 <Setter Property="Background" Value="Orange"/>
-                                <Setter Property="Text" Value="交通状况：中等"/>
+                                <Setter Property="Text" Value="{DynamicResource loc_trafficStatusMid}"/>
                             </Trigger>
                             <Trigger Property="DataContext">
                                 <Trigger.Value>
                                     <Modules:TrafficJamLevel>L3</Modules:TrafficJamLevel>
                                 </Trigger.Value>
                                 <Setter Property="Background" Value="Red"/>
-                                <Setter Property="Text" Value="交通状况：拥堵"/>
+                                <Setter Property="Text" Value="{DynamicResource loc_trafficStatusHigh}"/>
                             </Trigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <Label Content="拥堵的时间：" Margin="0,5,0,0"/>
-            <ListBox Name="trafficJamList">
-                
+            <Label Content="{DynamicResource loc_obstructedTime}" Margin="0,5,0,0"/>
+            <ListBox Name="trafficJamList" MaxHeight="250">
+                <!--<ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>-->
             </ListBox>
         </StackPanel>
         
