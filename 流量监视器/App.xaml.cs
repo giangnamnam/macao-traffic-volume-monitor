@@ -27,9 +27,9 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
                 Uri uri = mergedDictionaries[i].Source;
                 string uriString = uri.ToString();
 
-                if (uriString.StartsWith("Lang/" + DefaultCulture.Name, StringComparison.OrdinalIgnoreCase))
+                if (uriString.IndexOf("Lang/" + DefaultCulture.Name, StringComparison.OrdinalIgnoreCase) != -1)
                     continue;
-                if (uriString.StartsWith("Lang/", StringComparison.OrdinalIgnoreCase))
+                if (uriString.IndexOf("Lang/", StringComparison.OrdinalIgnoreCase) != -1)
                     mergedDictionaries.RemoveAt(i--);
             }
 
@@ -52,7 +52,7 @@ namespace Gqqnbig.TrafficVolumeMonitor.UI
             try
             {
                 ResourceDictionary rd = new ResourceDictionary();
-                rd.Source = new Uri("Lang/" + cultureInfo.Name + ".xaml", UriKind.Relative);
+                rd.Source = new Uri("pack://siteoforigin:,,,/Lang/" + cultureInfo.Name + ".xaml");
                 return rd;
                 //return LoadComponent(new Uri(@"Lang\" + cultureInfo.Name + ".xaml", UriKind.Relative)) as ResourceDictionary;
             }
