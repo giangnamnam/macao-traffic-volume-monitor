@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <sys:String x:Key="loc_Next">Next</sys:String>
+    <sys:String x:Key="loc_site">Sites</sys:String>
     <sys:String x:Key="loc_chartTitle">Traffic Throughput</sys:String>
     <sys:String x:Key="loc_xAsix">Time</sys:String>
     <sys:String x:Key="loc_yAsix">Number of Cars Passed After Previous Point</sys:String>
