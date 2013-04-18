@@ -6,4 +6,9 @@
     <sys:String x:Key="loc_chartTitle">车流量统计图</sys:String>
     <sys:String x:Key="loc_xAsix">时间</sys:String>
     <sys:String x:Key="loc_yAsix">经过的车辆数量</sys:String>
+    <sys:String x:Key="loc_trafficStatusLow">交通状况：良好</sys:String>
+    <sys:String x:Key="loc_trafficStatusMid">交通状况：中等</sys:String>
+    <sys:String x:Key="loc_trafficStatusHigh">交通状况：拥堵</sys:String>
+    <sys:String x:Key="loc_obstructedTime">拥堵的时间：</sys:String>
+
 </ResourceDictionary>
