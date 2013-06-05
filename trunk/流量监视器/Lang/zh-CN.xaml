@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="loc_title">流量监视器</sys:String>
     <sys:String x:Key="loc_Next">下一张</sys:String>
     <sys:String x:Key="loc_site">地点</sys:String>
     <sys:String x:Key="loc_chartTitle">车流量统计图</sys:String>

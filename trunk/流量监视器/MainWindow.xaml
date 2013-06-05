@@ -5,7 +5,7 @@
         xmlns:UI="clr-namespace:Gqqnbig.TrafficVolumeMonitor.UI"
         xmlns:Modules="clr-namespace:Gqqnbig.TrafficVolumeMonitor.Modules;assembly=modules"
         xmlns:visualizationToolkit="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
-        Title="MainWindow" Loaded="Window_Loaded">
+        Title="{DynamicResource loc_title}" Loaded="Window_Loaded">
     <Window.Resources>
         <Style x:Key="radioMenuItemStyle" TargetType="MenuItem">
             <Setter Property="Icon" Value="{DynamicResource RadioButtonResource}"/>
